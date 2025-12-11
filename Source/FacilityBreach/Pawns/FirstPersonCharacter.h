@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FacilityBreach/Pawns/Movement/FirstPersonMovementComponent.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UCameraComponent;
@@ -14,15 +15,12 @@ class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	
-	AFirstPersonCharacter();
+	AFirstPersonCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-
 	virtual void BeginPlay() override;
 
-public:	
-
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -31,4 +29,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* FirstPersonCameraComponent;
 
+	// Movement	
+	FORCEINLINE UFirstPersonMovementComponent* GetCharacterMovement() const { return CastChecked<UFirstPersonMovementComponent>(GetMovementComponent()); }
+
+	void Dash();
 };

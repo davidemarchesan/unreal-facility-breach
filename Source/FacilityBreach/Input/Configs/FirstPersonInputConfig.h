@@ -25,6 +25,12 @@ public:
 	UInputAction* IA_Look;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Jump;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Interact;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Dash;
 	
 };

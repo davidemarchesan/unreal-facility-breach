@@ -43,6 +43,12 @@ private:
 	
 	void Look(const FInputActionValue& Value);
 
+	void Interact();
+
+	void Jump();
+
+	void Dash();
+
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;
 	

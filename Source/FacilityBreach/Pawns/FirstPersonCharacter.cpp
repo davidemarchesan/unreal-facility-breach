@@ -8,35 +8,44 @@
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
-AFirstPersonCharacter::AFirstPersonCharacter()
+AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(
+		ObjectInitializer.SetDefaultSubobjectClass<UFirstPersonMovementComponent>(CharacterMovementComponentName)
+	)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(FName("FirstPersonCameraComponent"));
 	FirstPersonCameraComponent->SetupAttachment(CastChecked<USceneComponent, UCapsuleComponent>(GetCapsuleComponent()));
 	FirstPersonCameraComponent->bUsePawnControlRotation = true; // Rotate camera's pitch instead of pawn's
-	
 }
 
 // Called when the game starts or when spawned
 void AFirstPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AFirstPersonCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
+void AFirstPersonCharacter::Dash()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Character: Dash!"));
+	UFirstPersonMovementComponent* Movement = GetCharacterMovement();
+
+	if (Movement != nullptr)
+	{
+		Movement->DoDash();
+	}
+}

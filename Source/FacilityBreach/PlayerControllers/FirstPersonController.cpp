@@ -29,8 +29,18 @@ void AFirstPersonController::SetupInputComponent()
 	{
 		if (FirstPersonInputConfig)
 		{
-			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Move, ETriggerEvent::Triggered, this, &AFirstPersonController::Move);
-			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Look, ETriggerEvent::Triggered, this, &AFirstPersonController::Look);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Move, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Move);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Look, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Look);
+
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Jump, ETriggerEvent::Triggered, this,
+									  &AFirstPersonController::Jump);
+
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Interact, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Interact);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Dash, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Dash);
 		}
 	}
 }
@@ -39,7 +49,8 @@ void AFirstPersonController::InitializeMappingContexts()
 {
 	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>())
 		{
 			if (FirstPersonInputMappingContext)
 			{
@@ -64,12 +75,29 @@ void AFirstPersonController::Look(const FInputActionValue& Value)
 {
 	FVector2D InputVector = Value.Get<FVector2D>();
 
-	UE_LOG(LogTemp, Warning, TEXT("InputAction: Look (X %f, Y %f)"), InputVector.X, InputVector.Y);
-
 	if (FirstPersonCharacter != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InputAction: Rotate pitch"));
 		FirstPersonCharacter->AddControllerPitchInput(InputVector.Y);
 		FirstPersonCharacter->AddControllerYawInput(InputVector.X);
+	}
+}
+
+void AFirstPersonController::Interact()
+{
+}
+
+void AFirstPersonController::Jump()
+{
+	if (FirstPersonCharacter != nullptr)
+	{
+		FirstPersonCharacter->Jump();
+	}
+}
+
+void AFirstPersonController::Dash()
+{
+	if (FirstPersonCharacter != nullptr)
+	{
+		FirstPersonCharacter->Dash();
 	}
 }
