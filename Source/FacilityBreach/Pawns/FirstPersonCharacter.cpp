@@ -3,6 +3,7 @@
 
 #include "FirstPersonCharacter.h"
 
+#include "Ability/AbilityComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -16,9 +17,13 @@ AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectIni
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Camera
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(FName("FirstPersonCameraComponent"));
 	FirstPersonCameraComponent->SetupAttachment(CastChecked<USceneComponent, UCapsuleComponent>(GetCapsuleComponent()));
 	FirstPersonCameraComponent->bUsePawnControlRotation = true; // Rotate camera's pitch instead of pawn's
+
+	// Ability component
+	AbilityComponent = CreateDefaultSubobject<UAbilityComponent>(FName("AbilityComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -42,10 +47,8 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 void AFirstPersonCharacter::Dash()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Character: Dash!"));
-	UFirstPersonMovementComponent* Movement = GetCharacterMovement();
-
-	if (Movement != nullptr)
+	if (AbilityComponent)
 	{
-		Movement->DoDash();
+		AbilityComponent->Dash();
 	}
 }

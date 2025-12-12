@@ -7,6 +7,7 @@
 #include "FacilityBreach/Pawns/Movement/FirstPersonMovementComponent.h"
 #include "FirstPersonCharacter.generated.h"
 
+class UAbilityComponent;
 class UCameraComponent;
 
 UCLASS()
@@ -20,16 +21,21 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+private:
+
+	/** Component responsible for abilities' (like dash) settings, like cooldown, charges etc. */
+	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UAbilityComponent> AbilityComponent;
+
+	/** Custom camera component */
+	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// Camera
-	UPROPERTY(EditAnywhere)
-	UCameraComponent* FirstPersonCameraComponent;
-
-	// Movement	
+	
 	FORCEINLINE UFirstPersonMovementComponent* GetCharacterMovement() const { return CastChecked<UFirstPersonMovementComponent>(GetMovementComponent()); }
 
 	void Dash();
