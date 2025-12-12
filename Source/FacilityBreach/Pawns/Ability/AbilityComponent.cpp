@@ -41,70 +41,45 @@ TObjectPtr<UFirstPersonMovementComponent> UAbilityComponent::GetMovementComponen
 
 void UAbilityComponent::InitializeAbilities()
 {
-	InitializeDash();
-}
-
-void UAbilityComponent::InitializeDash()
-{
-	DashCurrentCharges = DashCharges;
-}
-
-bool UAbilityComponent::CanDash() const
-{
-	if (UFirstPersonMovementComponent* MovementComponent = GetMovementComponent())
+	if (AbilitiesDataTable != nullptr)
 	{
-		if (MovementComponent->IsDashing() || DashCurrentCharges <= 0)
-		{
-			return false;
-		}
-
-		return true;
+		AbilitiesDataTable->ForeachRow<FAbilityTableRow>("Abilities Look Up",
+		                                                 [this](const FName& Key, const FAbilityTableRow& Value)
+		                                                 {
+			                                                 const FAbilityState State = FAbilityState(
+				                                                 Value.MaxCharges, Value.Cooldown,
+				                                                 Value.bIsRechargeable);
+			                                                 AbilityStates.Add(Value.Type, State);
+		                                                 });
 	}
-
-	return false;
 }
 
-void UAbilityComponent::AddDashCharge()
+void UAbilityComponent::AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd)
 {
-	DashCurrentCharges = FMath::Min(DashCurrentCharges + 1, DashCharges);
-
-	if (bChargeDashUp == true)
+	if (FAbilityState* State = AbilityStates.Find(AbilityType))
 	{
-		if (DashCurrentCharges >= DashCharges)
+		State->CurrentCharges = FMath::Min(State->CurrentCharges + ChargesToAdd, State->MaxCharges);
+
+		if (State->CurrentCharges < State->MaxCharges)
 		{
-			// Stop charging dash
-			bChargeDashUp = false;
-		}
-		else
-		{
-			// Keep charging dash
-			DashCurrentCooldown = DashCooldown;
+			State->CurrentCooldown = State->Cooldown;
 		}
 	}
 }
 
-void UAbilityComponent::ConsumeDashCharge()
+void UAbilityComponent::ConsumeAbilityCharge(EAbilityType AbilityType, int32 ChargesToConsume)
 {
-	DashCurrentCharges = FMath::Max(DashCurrentCharges - 1, 0);
-
-	if (bChargeDashUp == false)
+	if (FAbilityState* State = AbilityStates.Find(AbilityType))
 	{
-		// Starting cooldown
-		bChargeDashUp = true;
-		DashCurrentCooldown = DashCooldown;
+		State->CurrentCharges = FMath::Max(State->CurrentCharges - ChargesToConsume, 0);
+
+		if (State->bIsRechargeable == true && State->CurrentCooldown <= 0.f)
+		{
+			// Starting cooldown
+			State->CurrentCooldown = State->Cooldown;
+		}
 	}
 }
-
-void UAbilityComponent::ChargeDashUp(float deltaTime)
-{
-	DashCurrentCooldown -= deltaTime;
-
-	if (DashCurrentCooldown <= 0.f)
-	{
-		AddDashCharge();
-	}
-}
-
 
 // Called every frame
 void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -112,17 +87,31 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bChargeDashUp == true)
+	for (TPair<EAbilityType, FAbilityState>& Ability : AbilityStates)
 	{
-		ChargeDashUp(DeltaTime);
+		if (Ability.Value.bIsRechargeable == false) continue; // Cannot recharge this ability
+		
+		if (Ability.Value.CurrentCooldown > 0.f)
+		{
+			Ability.Value.CurrentCooldown = FMath::Max(Ability.Value.CurrentCooldown - DeltaTime, 0.f);
+			if (Ability.Value.CurrentCooldown <= 0.f)
+			{
+				AddChargeToAbility(Ability.Key, 1);
+			}
+		}
 	}
 }
 
 void UAbilityComponent::Dash()
 {
-	if (CanDash())
+	if (FAbilityState* State = AbilityStates.Find(EAbilityType::ABILITY_Dash))
 	{
-		ConsumeDashCharge();
+		if (State->HasCharges() == false)
+		{
+			return;
+		}
+
+		ConsumeAbilityCharge(EAbilityType::ABILITY_Dash, 1);
 		if (UFirstPersonMovementComponent* MovementComponent = GetMovementComponent())
 		{
 			MovementComponent->DoDash();
