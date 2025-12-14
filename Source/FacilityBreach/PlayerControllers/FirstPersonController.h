@@ -51,5 +51,9 @@ private:
 
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;
+
+
+	// Debug only
+	void Debug();
 	
 };

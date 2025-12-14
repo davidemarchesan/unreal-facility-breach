@@ -5,14 +5,21 @@
 
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
+#include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
+#include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 #include "Widgets/SOverlay.h"
 
 void AFacilityBreachHUD::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	InitializeOverlayCrosshair();
+
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(SNew(SAbilitiesOverlay));
+	}
 }
 
 void AFacilityBreachHUD::InitializeOverlayCrosshair()

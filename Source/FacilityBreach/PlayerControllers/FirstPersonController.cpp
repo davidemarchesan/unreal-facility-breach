@@ -7,6 +7,7 @@
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/FirstPersonPawn.h"
+#include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void AFirstPersonController::BeginPlay()
 {
@@ -41,6 +42,10 @@ void AFirstPersonController::SetupInputComponent()
 			                          &AFirstPersonController::Interact);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Dash, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Dash);
+
+			// Debug only
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
+									  &AFirstPersonController::Debug);
 		}
 	}
 }
@@ -99,5 +104,21 @@ void AFirstPersonController::Dash()
 	if (FirstPersonCharacter != nullptr)
 	{
 		FirstPersonCharacter->Dash();
+	}
+}
+
+void AFirstPersonController::Debug()
+{
+	FFacilityBreachStyle::Shutdown();
+	FFacilityBreachStyle::Initialize();
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			1,
+			2.f,
+			FColor::Blue,
+			TEXT("Style has been reset")
+			);
 	}
 }
