@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/Pawns/Ability/Abilities.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
 
@@ -20,6 +22,19 @@ public:
 
 private:
 
+	TObjectPtr<AFirstPersonCharacter> CharacterOwner;
+	
+	/** Subscriptions to delegates */
+	void InitializeDelegatesSub();
+	void InitializeDelegatesAbilities();
+
+	UFUNCTION() void OnAbilityCooldownStart(EAbilityType AbilityType, float Seconds);
+	UFUNCTION() void OnAbilityCooldownEnd(EAbilityType AbilityType);
+	UFUNCTION() void OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges);
+	
+	/** Overlays */
+	void InitializeOverlays();
 	void InitializeOverlayCrosshair();
+	void InitializeOverlayAbilities();
 	
 };

@@ -8,6 +8,9 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "AbilityComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownStart, EAbilityType, AbilityType, float, Seconds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownEnd, EAbilityType, AbilityType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityChargesChange, EAbilityType, AbilityType, int32, Charges);
 
 USTRUCT(BlueprintType)
 struct FAbilityState
@@ -57,6 +60,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TObjectPtr<UDataTable> AbilitiesDataTable;
 
+	/** Delegates **/
+	FOnAbilityCooldownStart OnAbilityCooldownStart;
+	FOnAbilityCooldownEnd OnAbilityCooldownEnd;
+	FOnAbilityChargesChange OnAbilityChargesChange;
+
 	/** Try to perform dash */
 	void Dash();
 
@@ -91,6 +99,8 @@ private:
 	void AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd = 1);
 
 	void ConsumeAbilityCharge(EAbilityType AbilityType, int32 ChargesToConsume = 1);
+
+	void StartAbilityCooldown(EAbilityType AbilityType);
 
 	void ChargeDashUp(float deltaTime);
 

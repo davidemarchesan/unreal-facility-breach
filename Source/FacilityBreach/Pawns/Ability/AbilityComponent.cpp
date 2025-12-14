@@ -59,10 +59,11 @@ void UAbilityComponent::AddChargeToAbility(EAbilityType AbilityType, int32 Charg
 	if (FAbilityState* State = AbilityStates.Find(AbilityType))
 	{
 		State->CurrentCharges = FMath::Min(State->CurrentCharges + ChargesToAdd, State->MaxCharges);
+		OnAbilityChargesChange.Broadcast(AbilityType, State->CurrentCharges);
 
 		if (State->CurrentCharges < State->MaxCharges)
 		{
-			State->CurrentCooldown = State->Cooldown;
+			StartAbilityCooldown(AbilityType);
 		}
 	}
 }
@@ -72,12 +73,21 @@ void UAbilityComponent::ConsumeAbilityCharge(EAbilityType AbilityType, int32 Cha
 	if (FAbilityState* State = AbilityStates.Find(AbilityType))
 	{
 		State->CurrentCharges = FMath::Max(State->CurrentCharges - ChargesToConsume, 0);
+		OnAbilityChargesChange.Broadcast(AbilityType, State->CurrentCharges);
 
 		if (State->bIsRechargeable == true && State->CurrentCooldown <= 0.f)
 		{
-			// Starting cooldown
-			State->CurrentCooldown = State->Cooldown;
+			StartAbilityCooldown(AbilityType);
 		}
+	}
+}
+
+void UAbilityComponent::StartAbilityCooldown(EAbilityType AbilityType)
+{
+	if (FAbilityState* State = AbilityStates.Find(AbilityType))
+	{
+		State->CurrentCooldown = State->Cooldown;
+		OnAbilityCooldownStart.Broadcast(AbilityType, State->Cooldown);
 	}
 }
 
@@ -90,13 +100,14 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	for (TPair<EAbilityType, FAbilityState>& Ability : AbilityStates)
 	{
 		if (Ability.Value.bIsRechargeable == false) continue; // Cannot recharge this ability
-		
+
 		if (Ability.Value.CurrentCooldown > 0.f)
 		{
 			Ability.Value.CurrentCooldown = FMath::Max(Ability.Value.CurrentCooldown - DeltaTime, 0.f);
 			if (Ability.Value.CurrentCooldown <= 0.f)
 			{
 				AddChargeToAbility(Ability.Key, 1);
+				OnAbilityCooldownEnd.Broadcast(Ability.Key);
 			}
 		}
 	}

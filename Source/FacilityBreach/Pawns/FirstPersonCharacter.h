@@ -38,5 +38,7 @@ public:
 	
 	FORCEINLINE UFirstPersonMovementComponent* GetCharacterMovement() const { return CastChecked<UFirstPersonMovementComponent>(GetMovementComponent()); }
 
+	FORCEINLINE UAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
+	
 	void Dash();
 };
