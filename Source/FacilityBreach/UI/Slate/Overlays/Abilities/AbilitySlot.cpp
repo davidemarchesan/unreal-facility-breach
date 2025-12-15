@@ -49,7 +49,8 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			[
 				SAssignNew(ChargingShroudBox, SBox)
 				.WidthOverride(AbilitySlotSize)
-				.HeightOverride(AbilitySlotSize / 2)
+				.HeightOverride(0.f)
+				.Visibility(EVisibility::Hidden)
 				[
 					SNew(SBorder)
 					.BorderImage(
@@ -83,6 +84,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Center)
 			[
 				SAssignNew(CooldownTextBlock, STextBlock)
+				.Visibility(EVisibility::Hidden)
 				.Text(FText::AsNumber(0))
 				.ColorAndOpacity(FLinearColor::White)
 			]
@@ -101,25 +103,32 @@ void SAbilitySlot::Tick(const FGeometry& AllottedGeometry, const double InCurren
 		double SecondsPassed = FMath::Abs(CooldownStartTime - InCurrentTime);
 		UpdateCooldown(CooldownTotalSeconds - SecondsPassed);
 	}
-	
 }
 
 void SAbilitySlot::OnAbilityCooldownStart(float Seconds)
 {
-	if (CooldownTextBlock)
+	if (CooldownTextBlock && ChargingShroudBox)
 	{
 		CooldownTotalSeconds = Seconds;
 		CooldownStartTime = FSlateApplication::Get().GetCurrentTime();
-		
+
 		UpdateCooldown(Seconds);
-		
+
 		bCooldownStarted = true;
+
+		CooldownTextBlock->SetVisibility(EVisibility::Visible);
+		ChargingShroudBox->SetVisibility(EVisibility::Visible);
 	}
 }
 
 void SAbilitySlot::OnAbilityCooldownEnd()
 {
 	bCooldownStarted = false;
+	if (CooldownTextBlock && ChargingShroudBox)
+	{
+		CooldownTextBlock->SetVisibility(EVisibility::Hidden);
+		ChargingShroudBox->SetVisibility(EVisibility::Hidden);
+	}
 }
 
 void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
@@ -133,11 +142,14 @@ void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
 void SAbilitySlot::UpdateCooldown(float InCooldown)
 {
 	Cooldown = InCooldown;
-	
+
 	CooldownShown = FMath::CeilToInt(Cooldown);
 	CooldownTextBlock->SetText(FText::AsNumber(CooldownShown));
 
 	// BoxWidth is also the 100% height
-	float NewHeight = (AbilitySlotSize * Cooldown) / CooldownTotalSeconds;
-	ChargingShroudBox->SetHeightOverride(NewHeight);
+	if (ChargingShroudBox)
+	{
+		float NewHeight = (AbilitySlotSize * Cooldown) / CooldownTotalSeconds;
+		ChargingShroudBox->SetHeightOverride(NewHeight);
+	}
 }
