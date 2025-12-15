@@ -47,7 +47,6 @@ void SAbilitiesOverlay::InitializeAbilities(TObjectPtr<UDataTable> AbilitiesData
 		                                                 {
 			                                                 TSharedPtr<SAbilitySlot> AbilitySlot = SNew(SAbilitySlot)
 			                                                 	.Charges(Value.MaxCharges)
-			                                                 	.Cooldown(Value.Cooldown)
 			                                                 	.Icon(Value.Icon);
 		                                                 	
 			                                                 if (AbilitySlot && AbilitiesHorizontalBox)

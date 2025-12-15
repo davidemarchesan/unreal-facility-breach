@@ -52,7 +52,6 @@ void UAbilityComponent::InitializeAbilities()
 			                                                 AbilityStates.Add(Value.Type, State);
 		                                                 });
 	}
-	UE_LOG(LogTemp, Warning, TEXT("abilitycomponent: initialize abilities"));
 }
 
 void UAbilityComponent::AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd)
@@ -107,8 +106,8 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 			Ability.Value.CurrentCooldown = FMath::Max(Ability.Value.CurrentCooldown - DeltaTime, 0.f);
 			if (Ability.Value.CurrentCooldown <= 0.f)
 			{
-				AddChargeToAbility(Ability.Key, 1);
 				OnAbilityCooldownEnd.Broadcast(Ability.Key);
+				AddChargeToAbility(Ability.Key, 1);
 			}
 		}
 	}

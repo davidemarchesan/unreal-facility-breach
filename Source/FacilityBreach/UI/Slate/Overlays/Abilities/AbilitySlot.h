@@ -13,11 +13,12 @@ public:
 	SLATE_BEGIN_ARGS(SAbilitySlot)
 		{}
 		SLATE_ARGUMENT(int32, Charges)
-		SLATE_ARGUMENT(float, Cooldown)
 		SLATE_ARGUMENT(FName, Icon)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
+
+	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
 public:
 
@@ -29,5 +30,17 @@ private:
 
 	TSharedPtr<STextBlock> CooldownTextBlock;
 	TSharedPtr<STextBlock> ChargesTextBlock;
+	TSharedPtr<SBox> ChargingShroudBox;
+
+	const float AbilitySlotSize = 70.f;
+
+	/** Cooldown */
+	bool bCooldownStarted = false;		// Wether the cooldown is running
+	double CooldownStartTime = 0.f; 	// When cooldown started
+	float CooldownTotalSeconds = 0.f;	// Cooldown total seconds
+	float Cooldown = 0.f;				// Current cooldown
+	int32 CooldownShown = 0;			// Cooldown shown on UI
+
+	void UpdateCooldown(float InCooldown);
 	
 };

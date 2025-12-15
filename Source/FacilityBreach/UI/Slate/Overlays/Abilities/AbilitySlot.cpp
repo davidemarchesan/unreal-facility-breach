@@ -8,18 +8,16 @@
 
 void SAbilitySlot::Construct(const FArguments& InArgs)
 {
-	const float BoxWidth = 70.f;
 	const float BorderRadius = 5.f;
 
 	const int32 Charges = InArgs._Charges;
 	const FName Icon = InArgs._Icon;
-	const float Cooldown = InArgs._Cooldown;
 
 	ChildSlot
 	[
 		SNew(SBox)
-		.HeightOverride(BoxWidth)
-		.WidthOverride(BoxWidth)
+		.HeightOverride(AbilitySlotSize)
+		.WidthOverride(AbilitySlotSize)
 		[
 
 			SNew(SOverlay)
@@ -49,9 +47,9 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.HAlign(HAlign_Fill)
 			.VAlign(VAlign_Bottom)
 			[
-				SNew(SBox)
-				.WidthOverride(BoxWidth)
-				.HeightOverride(BoxWidth / 2)
+				SAssignNew(ChargingShroudBox, SBox)
+				.WidthOverride(AbilitySlotSize)
+				.HeightOverride(AbilitySlotSize / 2)
 				[
 					SNew(SBorder)
 					.BorderImage(
@@ -85,7 +83,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Center)
 			[
 				SAssignNew(CooldownTextBlock, STextBlock)
-				.Text(FText::AsNumber(Cooldown))
+				.Text(FText::AsNumber(0))
 				.ColorAndOpacity(FLinearColor::White)
 			]
 
@@ -94,16 +92,34 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 	];
 }
 
+void SAbilitySlot::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+{
+	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+
+	if (bCooldownStarted == true)
+	{
+		double SecondsPassed = FMath::Abs(CooldownStartTime - InCurrentTime);
+		UpdateCooldown(CooldownTotalSeconds - SecondsPassed);
+	}
+	
+}
+
 void SAbilitySlot::OnAbilityCooldownStart(float Seconds)
 {
 	if (CooldownTextBlock)
 	{
-		CooldownTextBlock->SetText(FText::AsNumber(Seconds));
+		CooldownTotalSeconds = Seconds;
+		CooldownStartTime = FSlateApplication::Get().GetCurrentTime();
+		
+		UpdateCooldown(Seconds);
+		
+		bCooldownStarted = true;
 	}
 }
 
 void SAbilitySlot::OnAbilityCooldownEnd()
 {
+	bCooldownStarted = false;
 }
 
 void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
@@ -112,4 +128,16 @@ void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
 	{
 		ChargesTextBlock->SetText(FText::AsNumber(Charges));
 	}
+}
+
+void SAbilitySlot::UpdateCooldown(float InCooldown)
+{
+	Cooldown = InCooldown;
+	
+	CooldownShown = FMath::CeilToInt(Cooldown);
+	CooldownTextBlock->SetText(FText::AsNumber(CooldownShown));
+
+	// BoxWidth is also the 100% height
+	float NewHeight = (AbilitySlotSize * Cooldown) / CooldownTotalSeconds;
+	ChargingShroudBox->SetHeightOverride(NewHeight);
 }
