@@ -11,6 +11,10 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 	const float BoxWidth = 70.f;
 	const float BorderRadius = 5.f;
 
+	const int32 Charges = InArgs._Charges;
+	const FName Icon = InArgs._Icon;
+	const float Cooldown = InArgs._Cooldown;
+
 	ChildSlot
 	[
 		SNew(SBox)
@@ -35,7 +39,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 					[
 
 						SNew(SImage)
-						.Image(FFacilityBreachStyle::Get().GetBrush("Ability.Dash.Icon"))
+						.Image(FFacilityBreachStyle::Get().GetBrush(Icon))
 					]
 				]
 			]
@@ -70,8 +74,8 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Bottom)
 			.Padding(5.f)
 			[
-				SNew(STextBlock)
-				.Text(FText::FromString("2"))
+				SAssignNew(ChargesTextBlock, STextBlock)
+				.Text(FText::AsNumber(Charges))
 				.ColorAndOpacity(FLinearColor::White)
 			]
 
@@ -80,12 +84,32 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			[
-				SNew(STextBlock)
-				.Text(FText::FromString("10"))
+				SAssignNew(CooldownTextBlock, STextBlock)
+				.Text(FText::AsNumber(Cooldown))
 				.ColorAndOpacity(FLinearColor::White)
 			]
 
 
 		]
 	];
+}
+
+void SAbilitySlot::OnAbilityCooldownStart(float Seconds)
+{
+	if (CooldownTextBlock)
+	{
+		CooldownTextBlock->SetText(FText::AsNumber(Seconds));
+	}
+}
+
+void SAbilitySlot::OnAbilityCooldownEnd()
+{
+}
+
+void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
+{
+	if (ChargesTextBlock)
+	{
+		ChargesTextBlock->SetText(FText::AsNumber(Charges));
+	}
 }

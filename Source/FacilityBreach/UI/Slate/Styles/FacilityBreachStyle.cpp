@@ -49,7 +49,11 @@ void FFacilityBreachStyle::InitializeIcons()
 		FStyleIconData(
 			"Ability.Dash.Icon",
 			"/Game/UI/Assets/Icons/Abilities/Icon_Dash",
-			FVector2D(128.f, 128.f))
+			FVector2D(128.f, 128.f)),
+		FStyleIconData(
+			"Ability.Invisibility.Icon",
+			"/Game/UI/Assets/Icons/Abilities/Icon_Invisibility",
+			FVector2D(128.f, 128.f)),
 	};
 
 	for (const FStyleIconData& StyleIcon : StyleIcons)

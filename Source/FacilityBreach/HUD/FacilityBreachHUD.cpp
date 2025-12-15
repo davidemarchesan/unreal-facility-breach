@@ -17,9 +17,8 @@ void AFacilityBreachHUD::BeginPlay()
 	CharacterOwner = CastChecked<AFirstPersonCharacter>(GetOwningPawn());
 
 	InitializeDelegatesSub();
-	
+
 	InitializeOverlays();
-	
 }
 
 void AFacilityBreachHUD::InitializeDelegatesSub()
@@ -39,26 +38,34 @@ void AFacilityBreachHUD::InitializeDelegatesAbilities()
 	{
 		return;
 	}
-	
+
 	AbilityComponent->OnAbilityCooldownStart.AddDynamic(this, &AFacilityBreachHUD::OnAbilityCooldownStart);
 	AbilityComponent->OnAbilityCooldownEnd.AddDynamic(this, &AFacilityBreachHUD::OnAbilityCooldownEnd);
 	AbilityComponent->OnAbilityChargesChange.AddDynamic(this, &AFacilityBreachHUD::OnAbilityChargesChange);
-	
 }
 
 void AFacilityBreachHUD::OnAbilityCooldownStart(EAbilityType AbilityType, float Seconds)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HUD: an ability has started cooldown"));
+	if (AbilitiesOverlay)
+	{
+		AbilitiesOverlay->OnAbilityCooldownStart(AbilityType, Seconds);
+	}
 }
 
 void AFacilityBreachHUD::OnAbilityCooldownEnd(EAbilityType AbilityType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HUD: an ability has ended cooldown"));
+	if (AbilitiesOverlay)
+	{
+		AbilitiesOverlay->OnAbilityCooldownEnd(AbilityType);
+	}
 }
 
 void AFacilityBreachHUD::OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HUD: an ability has new charges %d"), Charges);
+	if (AbilitiesOverlay)
+	{
+		AbilitiesOverlay->OnAbilityChargesChange(AbilityType, Charges);
+	}
 }
 
 void AFacilityBreachHUD::InitializeOverlays()
@@ -96,5 +103,14 @@ void AFacilityBreachHUD::InitializeOverlayCrosshair()
 
 void AFacilityBreachHUD::InitializeOverlayAbilities()
 {
-	GEngine->GameViewport->AddViewportWidgetContent(SNew(SAbilitiesOverlay));
+	AbilitiesOverlay = SNew(SAbilitiesOverlay);
+
+	if (AbilitiesOverlay && CharacterOwner)
+	{
+		if (UAbilityComponent* AbilityComponent = CharacterOwner->GetAbilityComponent())
+		{
+			AbilitiesOverlay->InitializeAbilities(AbilityComponent->AbilitiesDataTable);
+		}
+		GEngine->GameViewport->AddViewportWidgetContent(AbilitiesOverlay.ToSharedRef());
+	}
 }

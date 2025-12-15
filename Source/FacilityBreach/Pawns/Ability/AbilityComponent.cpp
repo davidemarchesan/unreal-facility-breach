@@ -52,6 +52,7 @@ void UAbilityComponent::InitializeAbilities()
 			                                                 AbilityStates.Add(Value.Type, State);
 		                                                 });
 	}
+	UE_LOG(LogTemp, Warning, TEXT("abilitycomponent: initialize abilities"));
 }
 
 void UAbilityComponent::AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd)

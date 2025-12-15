@@ -8,8 +8,6 @@
 
 void SAbilitiesOverlay::Construct(const FArguments& InArgs)
 {
-	
-
 	ChildSlot
 	[
 
@@ -21,21 +19,72 @@ void SAbilitiesOverlay::Construct(const FArguments& InArgs)
 		.Padding(40.f)
 		[
 
-			SNew(SHorizontalBox)
+			SAssignNew(AbilitiesHorizontalBox, SHorizontalBox)
 
-			+ SHorizontalBox::Slot()
-			.Padding(10.f, 0.f)
-			[
-				SNew(SAbilitySlot)
-			]
+			// + SHorizontalBox::Slot()
+			// .Padding(10.f, 0.f)
+			// [
+			// 	DashAbilitySlot.ToSharedRef()
+			// ]
 
-			+ SHorizontalBox::Slot()
-			.Padding(10.f, 0.f)
-			[
-				SNew(SAbilitySlot)
-			]
+			// + SHorizontalBox::Slot()
+			// .Padding(10.f, 0.f)
+			// [
+			// 	SNew(SAbilitySlot)
+			// ]
 
 		]
 
 	];
+}
+
+void SAbilitiesOverlay::InitializeAbilities(TObjectPtr<UDataTable> AbilitiesDataTable)
+{
+	if (AbilitiesDataTable != nullptr)
+	{
+		AbilitiesDataTable->ForeachRow<FAbilityTableRow>("Abilities Look Up",
+		                                                 [this](const FName& Key, const FAbilityTableRow& Value)
+		                                                 {
+			                                                 TSharedPtr<SAbilitySlot> AbilitySlot = SNew(SAbilitySlot)
+			                                                 	.Charges(Value.MaxCharges)
+			                                                 	.Cooldown(Value.Cooldown)
+			                                                 	.Icon(Value.Icon);
+		                                                 	
+			                                                 if (AbilitySlot && AbilitiesHorizontalBox)
+			                                                 {
+				                                                 AbilitySlots.Add(Value.Type, AbilitySlot);
+
+
+				                                                 AbilitiesHorizontalBox->AddSlot()
+					                                                 .Padding(10.f, 0.f)
+					                                                 [
+						                                                 AbilitySlot.ToSharedRef()
+					                                                 ];
+			                                                 }
+		                                                 });
+	}
+}
+
+void SAbilitiesOverlay::OnAbilityCooldownStart(EAbilityType AbilityType, float Seconds)
+{
+	if (TSharedPtr<SAbilitySlot>* AbilitySlot = AbilitySlots.Find(AbilityType))
+	{
+		AbilitySlot->ToSharedRef()->OnAbilityCooldownStart(Seconds);
+	}
+}
+
+void SAbilitiesOverlay::OnAbilityCooldownEnd(EAbilityType AbilityType)
+{
+	if (TSharedPtr<SAbilitySlot>* AbilitySlot = AbilitySlots.Find(AbilityType))
+	{
+		AbilitySlot->ToSharedRef()->OnAbilityCooldownEnd();
+	}
+}
+
+void SAbilitiesOverlay::OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges)
+{
+	if (TSharedPtr<SAbilitySlot>* AbilitySlot = AbilitySlots.Find(AbilityType))
+	{
+		AbilitySlot->ToSharedRef()->OnAbilityChargesChange(Charges);
+	}
 }

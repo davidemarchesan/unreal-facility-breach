@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
+#include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
 
@@ -36,5 +37,7 @@ private:
 	void InitializeOverlays();
 	void InitializeOverlayCrosshair();
 	void InitializeOverlayAbilities();
+
+	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;
 	
 };

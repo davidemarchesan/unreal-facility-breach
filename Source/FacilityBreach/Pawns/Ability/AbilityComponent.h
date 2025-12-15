@@ -60,6 +60,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TObjectPtr<UDataTable> AbilitiesDataTable;
 
+	TMap<EAbilityType, FAbilityState> GetAbilityStates() const { return AbilityStates; };
+
 	/** Delegates **/
 	FOnAbilityCooldownStart OnAbilityCooldownStart;
 	FOnAbilityCooldownEnd OnAbilityCooldownEnd;
@@ -77,11 +79,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<EAbilityType, FAbilityState> AbilityStates;
 
-	// To delete
+	// Todo: delete
 	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="s"))
 	float DashCooldown;
 
-	// To delete
+	// Todo: delete
 	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite)
 	int32 DashCharges;
 
@@ -91,8 +93,10 @@ private:
 
 	void InitializeAbilities();
 
+	// todo: delete
 	float DashCurrentCooldown;
 
+	// todo: delete
 	UPROPERTY(Category="Dash", VisibleAnywhere)
 	int32 DashCurrentCharges = 0;
 	
@@ -102,7 +106,9 @@ private:
 
 	void StartAbilityCooldown(EAbilityType AbilityType);
 
+	// todo: delete
 	void ChargeDashUp(float deltaTime);
 
+	// todo: delete
 	bool bChargeDashUp = false;
 };

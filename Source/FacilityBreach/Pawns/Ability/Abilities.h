@@ -47,5 +47,8 @@ struct FAbilityTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	bool bIsRechargeable = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	FName Icon = "";
 	
 };
