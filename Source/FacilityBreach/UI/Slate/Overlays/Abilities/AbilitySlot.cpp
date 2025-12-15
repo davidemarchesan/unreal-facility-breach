@@ -31,8 +31,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			[
 
 				SAssignNew(IconBorder, SBorder)
-				.BorderImage(
-					new FSlateRoundedBoxBrush(FLinearColor(AbilitySlotEnabledColor), BorderRadius))
+				.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Ability.Slot.Enabled"))
 				.Padding(10.f)
 				[
 					SNew(SScaleBox)
@@ -61,16 +60,6 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 					.BorderImage(
 						new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3f), BorderRadius))
 				]
-			]
-
-			// Ability disabled shroud
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
-			[
-				SNew(SBorder)
-				.Visibility(EVisibility::Hidden)
-				.BorderImage(new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.5f), BorderRadius))
 			]
 
 			// Charges
@@ -148,10 +137,9 @@ void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
 	if (IconBorder)
 	{
 		IconBorder->SetBorderImage(
-			new FSlateRoundedBoxBrush(
-				FLinearColor(Charges > 0 ? AbilitySlotEnabledColor : AbilitySlotDisabledColor),
-				BorderRadius
-			)
+			FFacilityBreachStyle::Get().GetBrush(Charges > 0
+				                                     ? "Brush.Ability.Slot.Enabled"
+				                                     : "Brush.Ability.Slot.Disabled")
 		);
 	}
 }

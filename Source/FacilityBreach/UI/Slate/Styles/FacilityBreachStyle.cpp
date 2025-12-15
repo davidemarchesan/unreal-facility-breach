@@ -24,6 +24,7 @@ void FFacilityBreachStyle::Initialize()
 	StyleInstance = MakeShareable(new FSlateStyleSet("FacilityBreachStyle"));
 
 	InitializeIcons();
+	InitializeBrushes();
 
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleInstance);
 }
@@ -61,4 +62,10 @@ void FFacilityBreachStyle::InitializeIcons()
 		StyleInstance->Set(StyleIcon.Name,
 		                   new FSlateImageBrush(LoadObject<UTexture2D>(nullptr, *StyleIcon.Source), StyleIcon.Size));
 	}
+}
+
+void FFacilityBreachStyle::InitializeBrushes()
+{
+	StyleInstance->Set("Brush.Ability.Slot.Enabled", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
+	StyleInstance->Set("Brush.Ability.Slot.Disabled", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("999999")), 5.f));
 }

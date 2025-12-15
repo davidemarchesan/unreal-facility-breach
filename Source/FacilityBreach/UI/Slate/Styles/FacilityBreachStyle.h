@@ -19,4 +19,5 @@ private:
 	static TSharedPtr<FSlateStyleSet> StyleInstance;
 
 	static void InitializeIcons();
+	static void InitializeBrushes();
 };

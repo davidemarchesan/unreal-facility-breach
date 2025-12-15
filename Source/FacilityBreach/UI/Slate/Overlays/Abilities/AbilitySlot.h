@@ -36,9 +36,6 @@ private:
 	const float AbilitySlotSize = 70.f;
 	const float BorderRadius = 5.f;
 
-	const FColor AbilitySlotEnabledColor = FColor::White;
-	const FColor AbilitySlotDisabledColor = FColor::FromHex("999999");
-
 	/** Cooldown */
 	bool bCooldownStarted = false;		// Wether the cooldown is running
 	double CooldownStartTime = 0.f; 	// When cooldown started

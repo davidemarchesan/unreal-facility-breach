@@ -18,21 +18,7 @@ void SAbilitiesOverlay::Construct(const FArguments& InArgs)
 		.VAlign(VAlign_Bottom)
 		.Padding(40.f)
 		[
-
 			SAssignNew(AbilitiesHorizontalBox, SHorizontalBox)
-
-			// + SHorizontalBox::Slot()
-			// .Padding(10.f, 0.f)
-			// [
-			// 	DashAbilitySlot.ToSharedRef()
-			// ]
-
-			// + SHorizontalBox::Slot()
-			// .Padding(10.f, 0.f)
-			// [
-			// 	SNew(SAbilitySlot)
-			// ]
-
 		]
 
 	];
@@ -46,9 +32,9 @@ void SAbilitiesOverlay::InitializeAbilities(TObjectPtr<UDataTable> AbilitiesData
 		                                                 [this](const FName& Key, const FAbilityTableRow& Value)
 		                                                 {
 			                                                 TSharedPtr<SAbilitySlot> AbilitySlot = SNew(SAbilitySlot)
-			                                                 	.Charges(Value.MaxCharges)
-			                                                 	.Icon(Value.Icon);
-		                                                 	
+				                                                 .Charges(Value.MaxCharges)
+				                                                 .Icon(Value.Icon);
+
 			                                                 if (AbilitySlot && AbilitiesHorizontalBox)
 			                                                 {
 				                                                 AbilitySlots.Add(Value.Type, AbilitySlot);
