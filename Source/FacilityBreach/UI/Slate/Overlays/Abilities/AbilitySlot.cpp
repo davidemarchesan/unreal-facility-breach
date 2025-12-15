@@ -8,10 +8,12 @@
 
 void SAbilitySlot::Construct(const FArguments& InArgs)
 {
-	const float BorderRadius = 5.f;
-
 	const int32 Charges = InArgs._Charges;
 	const FName Icon = InArgs._Icon;
+
+	FSlateFontInfo CooldownTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
+	CooldownTextFont.Size = 16.f;
+	CooldownTextFont.OutlineSettings = FFontOutlineSettings(1.f, FLinearColor::Black);
 
 	ChildSlot
 	[
@@ -28,7 +30,9 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Fill)
 			[
 
-				SNew(SBox)
+				SAssignNew(IconBorder, SBorder)
+				.BorderImage(
+					new FSlateRoundedBoxBrush(FLinearColor(AbilitySlotEnabledColor), BorderRadius))
 				.Padding(10.f)
 				[
 					SNew(SScaleBox)
@@ -37,6 +41,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 					[
 
 						SNew(SImage)
+						.ColorAndOpacity(FLinearColor::Black)
 						.Image(FFacilityBreachStyle::Get().GetBrush(Icon))
 					]
 				]
@@ -54,7 +59,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 				[
 					SNew(SBorder)
 					.BorderImage(
-						new FSlateRoundedBoxBrush(FLinearColor(1.f, 1.f, 1.f, 0.5f), BorderRadius))
+						new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3f), BorderRadius))
 				]
 			]
 
@@ -64,6 +69,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			.VAlign(VAlign_Fill)
 			[
 				SNew(SBorder)
+				.Visibility(EVisibility::Hidden)
 				.BorderImage(new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.5f), BorderRadius))
 			]
 
@@ -75,7 +81,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 			[
 				SAssignNew(ChargesTextBlock, STextBlock)
 				.Text(FText::AsNumber(Charges))
-				.ColorAndOpacity(FLinearColor::White)
+				.ColorAndOpacity(FLinearColor::Black)
 			]
 
 			// Cooldown
@@ -86,6 +92,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 				SAssignNew(CooldownTextBlock, STextBlock)
 				.Visibility(EVisibility::Hidden)
 				.Text(FText::AsNumber(0))
+				.Font(CooldownTextFont)
 				.ColorAndOpacity(FLinearColor::White)
 			]
 
@@ -136,6 +143,16 @@ void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
 	if (ChargesTextBlock)
 	{
 		ChargesTextBlock->SetText(FText::AsNumber(Charges));
+	}
+
+	if (IconBorder)
+	{
+		IconBorder->SetBorderImage(
+			new FSlateRoundedBoxBrush(
+				FLinearColor(Charges > 0 ? AbilitySlotEnabledColor : AbilitySlotDisabledColor),
+				BorderRadius
+			)
+		);
 	}
 }
 

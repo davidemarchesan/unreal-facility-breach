@@ -31,8 +31,13 @@ private:
 	TSharedPtr<STextBlock> CooldownTextBlock;
 	TSharedPtr<STextBlock> ChargesTextBlock;
 	TSharedPtr<SBox> ChargingShroudBox;
+	TSharedPtr<SBorder> IconBorder;
 
 	const float AbilitySlotSize = 70.f;
+	const float BorderRadius = 5.f;
+
+	const FColor AbilitySlotEnabledColor = FColor::White;
+	const FColor AbilitySlotDisabledColor = FColor::FromHex("999999");
 
 	/** Cooldown */
 	bool bCooldownStarted = false;		// Wether the cooldown is running
