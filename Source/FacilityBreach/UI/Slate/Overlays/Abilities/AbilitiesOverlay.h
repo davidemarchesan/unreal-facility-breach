@@ -4,7 +4,6 @@
 
 #include "AbilitySlot.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
-#include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "Widgets/SCompoundWidget.h"
 
 /**

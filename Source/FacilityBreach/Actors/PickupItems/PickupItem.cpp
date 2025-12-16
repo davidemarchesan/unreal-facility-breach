@@ -15,6 +15,8 @@ APickupItem::APickupItem()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
+
+	
 	
 }
 
@@ -38,15 +40,25 @@ void APickupItem::Tick(float DeltaTime)
 
 }
 
-void APickupItem::Interact()
+void APickupItem::OnInteract()
 {
 	if (Item == nullptr)
 	{
 		return;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Picking up item %s"), *Item->Name)
+	UE_LOG(LogTemp, Warning, TEXT("APickupItem::OnInteract %s"), *Item->Name);
 
 	return;
+}
+
+void APickupItem::OnFocus()
+{
+	if (Item == nullptr)
+	{
+		return;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("APickupItem::OnFocus %s"), *Item->Name);
 }
 

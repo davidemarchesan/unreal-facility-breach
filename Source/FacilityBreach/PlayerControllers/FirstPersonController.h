@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -12,6 +14,9 @@ struct FInputActionValue;
 
 class AFirstPersonCharacter;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractableFocus, TScriptInterface<IInteractableInterface>, InteractableScriptInterface);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractableFocusEnd);
+
 /**
  * 
  */
@@ -19,6 +24,14 @@ UCLASS()
 class FACILITYBREACH_API AFirstPersonController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	/** Delegates */
+	FOnInteractableFocus OnInteractableFocus;
+	FOnInteractableFocusEnd OnInteractableFocusEnd;
 
 protected:
 
@@ -51,7 +64,12 @@ private:
 
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;
+	UCameraComponent* FirstPersonCameraComponent;
 
+	// Line trace
+	float LineTraceRayLength = 170.f;
+	void LineTrace();
+	AActor* LineTraceHitActor = nullptr;
 
 	// Debug only
 	void Debug();

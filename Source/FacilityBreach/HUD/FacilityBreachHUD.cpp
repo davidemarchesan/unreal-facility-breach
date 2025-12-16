@@ -5,7 +5,9 @@
 
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
+#include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 
 #include "Widgets/SOverlay.h"
@@ -24,6 +26,7 @@ void AFacilityBreachHUD::BeginPlay()
 void AFacilityBreachHUD::InitializeDelegatesSub()
 {
 	InitializeDelegatesAbilities();
+	InitializeDelegatesInteractables();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -68,12 +71,39 @@ void AFacilityBreachHUD::OnAbilityChargesChange(EAbilityType AbilityType, int32 
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesInteractables()
+{
+	AFirstPersonController* Controller = Cast<AFirstPersonController>(GetOwningPlayerController());
+	if (Controller)
+	{
+		Controller->OnInteractableFocus.AddDynamic(this, &AFacilityBreachHUD::OnInteractableFocus);
+		Controller->OnInteractableFocusEnd.AddDynamic(this, &AFacilityBreachHUD::OnInteractableFocusEnd);
+	}
+}
+
+void AFacilityBreachHUD::OnInteractableFocus(TScriptInterface<IInteractableInterface> InteractableScriptInterface)
+{
+	if (InteractablesOverlay)
+	{
+		InteractablesOverlay->OnInteractableFocus(InteractableScriptInterface->GetHint());
+	}
+}
+
+void AFacilityBreachHUD::OnInteractableFocusEnd()
+{
+	if (InteractablesOverlay)
+	{
+		InteractablesOverlay->OnInteractableFocusEnd();
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
 	{
 		InitializeOverlayCrosshair();
 		InitializeOverlayAbilities();
+		InitializeOverlayInteractables();
 	}
 }
 
@@ -112,5 +142,15 @@ void AFacilityBreachHUD::InitializeOverlayAbilities()
 			AbilitiesOverlay->InitializeAbilities(AbilityComponent->AbilitiesDataTable);
 		}
 		GEngine->GameViewport->AddViewportWidgetContent(AbilitiesOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayInteractables()
+{
+	InteractablesOverlay = SNew(SInteractablesOverlay);
+
+	if (InteractablesOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(InteractablesOverlay.ToSharedRef());
 	}
 }

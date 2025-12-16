@@ -4,10 +4,19 @@
 #include "FirstPersonController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "KismetTraceUtils.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/FirstPersonPawn.h"
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
+
+void AFirstPersonController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	LineTrace();
+}
 
 void AFirstPersonController::BeginPlay()
 {
@@ -19,6 +28,11 @@ void AFirstPersonController::BeginPlay()
 	if (FirstPersonCharacter == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("FirstPersonController: No Character found!"));
+	}
+
+	if (FirstPersonCharacter)
+	{
+		FirstPersonCameraComponent = FirstPersonCharacter->GetCameraComponent();
 	}
 }
 
@@ -36,7 +50,7 @@ void AFirstPersonController::SetupInputComponent()
 			                          &AFirstPersonController::Look);
 
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Jump, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::Jump);
+			                          &AFirstPersonController::Jump);
 
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Interact, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Interact);
@@ -45,7 +59,7 @@ void AFirstPersonController::SetupInputComponent()
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::Debug);
+			                          &AFirstPersonController::Debug);
 		}
 	}
 }
@@ -107,6 +121,60 @@ void AFirstPersonController::Dash()
 	}
 }
 
+void AFirstPersonController::LineTrace()
+{
+	if (FirstPersonCameraComponent)
+	{
+		const FVector Forward = FirstPersonCameraComponent->GetForwardVector().GetSafeNormal();
+
+		const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+		const FVector End = Start + (Forward * LineTraceRayLength);
+
+		FHitResult OutHit;
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			OutHit,
+			Start,
+			End,
+			ECC_Visibility
+		);
+
+		if (bHit)
+		{
+			if (OutHit.GetActor())
+			{
+
+				if (LineTraceHitActor != nullptr && OutHit.GetActor() == LineTraceHitActor)
+				{
+					// Same actor
+					return;
+				}
+				
+				if (LineTraceHitActor == nullptr || OutHit.GetActor() != LineTraceHitActor)
+				{
+					// We got a new actor
+					LineTraceHitActor = OutHit.GetActor();
+
+					// Check if it is interactable
+					if (LineTraceHitActor->Implements<UInteractableInterface>())
+					{
+						TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
+							IInteractableInterface>(LineTraceHitActor);
+						if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
+						{
+							OnInteractableFocus.Broadcast(InteractableScriptInterface);
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		LineTraceHitActor = nullptr;
+		OnInteractableFocusEnd.Broadcast();
+	}
+}
+
 void AFirstPersonController::Debug()
 {
 	FFacilityBreachStyle::Shutdown();
@@ -119,6 +187,6 @@ void AFirstPersonController::Debug()
 			2.f,
 			FColor::Blue,
 			TEXT("Style has been reset")
-			);
+		);
 	}
 }

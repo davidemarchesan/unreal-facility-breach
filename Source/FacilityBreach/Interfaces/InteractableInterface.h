@@ -23,8 +23,10 @@ class IInteractableInterface
 
 public:
 
-	virtual void Interact();
-
-	FString Hint = "Override Hint variable in IInteractableInterface Interface";
+	virtual bool IsInteractable();
+	virtual FText GetHint();
+	
+	virtual void OnInteract();
+	virtual void OnFocus();
 	
 };

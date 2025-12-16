@@ -12,14 +12,18 @@ UCLASS()
 class FACILITYBREACH_API APickupItem : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	APickupItem();
 
 	virtual void Tick(float DeltaTime) override;
 
 	/* InteractableInterface */
-	virtual void Interact() override;
+	virtual bool IsInteractable() override { return true; };
+	virtual FText GetHint() override { return FText::FromString("Pick me up FText"); };
+
+	virtual void OnInteract() override;
+	virtual void OnFocus() override;
 	/* END InteractableInterface */
 
 protected:
@@ -32,7 +36,5 @@ protected:
 	FDataTableRowHandle ItemTableRow;
 
 private:
-
 	FItemTableRow* Item;
-
 };

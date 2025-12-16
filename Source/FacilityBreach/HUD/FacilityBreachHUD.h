@@ -6,6 +6,7 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
+#include "FacilityBreach/UI/Slate/Overlays/Interactables/InteractablesOverlay.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
 
@@ -27,17 +28,23 @@ private:
 	
 	/** Subscriptions to delegates */
 	void InitializeDelegatesSub();
-	void InitializeDelegatesAbilities();
 
+	void InitializeDelegatesAbilities();
 	UFUNCTION() void OnAbilityCooldownStart(EAbilityType AbilityType, float Seconds);
 	UFUNCTION() void OnAbilityCooldownEnd(EAbilityType AbilityType);
 	UFUNCTION() void OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges);
+
+	void InitializeDelegatesInteractables();
+	UFUNCTION() void OnInteractableFocus(TScriptInterface<IInteractableInterface> InteractableScriptInterface); // todo: pointer?
+	UFUNCTION() void OnInteractableFocusEnd();
 	
 	/** Overlays */
 	void InitializeOverlays();
 	void InitializeOverlayCrosshair();
 	void InitializeOverlayAbilities();
+	void InitializeOverlayInteractables();
 
 	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;
+	TSharedPtr<SInteractablesOverlay> InteractablesOverlay;
 	
 };
