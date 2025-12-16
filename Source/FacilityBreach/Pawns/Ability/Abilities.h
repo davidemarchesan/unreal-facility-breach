@@ -11,26 +11,6 @@ enum class EAbilityType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FAbilities : public FTableRowBase
-{
-
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	EAbilityType Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	int32 MaxCharges = 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	float Cooldown = 10.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	bool bIsRechargeable = true;
-	
-};
-
-USTRUCT(BlueprintType)
 struct FAbilityTableRow : public FTableRowBase
 {
 

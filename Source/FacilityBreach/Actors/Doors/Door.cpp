@@ -59,16 +59,10 @@ void ADoor::Tick(float DeltaTime)
 	{
 		AnimationTime += DeltaTime;
 
-		float t = AnimationTime / AnimationDuration;
-
-		float AdjustedSlidingVelocity = DoorSlidingVelocity * DeltaTime;
-
-		float c = FMath::InterpEaseOut(0.f, 1.f, t, 3.f);
-		UE_LOG(LogTemp, Warning, TEXT("t %f | c %f"), t, c);
-
-		AdjustedSlidingVelocity = FMath::InterpEaseInOut(0.f, AdjustedSlidingVelocity, t, 2.f);
-
-		MeshComponent->AddLocalOffset(FVector(AdjustedSlidingVelocity, 0.f, 0.f));
+		float t = FMath::Clamp(AnimationTime / AnimationDuration, 0.f, 1.f);
+		float AdjustedSlidingVelocity = t < 0.5f ? FMath::InterpCircularOut(0.f, DoorSlidingVelocity, t * 2) : FMath::InterpCircularIn(DoorSlidingVelocity, 0.f, (t * 2) - 1.f);
+		
+		MeshComponent->AddLocalOffset(FVector(AdjustedSlidingVelocity * DeltaTime, 0.f, 0.f));
 
 		if (AnimationTime >= AnimationDuration)
 		{
