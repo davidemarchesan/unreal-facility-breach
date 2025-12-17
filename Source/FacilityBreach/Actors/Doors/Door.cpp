@@ -50,14 +50,14 @@ bool ADoor::HasRequiredItems(AFirstPersonCharacter* Character)
 		UE_LOG(LogTemp, Error, TEXT("ADoor::HasRequiredItems() Item look up failed"));
 		return true;
 	}
-	
+
 	return Character->HasItemInInventory(RequiredItem->Name);
 }
 
 void ADoor::SetDoorState(EDoorState NewState)
 {
 	DoorState = NewState;
-	if (NewState != EDoorState::DOOR_Idle)
+	if (NewState != EDoorState::DOOR_Closed)
 	{
 		AnimationTime = 0.f;
 	}
@@ -73,27 +73,31 @@ void ADoor::OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 void ADoor::OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// SetDoorState(EDoorState::DOOR_Closing);
+	if (DoorState == EDoorState::DOOR_Open)
+	{
+		SetDoorState(EDoorState::DOOR_Closing);
+	}
 }
 
 void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (DoorState != EDoorState::DOOR_Idle)
+	if (DoorState == EDoorState::DOOR_Opening || DoorState == EDoorState::DOOR_Closing)
 	{
 		AnimationTime += DeltaTime;
 
-		float t = FMath::Clamp(AnimationTime / AnimationDuration, 0.f, 1.f);
-		float AdjustedSlidingVelocity = t < 0.5f
-			                                ? FMath::InterpCircularOut(0.f, DoorSlidingVelocity, t * 2)
-			                                : FMath::InterpCircularIn(DoorSlidingVelocity, 0.f, (t * 2) - 1.f);
+		float Time = FMath::Clamp(AnimationTime / AnimationDuration, 0.f, 1.f);
+		float AdjustedSlidingVelocity = Time < 0.5f
+			                                ? FMath::InterpCircularOut(0.f, DoorSlidingVelocity, Time * 2)
+			                                : FMath::InterpCircularIn(DoorSlidingVelocity, 0.f, (Time * 2) - 1.f);
 
-		MeshComponent->AddLocalOffset(FVector(AdjustedSlidingVelocity * DeltaTime, 0.f, 0.f));
+		float Direction = DoorState == EDoorState::DOOR_Opening ? 1.f : -1.f;
+		MeshComponent->AddLocalOffset(FVector(AdjustedSlidingVelocity * DeltaTime * Direction, 0.f, 0.f));
 
 		if (AnimationTime >= AnimationDuration)
 		{
-			SetDoorState(EDoorState::DOOR_Idle);
+			SetDoorState(DoorState == EDoorState::DOOR_Opening ? EDoorState::DOOR_Open : EDoorState::DOOR_Closed);
 		}
 	}
 }
@@ -101,6 +105,11 @@ void ADoor::Tick(float DeltaTime)
 FText ADoor::GetHint(APawn* PawnInstigator)
 {
 	if (bInteractable == false)
+	{
+		return FText::GetEmpty();
+	}
+
+	if (DoorState != EDoorState::DOOR_Closed)
 	{
 		return FText::GetEmpty();
 	}
@@ -130,6 +139,11 @@ FText ADoor::GetHint(APawn* PawnInstigator)
 void ADoor::OnInteract(APawn* PawnInstigator)
 {
 	if (bInteractable == false)
+	{
+		return;
+	}
+
+	if (DoorState != EDoorState::DOOR_Closed)
 	{
 		return;
 	}

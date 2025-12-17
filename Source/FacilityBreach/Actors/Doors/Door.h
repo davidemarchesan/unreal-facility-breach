@@ -13,9 +13,10 @@
 UENUM(BlueprintType)
 enum class EDoorState : uint8
 {
-	DOOR_Idle,
+	DOOR_Closed,
+	DOOR_Opening,
+	DOOR_Open,
 	DOOR_Closing,
-	DOOR_Opening
 };
 
 UCLASS()
@@ -65,8 +66,8 @@ protected:
 
 private:
 
-	UPROPERTY(VisibleAnywhere)
-	EDoorState DoorState = EDoorState::DOOR_Idle;
+	UPROPERTY(EditAnywhere)
+	EDoorState DoorState = EDoorState::DOOR_Closed;
 
 	void SetDoorState(EDoorState NewState);
 
