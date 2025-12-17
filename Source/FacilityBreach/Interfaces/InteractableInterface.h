@@ -26,7 +26,7 @@ public:
 	virtual bool IsInteractable();
 	virtual FText GetHint();
 	
-	virtual void OnInteract();
-	virtual void OnFocus();
+	virtual void OnInteract(APawn* PawnInstigator);
+	virtual void OnFocus(APawn* PawnInstigator);
 	
 };

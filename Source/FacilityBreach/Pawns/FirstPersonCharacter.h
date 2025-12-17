@@ -43,4 +43,9 @@ public:
 	FORCEINLINE UCameraComponent* GetCameraComponent() const { return FirstPersonCameraComponent; }
 	
 	void Dash();
+
+	/** Inventory */
+	void AddItemToInventory(FString ItemName, int32 Quantity = 1);
+	bool HasItemInInventory(FString ItemName, int32 QuantityRequired = 1);
+	
 };

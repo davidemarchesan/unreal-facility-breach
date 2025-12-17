@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
 
 // Sets default values
 AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectInitializer)
@@ -51,4 +52,27 @@ void AFirstPersonCharacter::Dash()
 	{
 		AbilityComponent->Dash();
 	}
+}
+
+void AFirstPersonCharacter::AddItemToInventory(FString ItemName, int32 Quantity)
+{
+	if (AFirstPersonPlayerState* State = Cast<AFirstPersonPlayerState>(GetPlayerState()))
+	{
+		if (State->Inventory)
+		{
+			State->Inventory->AddItem(ItemName, Quantity);
+		}
+	}
+}
+
+bool AFirstPersonCharacter::HasItemInInventory(FString ItemName, int32 QuantityRequired)
+{
+	if (AFirstPersonPlayerState* State = Cast<AFirstPersonPlayerState>(GetPlayerState()))
+	{
+		if (State->Inventory)
+		{
+			return State->Inventory->HasItem(ItemName, QuantityRequired);
+		}
+	}
+	return false;
 }

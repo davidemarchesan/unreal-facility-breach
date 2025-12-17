@@ -22,8 +22,8 @@ public:
 	virtual bool IsInteractable() override { return true; };
 	virtual FText GetHint() override { return FText::FromString("Pick me up FText"); };
 
-	virtual void OnInteract() override;
-	virtual void OnFocus() override;
+	virtual void OnInteract(APawn* PawnInstigator) override;
+	virtual void OnFocus(APawn* PawnInstigator) override;
 	/* END InteractableInterface */
 
 protected:

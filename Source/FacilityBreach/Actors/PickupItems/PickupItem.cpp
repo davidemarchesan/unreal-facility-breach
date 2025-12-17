@@ -4,6 +4,7 @@
 #include "PickupItem.h"
 
 #include "PickupItems.h"
+#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 
 // Sets default values
 APickupItem::APickupItem()
@@ -40,19 +41,23 @@ void APickupItem::Tick(float DeltaTime)
 
 }
 
-void APickupItem::OnInteract()
+void APickupItem::OnInteract(APawn* PawnInstigator)
 {
 	if (Item == nullptr)
 	{
 		return;
 	}
-	
+
+	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	{
+		Character->AddItemToInventory(Item->Name);
+	}
 	UE_LOG(LogTemp, Warning, TEXT("APickupItem::OnInteract %s"), *Item->Name);
 
 	return;
 }
 
-void APickupItem::OnFocus()
+void APickupItem::OnFocus(APawn* PawnInstigator)
 {
 	if (Item == nullptr)
 	{

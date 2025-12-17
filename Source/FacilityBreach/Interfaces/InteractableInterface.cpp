@@ -13,12 +13,12 @@ FText IInteractableInterface::GetHint()
 	return FText::FromString("Interactable");
 }
 
-void IInteractableInterface::OnInteract()
+void IInteractableInterface::OnInteract(APawn* PawnInstigator)
 {
 	return;
 }
 
-void IInteractableInterface::OnFocus()
+void IInteractableInterface::OnFocus(APawn* PawnInstigator)
 {
 	return;
 }

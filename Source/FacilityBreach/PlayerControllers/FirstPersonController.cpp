@@ -4,7 +4,6 @@
 #include "FirstPersonController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "KismetTraceUtils.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
@@ -103,6 +102,20 @@ void AFirstPersonController::Look(const FInputActionValue& Value)
 
 void AFirstPersonController::Interact()
 {
+	if (LineTraceHitActor == nullptr)
+	{
+		return;
+	}
+	
+	if (LineTraceHitActor->Implements<UInteractableInterface>())
+	{
+		TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
+			IInteractableInterface>(LineTraceHitActor);
+		if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
+		{
+			InteractableScriptInterface->OnInteract(GetPawn());
+		}
+	}
 }
 
 void AFirstPersonController::Jump()
@@ -143,13 +156,12 @@ void AFirstPersonController::LineTrace()
 		{
 			if (OutHit.GetActor())
 			{
-
 				if (LineTraceHitActor != nullptr && OutHit.GetActor() == LineTraceHitActor)
 				{
 					// Same actor
 					return;
 				}
-				
+
 				if (LineTraceHitActor == nullptr || OutHit.GetActor() != LineTraceHitActor)
 				{
 					// We got a new actor
