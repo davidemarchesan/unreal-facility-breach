@@ -6,7 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
-#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "GameFramework/Actor.h"
 #include "Door.generated.h"
 
@@ -32,9 +32,9 @@ public:
 
 	/* InteractableInterface */
 	virtual bool IsInteractable() override { return bInteractable; };
-	virtual FInteractionHint GetHint(APawn* PawnInstigator) override;
+	virtual FInteractionHint GetHint(APlayerController* PlayerController) override;
 
-	virtual void OnInteract(APawn* PawnInstigator) override;
+	virtual void OnInteract(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
 
 protected:
@@ -61,7 +61,7 @@ protected:
 	UPROPERTY(Category="Interaction", EditAnywhere)
 	FDataTableRowHandle RequiredItemTableRow;
 
-	bool HasRequiredItems(AFirstPersonCharacter* Character);
+	bool HasRequiredItems(AFirstPersonController* Controller);
 	FItemTableRow* RequiredItem;
 
 private:

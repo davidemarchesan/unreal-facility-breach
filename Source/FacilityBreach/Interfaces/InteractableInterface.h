@@ -43,8 +43,8 @@ class IInteractableInterface
 
 public:
 	virtual bool IsInteractable();
-	virtual FInteractionHint GetHint(APawn* PawnInstigator);
+	virtual FInteractionHint GetHint(APlayerController* PlayerController);
 
-	virtual void OnInteract(APawn* PawnInstigator);
-	virtual void OnFocus(APawn* PawnInstigator);
+	virtual void OnInteract(APlayerController* PlayerController);
+	virtual void OnFocus(APlayerController* PlayerController);
 };

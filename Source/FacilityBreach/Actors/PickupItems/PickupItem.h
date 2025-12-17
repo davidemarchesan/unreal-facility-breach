@@ -20,9 +20,9 @@ public:
 
 	/* InteractableInterface */
 	virtual bool IsInteractable() override { return true; };
-	virtual FInteractionHint GetHint(APawn* PawnInstigator) override;
+	virtual FInteractionHint GetHint(APlayerController* PlayerController) override;
 
-	virtual void OnInteract(APawn* PawnInstigator) override;
+	virtual void OnInteract(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
 
 protected:

@@ -8,17 +8,17 @@ bool IInteractableInterface::IsInteractable()
 	return false;
 }
 
-FInteractionHint IInteractableInterface::GetHint(APawn* PawnInstigator)
+FInteractionHint IInteractableInterface::GetHint(APlayerController* PlayerController)
 {
 	return FInteractionHint();
 }
 
-void IInteractableInterface::OnInteract(APawn* PawnInstigator)
+void IInteractableInterface::OnInteract(APlayerController* PlayerController)
 {
 	return;
 }
 
-void IInteractableInterface::OnFocus(APawn* PawnInstigator)
+void IInteractableInterface::OnFocus(APlayerController* PlayerController)
 {
 	return;
 }

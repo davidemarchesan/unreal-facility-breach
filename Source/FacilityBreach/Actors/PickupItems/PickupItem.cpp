@@ -4,7 +4,7 @@
 #include "PickupItem.h"
 
 #include "PickupItems.h"
-#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 
 // Sets default values
 APickupItem::APickupItem()
@@ -41,7 +41,7 @@ void APickupItem::Tick(float DeltaTime)
 
 }
 
-FInteractionHint APickupItem::GetHint(APawn* PawnInstigator)
+FInteractionHint APickupItem::GetHint(APlayerController* PlayerController)
 {
 	if (Item)
 	{
@@ -53,16 +53,16 @@ FInteractionHint APickupItem::GetHint(APawn* PawnInstigator)
 	return FInteractionHint();
 }
 
-void APickupItem::OnInteract(APawn* PawnInstigator)
+void APickupItem::OnInteract(APlayerController* PlayerController)
 {
 	if (Item == nullptr)
 	{
 		return;
 	}
 
-	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(PlayerController))
 	{
-		Character->AddItemToInventory(Item->Name);
+		Controller->AddItemToInventory(Item->Name);
 		Destroy();
 	}
 

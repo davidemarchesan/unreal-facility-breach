@@ -8,6 +8,7 @@
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/FirstPersonPawn.h"
+#include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void AFirstPersonController::Tick(float DeltaSeconds)
@@ -118,7 +119,7 @@ void AFirstPersonController::Interact()
 			IInteractableInterface>(LineTraceHitActor);
 		if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
 		{
-			InteractableScriptInterface->OnInteract(GetPawn());
+			InteractableScriptInterface->OnInteract(this);
 		}
 	}
 }
@@ -185,7 +186,7 @@ void AFirstPersonController::LineTrace()
 							IInteractableInterface>(LineTraceHitActor);
 						if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
 						{
-							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(GetPawn());
+							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(this);
 							OnShowInteractionHint.Broadcast(InteractionHint);
 							
 							return;
@@ -214,4 +215,27 @@ void AFirstPersonController::Debug()
 			TEXT("Style has been reset")
 		);
 	}
+}
+
+void AFirstPersonController::AddItemToInventory(FString ItemName, int32 Quantity)
+{
+	if (AFirstPersonPlayerState* State = GetPlayerState<AFirstPersonPlayerState>())
+	{
+		if (State->Inventory)
+		{
+			State->Inventory->AddItem(ItemName, Quantity);
+		}
+	}
+}
+
+bool AFirstPersonController::HasItemInInventory(FString ItemName, int32 QuantityRequired)
+{
+	if (AFirstPersonPlayerState* State = GetPlayerState<AFirstPersonPlayerState>())
+	{
+		if (State->Inventory)
+		{
+			return State->Inventory->HasItem(ItemName, QuantityRequired);
+		}
+	}
+	return false;
 }

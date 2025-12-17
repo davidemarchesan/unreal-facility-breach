@@ -73,5 +73,11 @@ private:
 
 	// Debug only
 	void Debug();
+
+public:
+
+	/** Inventory */
+	void AddItemToInventory(FString ItemName, int32 Quantity = 1);
+	bool HasItemInInventory(FString ItemName, int32 QuantityRequired = 1);
 	
 };

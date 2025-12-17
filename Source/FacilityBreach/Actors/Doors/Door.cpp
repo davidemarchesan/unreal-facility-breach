@@ -4,7 +4,7 @@
 #include "Door.h"
 
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
-#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 
 // Sets default values
 ADoor::ADoor()
@@ -25,33 +25,35 @@ ADoor::ADoor()
 		BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADoor::OnPlayerBeginOverlap);
 		BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ADoor::OnPlayerEndOverlap);
 	}
+	
 }
 
 void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	RequiredItem = RequiredItemTableRow.GetRow<FItemTableRow>("Item look up");
 }
 
-bool ADoor::HasRequiredItems(AFirstPersonCharacter* Character)
+bool ADoor::HasRequiredItems(AFirstPersonController* Controller)
 {
 	if (RequiredItemTableRow.IsNull())
 	{
 		return true;
 	}
 
-	if (Character == nullptr)
+	if (Controller == nullptr)
 	{
 		return true;
 	}
-
-	RequiredItem = RequiredItemTableRow.GetRow<FItemTableRow>("Item look up");
+	
 	if (RequiredItem == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ADoor::HasRequiredItems() Item look up failed"));
 		return true;
 	}
 
-	return Character->HasItemInInventory(RequiredItem->Name);
+	return Controller->HasItemInInventory(RequiredItem->Name);
 }
 
 void ADoor::SetDoorState(EDoorState NewState)
@@ -102,7 +104,7 @@ void ADoor::Tick(float DeltaTime)
 	}
 }
 
-FInteractionHint ADoor::GetHint(APawn* PawnInstigator)
+FInteractionHint ADoor::GetHint(APlayerController* PlayerController)
 {
 	if (bInteractable == false)
 	{
@@ -114,9 +116,9 @@ FInteractionHint ADoor::GetHint(APawn* PawnInstigator)
 		return FInteractionHint();
 	}
 
-	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(PlayerController))
 	{
-		if (HasRequiredItems(Character))
+		if (HasRequiredItems(Controller))
 		{
 			return FInteractionHint(FText::FromString("Open Door"));
 		}
@@ -139,7 +141,7 @@ FInteractionHint ADoor::GetHint(APawn* PawnInstigator)
 	return FInteractionHint();
 }
 
-void ADoor::OnInteract(APawn* PawnInstigator)
+void ADoor::OnInteract(APlayerController* PlayerController)
 {
 	if (bInteractable == false)
 	{
@@ -151,9 +153,9 @@ void ADoor::OnInteract(APawn* PawnInstigator)
 		return;
 	}
 
-	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(PlayerController))
 	{
-		if (HasRequiredItems(Character))
+		if (HasRequiredItems(Controller))
 		{
 			SetDoorState(EDoorState::DOOR_Opening);
 		}
