@@ -24,7 +24,7 @@ class IInteractableInterface
 public:
 
 	virtual bool IsInteractable();
-	virtual FText GetHint();
+	virtual FText GetHint(APawn* PawnInstigator);
 	
 	virtual void OnInteract(APawn* PawnInstigator);
 	virtual void OnFocus(APawn* PawnInstigator);

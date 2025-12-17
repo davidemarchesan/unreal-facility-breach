@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
-#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -14,7 +13,7 @@ struct FInputActionValue;
 
 class AFirstPersonCharacter;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractableFocus, TScriptInterface<IInteractableInterface>, InteractableScriptInterface);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractableFocus, FText, Hint);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractableFocusEnd);
 
 /**

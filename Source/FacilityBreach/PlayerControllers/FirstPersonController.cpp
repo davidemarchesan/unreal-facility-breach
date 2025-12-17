@@ -106,6 +106,11 @@ void AFirstPersonController::Interact()
 	{
 		return;
 	}
+
+	if (LineTraceHitActor->IsActorBeingDestroyed())
+	{
+		return;
+	}
 	
 	if (LineTraceHitActor->Implements<UInteractableInterface>())
 	{
@@ -156,6 +161,12 @@ void AFirstPersonController::LineTrace()
 		{
 			if (OutHit.GetActor())
 			{
+
+				if (OutHit.GetActor()->IsActorBeingDestroyed())
+				{
+					return;
+				}
+				
 				if (LineTraceHitActor != nullptr && OutHit.GetActor() == LineTraceHitActor)
 				{
 					// Same actor
@@ -174,7 +185,8 @@ void AFirstPersonController::LineTrace()
 							IInteractableInterface>(LineTraceHitActor);
 						if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
 						{
-							OnInteractableFocus.Broadcast(InteractableScriptInterface);
+							FText Hint = InteractableScriptInterface->GetHint(GetPawn());
+							OnInteractableFocus.Broadcast(Hint);
 							return;
 						}
 					}

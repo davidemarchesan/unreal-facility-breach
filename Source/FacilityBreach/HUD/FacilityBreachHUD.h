@@ -35,7 +35,7 @@ private:
 	UFUNCTION() void OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges);
 
 	void InitializeDelegatesInteractables();
-	UFUNCTION() void OnInteractableFocus(TScriptInterface<IInteractableInterface> InteractableScriptInterface); // todo: pointer?
+	UFUNCTION() void OnInteractableFocus(FText Hint);
 	UFUNCTION() void OnInteractableFocusEnd();
 	
 	/** Overlays */

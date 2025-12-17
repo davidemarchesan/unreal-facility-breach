@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
+#include "FacilityBreach/Actors/PickupItems/PickupItems.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
+#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Door.generated.h"
 
@@ -16,7 +19,7 @@ enum class EDoorState : uint8
 };
 
 UCLASS()
-class FACILITYBREACH_API ADoor : public AActor
+class FACILITYBREACH_API ADoor : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -25,6 +28,13 @@ public:
 	ADoor();
 
 	virtual void Tick(float DeltaTime) override;
+
+	/* InteractableInterface */
+	virtual bool IsInteractable() override { return bInteractable; };
+	virtual FText GetHint(APawn* PawnInstigator) override;
+
+	virtual void OnInteract(APawn* PawnInstigator) override;
+	/* END InteractableInterface */
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,11 +46,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* BoxComponent;
 
+	/** Sliding animation */
 	UPROPERTY(Category="Animation", EditAnywhere, meta=(ForceUnits="s"))
 	float AnimationDuration = 1.f;
 
 	UPROPERTY(Category="Animation", EditAnywhere)
 	float DoorSlidingVelocity = 1.f;
+
+	/** Interaction */
+	UPROPERTY(Category="Interaction", EditAnywhere)
+	bool bInteractable = false;
+
+	UPROPERTY(Category="Interaction", EditAnywhere)
+	FDataTableRowHandle RequiredItemTableRow;
+
+	bool HasRequiredItems(AFirstPersonCharacter* Character);
+	FItemTableRow* RequiredItem;
 
 private:
 

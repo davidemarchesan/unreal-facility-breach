@@ -5,7 +5,6 @@
 
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
-#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
@@ -81,11 +80,11 @@ void AFacilityBreachHUD::InitializeDelegatesInteractables()
 	}
 }
 
-void AFacilityBreachHUD::OnInteractableFocus(TScriptInterface<IInteractableInterface> InteractableScriptInterface)
+void AFacilityBreachHUD::OnInteractableFocus(FText Hint)
 {
 	if (InteractablesOverlay)
 	{
-		InteractablesOverlay->OnInteractableFocus(InteractableScriptInterface->GetHint());
+		InteractablesOverlay->OnInteractableFocus(Hint);
 	}
 }
 

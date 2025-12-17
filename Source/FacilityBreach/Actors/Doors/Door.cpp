@@ -3,6 +3,9 @@
 
 #include "Door.h"
 
+#include "FacilityBreach/Actors/PickupItems/PickupItems.h"
+#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+
 // Sets default values
 ADoor::ADoor()
 {
@@ -29,6 +32,28 @@ void ADoor::BeginPlay()
 	Super::BeginPlay();
 }
 
+bool ADoor::HasRequiredItems(AFirstPersonCharacter* Character)
+{
+	if (RequiredItemTableRow.IsNull())
+	{
+		return true;
+	}
+
+	if (Character == nullptr)
+	{
+		return true;
+	}
+
+	RequiredItem = RequiredItemTableRow.GetRow<FItemTableRow>("Item look up");
+	if (RequiredItem == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ADoor::HasRequiredItems() Item look up failed"));
+		return true;
+	}
+	
+	return Character->HasItemInInventory(RequiredItem->Name);
+}
+
 void ADoor::SetDoorState(EDoorState NewState)
 {
 	DoorState = NewState;
@@ -42,13 +67,13 @@ void ADoor::OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                  const FHitResult& SweepResult)
 {
-	SetDoorState(EDoorState::DOOR_Opening);
+	// SetDoorState(EDoorState::DOOR_Opening);
 }
 
 void ADoor::OnPlayerEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	SetDoorState(EDoorState::DOOR_Closing);
+	// SetDoorState(EDoorState::DOOR_Closing);
 }
 
 void ADoor::Tick(float DeltaTime)
@@ -60,13 +85,60 @@ void ADoor::Tick(float DeltaTime)
 		AnimationTime += DeltaTime;
 
 		float t = FMath::Clamp(AnimationTime / AnimationDuration, 0.f, 1.f);
-		float AdjustedSlidingVelocity = t < 0.5f ? FMath::InterpCircularOut(0.f, DoorSlidingVelocity, t * 2) : FMath::InterpCircularIn(DoorSlidingVelocity, 0.f, (t * 2) - 1.f);
-		
+		float AdjustedSlidingVelocity = t < 0.5f
+			                                ? FMath::InterpCircularOut(0.f, DoorSlidingVelocity, t * 2)
+			                                : FMath::InterpCircularIn(DoorSlidingVelocity, 0.f, (t * 2) - 1.f);
+
 		MeshComponent->AddLocalOffset(FVector(AdjustedSlidingVelocity * DeltaTime, 0.f, 0.f));
 
 		if (AnimationTime >= AnimationDuration)
 		{
 			SetDoorState(EDoorState::DOOR_Idle);
+		}
+	}
+}
+
+FText ADoor::GetHint(APawn* PawnInstigator)
+{
+	if (bInteractable == false)
+	{
+		return FText::GetEmpty();
+	}
+
+	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	{
+		if (HasRequiredItems(Character))
+		{
+			return FText::FromString("Open Door");
+		}
+		else
+		{
+			if (RequiredItem)
+			{
+				return FText::FromString(FString::Printf(TEXT("%s required"), *RequiredItem->Name));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("ADoor::GetHint() Required Item is null"));
+			}
+		}
+	}
+
+	return FText::GetEmpty();
+}
+
+void ADoor::OnInteract(APawn* PawnInstigator)
+{
+	if (bInteractable == false)
+	{
+		return;
+	}
+
+	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
+	{
+		if (HasRequiredItems(Character))
+		{
+			SetDoorState(EDoorState::DOOR_Opening);
 		}
 	}
 }

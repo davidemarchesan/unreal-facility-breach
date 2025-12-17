@@ -20,10 +20,9 @@ public:
 
 	/* InteractableInterface */
 	virtual bool IsInteractable() override { return true; };
-	virtual FText GetHint() override { return FText::FromString("Pick me up FText"); };
+	virtual FText GetHint(APawn* PawnInstigator) override;
 
 	virtual void OnInteract(APawn* PawnInstigator) override;
-	virtual void OnFocus(APawn* PawnInstigator) override;
 	/* END InteractableInterface */
 
 protected:
@@ -32,7 +31,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly);
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(Category = "Item", EditDefaultsOnly);
+	UPROPERTY(Category = "Item", EditAnywhere);
 	FDataTableRowHandle ItemTableRow;
 
 private:

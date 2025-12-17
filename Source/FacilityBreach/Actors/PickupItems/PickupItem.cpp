@@ -41,6 +41,16 @@ void APickupItem::Tick(float DeltaTime)
 
 }
 
+FText APickupItem::GetHint(APawn* PawnInstigator)
+{
+	if (Item)
+	{
+		return FText::FromString(FString::Printf(TEXT("Pick up %s"), *Item->Name));
+	}
+	
+	return FText::GetEmpty();
+}
+
 void APickupItem::OnInteract(APawn* PawnInstigator)
 {
 	if (Item == nullptr)
@@ -51,19 +61,9 @@ void APickupItem::OnInteract(APawn* PawnInstigator)
 	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
 	{
 		Character->AddItemToInventory(Item->Name);
+		Destroy();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("APickupItem::OnInteract %s"), *Item->Name);
 
 	return;
-}
-
-void APickupItem::OnFocus(APawn* PawnInstigator)
-{
-	if (Item == nullptr)
-	{
-		return;
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("APickupItem::OnFocus %s"), *Item->Name);
 }
 
