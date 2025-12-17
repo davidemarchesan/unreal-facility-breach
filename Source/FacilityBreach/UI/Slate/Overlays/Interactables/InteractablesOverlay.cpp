@@ -50,7 +50,7 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 					.AutoWidth()
 					[
 
-						SNew(SBox)
+						SAssignNew(InputBox, SBox)
 						.HeightOverride(KeyBoxSize)
 						.WidthOverride(KeyBoxSize)
 						[
@@ -89,11 +89,21 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 	];
 }
 
-void SInteractablesOverlay::OnInteractableFocus(FText Hint)
+void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 {
+
+	if (Hint.Text.IsEmpty())
+	{
+		OnHideInteractionHint();
+	}
+	
 	if (HintTextBlock)
 	{
-		HintTextBlock->SetText(Hint);
+		HintTextBlock->SetText(Hint.Text);
+	}
+	if (InputBox)
+	{
+		InputBox->SetVisibility(Hint.bShowInput ? EVisibility::Visible : EVisibility::Hidden);
 	}
 	if (RootOverlay)
 	{
@@ -101,7 +111,7 @@ void SInteractablesOverlay::OnInteractableFocus(FText Hint)
 	}
 }
 
-void SInteractablesOverlay::OnInteractableFocusEnd()
+void SInteractablesOverlay::OnHideInteractionHint()
 {
 	if (HintTextBlock)
 	{

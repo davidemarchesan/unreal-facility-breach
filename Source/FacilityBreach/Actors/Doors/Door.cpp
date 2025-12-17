@@ -102,29 +102,32 @@ void ADoor::Tick(float DeltaTime)
 	}
 }
 
-FText ADoor::GetHint(APawn* PawnInstigator)
+FInteractionHint ADoor::GetHint(APawn* PawnInstigator)
 {
 	if (bInteractable == false)
 	{
-		return FText::GetEmpty();
+		return FInteractionHint();
 	}
 
 	if (DoorState != EDoorState::DOOR_Closed)
 	{
-		return FText::GetEmpty();
+		return FInteractionHint();
 	}
 
 	if (AFirstPersonCharacter* Character = Cast<AFirstPersonCharacter>(PawnInstigator))
 	{
 		if (HasRequiredItems(Character))
 		{
-			return FText::FromString("Open Door");
+			return FInteractionHint(FText::FromString("Open Door"));
 		}
 		else
 		{
 			if (RequiredItem)
 			{
-				return FText::FromString(FString::Printf(TEXT("%s required"), *RequiredItem->Name));
+				return FInteractionHint(
+					FText::FromString(FString::Printf(TEXT("%s required"), *RequiredItem->Name)),
+					false
+				);
 			}
 			else
 			{
@@ -133,7 +136,7 @@ FText ADoor::GetHint(APawn* PawnInstigator)
 		}
 	}
 
-	return FText::GetEmpty();
+	return FInteractionHint();
 }
 
 void ADoor::OnInteract(APawn* PawnInstigator)

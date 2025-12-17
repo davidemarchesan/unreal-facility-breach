@@ -32,7 +32,7 @@ public:
 
 	/* InteractableInterface */
 	virtual bool IsInteractable() override { return bInteractable; };
-	virtual FText GetHint(APawn* PawnInstigator) override;
+	virtual FInteractionHint GetHint(APawn* PawnInstigator) override;
 
 	virtual void OnInteract(APawn* PawnInstigator) override;
 	/* END InteractableInterface */

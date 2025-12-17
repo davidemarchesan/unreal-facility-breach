@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
@@ -35,8 +36,8 @@ private:
 	UFUNCTION() void OnAbilityChargesChange(EAbilityType AbilityType, int32 Charges);
 
 	void InitializeDelegatesInteractables();
-	UFUNCTION() void OnInteractableFocus(FText Hint);
-	UFUNCTION() void OnInteractableFocusEnd();
+	UFUNCTION() void OnShowInteractionHint(FInteractionHint Hint);
+	UFUNCTION() void OnHideInteractionHint();
 	
 	/** Overlays */
 	void InitializeOverlays();

@@ -5,6 +5,26 @@
 #include "CoreMinimal.h"
 #include "InteractableInterface.generated.h"
 
+USTRUCT(BlueprintType)
+struct FInteractionHint
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FText Text = FText::GetEmpty();
+
+	UPROPERTY(EditAnywhere)
+	bool bShowInput = false;
+
+	FInteractionHint() = default;
+
+	FInteractionHint(const FText& InText, const bool bInShowInput = true)
+	{
+		Text = InText;
+		bShowInput = bInShowInput;
+	}
+};
+
 /*
 Empty class for reflection system visibility.
 Uses the UINTERFACE macro.
@@ -22,11 +42,9 @@ class IInteractableInterface
 	GENERATED_BODY()
 
 public:
-
 	virtual bool IsInteractable();
-	virtual FText GetHint(APawn* PawnInstigator);
-	
+	virtual FInteractionHint GetHint(APawn* PawnInstigator);
+
 	virtual void OnInteract(APawn* PawnInstigator);
 	virtual void OnFocus(APawn* PawnInstigator);
-	
 };

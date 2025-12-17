@@ -41,14 +41,16 @@ void APickupItem::Tick(float DeltaTime)
 
 }
 
-FText APickupItem::GetHint(APawn* PawnInstigator)
+FInteractionHint APickupItem::GetHint(APawn* PawnInstigator)
 {
 	if (Item)
 	{
-		return FText::FromString(FString::Printf(TEXT("Pick up %s"), *Item->Name));
+		return FInteractionHint(
+			FText::FromString(FString::Printf(TEXT("Pick up %s"), *Item->Name)),
+			true);
 	}
 	
-	return FText::GetEmpty();
+	return FInteractionHint();
 }
 
 void APickupItem::OnInteract(APawn* PawnInstigator)

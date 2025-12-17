@@ -185,8 +185,9 @@ void AFirstPersonController::LineTrace()
 							IInteractableInterface>(LineTraceHitActor);
 						if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
 						{
-							FText Hint = InteractableScriptInterface->GetHint(GetPawn());
-							OnInteractableFocus.Broadcast(Hint);
+							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(GetPawn());
+							OnShowInteractionHint.Broadcast(InteractionHint);
+							
 							return;
 						}
 					}
@@ -195,7 +196,7 @@ void AFirstPersonController::LineTrace()
 		}
 
 		LineTraceHitActor = nullptr;
-		OnInteractableFocusEnd.Broadcast();
+		OnHideInteractionHint.Broadcast();
 	}
 }
 

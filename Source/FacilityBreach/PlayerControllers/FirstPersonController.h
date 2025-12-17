@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -13,8 +14,8 @@ struct FInputActionValue;
 
 class AFirstPersonCharacter;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractableFocus, FText, Hint);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractableFocusEnd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShowInteractionHint, FInteractionHint, Hint);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHideInteractionHint);
 
 /**
  * 
@@ -29,8 +30,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	/** Delegates */
-	FOnInteractableFocus OnInteractableFocus;
-	FOnInteractableFocusEnd OnInteractableFocusEnd;
+	FOnShowInteractionHint OnShowInteractionHint;
+	FOnHideInteractionHint OnHideInteractionHint;
 
 protected:
 

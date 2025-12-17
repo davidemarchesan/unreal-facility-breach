@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "Widgets/SCompoundWidget.h"
 
 /**
@@ -15,12 +16,13 @@ public:
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
-
-	void OnInteractableFocus(FText Hint);
-	void OnInteractableFocusEnd();
+	
+	void OnShowInteractionHint(FInteractionHint Hint);
+	void OnHideInteractionHint();
 
 private:
 
 	TSharedPtr<SOverlay> RootOverlay;
 	TSharedPtr<STextBlock> HintTextBlock;
+	TSharedPtr<SBox> InputBox;
 };

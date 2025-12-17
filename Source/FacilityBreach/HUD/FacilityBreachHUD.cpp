@@ -75,24 +75,24 @@ void AFacilityBreachHUD::InitializeDelegatesInteractables()
 	AFirstPersonController* Controller = Cast<AFirstPersonController>(GetOwningPlayerController());
 	if (Controller)
 	{
-		Controller->OnInteractableFocus.AddDynamic(this, &AFacilityBreachHUD::OnInteractableFocus);
-		Controller->OnInteractableFocusEnd.AddDynamic(this, &AFacilityBreachHUD::OnInteractableFocusEnd);
+		Controller->OnShowInteractionHint.AddDynamic(this, &AFacilityBreachHUD::OnShowInteractionHint);
+		Controller->OnHideInteractionHint.AddDynamic(this, &AFacilityBreachHUD::OnHideInteractionHint);
 	}
 }
 
-void AFacilityBreachHUD::OnInteractableFocus(FText Hint)
+void AFacilityBreachHUD::OnShowInteractionHint(FInteractionHint Hint)
 {
 	if (InteractablesOverlay)
 	{
-		InteractablesOverlay->OnInteractableFocus(Hint);
+		InteractablesOverlay->OnShowInteractionHint(Hint);
 	}
 }
 
-void AFacilityBreachHUD::OnInteractableFocusEnd()
+void AFacilityBreachHUD::OnHideInteractionHint()
 {
 	if (InteractablesOverlay)
 	{
-		InteractablesOverlay->OnInteractableFocusEnd();
+		InteractablesOverlay->OnHideInteractionHint();
 	}
 }
 

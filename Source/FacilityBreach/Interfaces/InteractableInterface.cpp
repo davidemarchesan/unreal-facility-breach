@@ -8,9 +8,9 @@ bool IInteractableInterface::IsInteractable()
 	return false;
 }
 
-FText IInteractableInterface::GetHint(APawn* PawnInstigator)
+FInteractionHint IInteractableInterface::GetHint(APawn* PawnInstigator)
 {
-	return FText::FromString("Interactable");
+	return FInteractionHint();
 }
 
 void IInteractableInterface::OnInteract(APawn* PawnInstigator)
