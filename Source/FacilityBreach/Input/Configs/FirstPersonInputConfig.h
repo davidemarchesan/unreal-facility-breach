@@ -35,5 +35,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Debug;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_PrimaryAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_SecondaryAction;
 	
 };

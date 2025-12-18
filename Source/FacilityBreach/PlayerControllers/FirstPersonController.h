@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "FacilityBreach/Actors/Portals/Portal.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
@@ -52,6 +53,10 @@ private:
 	TObjectPtr<UFirstPersonInputConfig> FirstPersonInputConfig;
 
 	// Input Actions triggers
+	void PrimaryAction();
+	
+	void SecondaryAction();
+	
 	void Move(const FInputActionValue& Value);
 	
 	void Look(const FInputActionValue& Value);
@@ -70,6 +75,16 @@ private:
 	float LineTraceRayLength = 170.f;
 	void LineTrace();
 	AActor* LineTraceHitActor = nullptr;
+
+	// Portals
+	TObjectPtr<APortal> PortalOne;
+	TObjectPtr<APortal> PortalTwo;
+
+	UPROPERTY(Category = "Portal", EditDefaultsOnly)
+	float PortalLineTraceLength = 10.f;
+
+	UPROPERTY(Category = "Portal", EditDefaultsOnly)
+	TSubclassOf<APortal> PortalClass;
 
 	// Debug only
 	void Debug();

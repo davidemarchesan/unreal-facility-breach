@@ -44,6 +44,11 @@ void AFirstPersonController::SetupInputComponent()
 	{
 		if (FirstPersonInputConfig)
 		{
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_PrimaryAction, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::PrimaryAction);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_SecondaryAction, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::SecondaryAction);
+
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Move, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Move);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Look, ETriggerEvent::Triggered, this,
@@ -79,6 +84,48 @@ void AFirstPersonController::InitializeMappingContexts()
 	}
 }
 
+void AFirstPersonController::PrimaryAction()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Primary action!"));
+
+	if (PortalOne != nullptr)
+	{
+		PortalOne->Destroy();
+	}
+
+	const FVector Forward = FirstPersonCameraComponent->GetForwardVector().GetSafeNormal();
+
+	const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	const FVector End = Start + (Forward * PortalLineTraceLength);
+
+	FHitResult OutHit;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		OutHit,
+		Start,
+		End,
+		ECC_Visibility
+	);
+	
+	if (bHit)
+	{
+		if (PortalClass)
+		{
+			PortalOne = GetWorld()->SpawnActor<APortal>(PortalClass, OutHit.Location, OutHit.Normal.Rotation());
+			if (PortalOne)
+			{
+				
+			}
+		}
+		
+	}
+}
+
+void AFirstPersonController::SecondaryAction()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Secondary action!"));
+}
+
 void AFirstPersonController::Move(const FInputActionValue& Value)
 {
 	FVector2D InputVector = Value.Get<FVector2D>();
@@ -112,7 +159,7 @@ void AFirstPersonController::Interact()
 	{
 		return;
 	}
-	
+
 	if (LineTraceHitActor->Implements<UInteractableInterface>())
 	{
 		TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
@@ -162,12 +209,11 @@ void AFirstPersonController::LineTrace()
 		{
 			if (OutHit.GetActor())
 			{
-
 				if (OutHit.GetActor()->IsActorBeingDestroyed())
 				{
 					return;
 				}
-				
+
 				if (LineTraceHitActor != nullptr && OutHit.GetActor() == LineTraceHitActor)
 				{
 					// Same actor
@@ -188,7 +234,7 @@ void AFirstPersonController::LineTrace()
 						{
 							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(this);
 							OnShowInteractionHint.Broadcast(InteractionHint);
-							
+
 							return;
 						}
 					}
