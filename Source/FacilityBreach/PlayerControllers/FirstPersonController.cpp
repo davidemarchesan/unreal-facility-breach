@@ -106,7 +106,7 @@ void AFirstPersonController::PrimaryAction()
 		End,
 		ECC_Visibility
 	);
-	
+
 	if (bHit)
 	{
 		if (PortalClass)
@@ -114,16 +114,58 @@ void AFirstPersonController::PrimaryAction()
 			PortalOne = GetWorld()->SpawnActor<APortal>(PortalClass, OutHit.Location, OutHit.Normal.Rotation());
 			if (PortalOne)
 			{
-				
+				PortalOne->SetType(EPortalType::PORTAL_Blue);
+
+				if (PortalTwo)
+				{
+					PortalOne->LinkPortal(PortalTwo);
+					PortalTwo->LinkPortal(PortalOne);
+				}
 			}
 		}
-		
 	}
 }
 
 void AFirstPersonController::SecondaryAction()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Secondary action!"));
+
+	if (PortalTwo != nullptr)
+	{
+		PortalTwo->Destroy();
+	}
+
+	const FVector Forward = FirstPersonCameraComponent->GetForwardVector().GetSafeNormal();
+
+	const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	const FVector End = Start + (Forward * PortalLineTraceLength);
+
+	FHitResult OutHit;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		OutHit,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	if (bHit)
+	{
+		if (PortalClass)
+		{
+			PortalTwo = GetWorld()->SpawnActor<APortal>(PortalClass, OutHit.Location, OutHit.Normal.Rotation());
+			if (PortalTwo)
+			{
+				PortalTwo->SetType(EPortalType::PORTAL_Red);
+
+				if (PortalOne)
+				{
+					PortalOne->LinkPortal(PortalTwo);
+					PortalTwo->LinkPortal(PortalOne);
+				}
+			}
+		}
+	}
 }
 
 void AFirstPersonController::Move(const FInputActionValue& Value)
