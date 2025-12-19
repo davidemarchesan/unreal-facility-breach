@@ -17,6 +17,8 @@ ADoor::ADoor()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 
+	MeshComponent->SetRenderCustomDepth(false);
+
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("SphereComponent"));
 	BoxComponent->SetupAttachment(RootComponent);
 
@@ -33,6 +35,11 @@ void ADoor::BeginPlay()
 	Super::BeginPlay();
 
 	RequiredItem = RequiredItemTableRow.GetRow<FItemTableRow>("Item look up");
+
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(false);
+	}
 }
 
 bool ADoor::HasRequiredItems(AFirstPersonController* Controller)
@@ -159,5 +166,21 @@ void ADoor::OnInteract(APlayerController* PlayerController)
 		{
 			SetDoorState(EDoorState::DOOR_Opening);
 		}
+	}
+}
+
+void ADoor::OnFocus(APlayerController* PlayerController)
+{
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(true);
+	}
+}
+
+void ADoor::OnFocusLost(APlayerController* PlayerController)
+{
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(false);
 	}
 }

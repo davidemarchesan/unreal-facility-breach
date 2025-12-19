@@ -22,3 +22,8 @@ void IInteractableInterface::OnFocus(APlayerController* PlayerController)
 {
 	return;
 }
+
+void IInteractableInterface::OnFocusLost(APlayerController* PlayerController)
+{
+	return;
+}

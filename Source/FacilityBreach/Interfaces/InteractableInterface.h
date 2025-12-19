@@ -47,4 +47,5 @@ public:
 
 	virtual void OnInteract(APlayerController* PlayerController);
 	virtual void OnFocus(APlayerController* PlayerController);
+	virtual void OnFocusLost(APlayerController* PlayerController);
 };

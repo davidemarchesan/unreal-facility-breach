@@ -23,6 +23,8 @@ public:
 	virtual FInteractionHint GetHint(APlayerController* PlayerController) override;
 
 	virtual void OnInteract(APlayerController* PlayerController) override;
+	virtual void OnFocus(APlayerController* PlayerController) override;
+	virtual void OnFocusLost(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
 
 protected:

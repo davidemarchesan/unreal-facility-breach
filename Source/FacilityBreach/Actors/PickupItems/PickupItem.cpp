@@ -17,7 +17,7 @@ APickupItem::APickupItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 
-	
+	MeshComponent->SetRenderCustomDepth(false);
 	
 }
 
@@ -30,6 +30,11 @@ void APickupItem::BeginPlay()
 	if (Item == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Item from DT_Items table not found"));
+	}
+
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(false);
 	}
 	
 }
@@ -67,5 +72,21 @@ void APickupItem::OnInteract(APlayerController* PlayerController)
 	}
 
 	return;
+}
+
+void APickupItem::OnFocus(APlayerController* PlayerController)
+{
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(true);
+	}
+}
+
+void APickupItem::OnFocusLost(APlayerController* PlayerController)
+{
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth(false);
+	}
 }
 

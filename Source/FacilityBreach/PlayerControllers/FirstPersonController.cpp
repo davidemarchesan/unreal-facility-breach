@@ -44,10 +44,10 @@ void AFirstPersonController::SetupInputComponent()
 	{
 		if (FirstPersonInputConfig)
 		{
-			EnhancedInput->BindAction(FirstPersonInputConfig->IA_PrimaryAction, ETriggerEvent::Triggered, this,
-			                          &AFirstPersonController::PrimaryAction);
-			EnhancedInput->BindAction(FirstPersonInputConfig->IA_SecondaryAction, ETriggerEvent::Triggered, this,
-			                          &AFirstPersonController::SecondaryAction);
+			// EnhancedInput->BindAction(FirstPersonInputConfig->IA_PrimaryAction, ETriggerEvent::Triggered, this,
+			//                           &AFirstPersonController::PrimaryAction);
+			// EnhancedInput->BindAction(FirstPersonInputConfig->IA_SecondaryAction, ETriggerEvent::Triggered, this,
+			//                           &AFirstPersonController::SecondaryAction);
 
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Move, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Move);
@@ -277,6 +277,8 @@ void AFirstPersonController::LineTrace()
 							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(this);
 							OnShowInteractionHint.Broadcast(InteractionHint);
 
+							InteractableScriptInterface->OnFocus(this);
+
 							return;
 						}
 					}
@@ -284,7 +286,16 @@ void AFirstPersonController::LineTrace()
 			}
 		}
 
-		LineTraceHitActor = nullptr;
+		if (LineTraceHitActor && LineTraceHitActor->Implements<UInteractableInterface>())
+		{
+			TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
+				IInteractableInterface>(LineTraceHitActor);
+			if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
+			{
+				InteractableScriptInterface->OnFocusLost(this);
+				LineTraceHitActor = nullptr;
+			}
+		}
 		OnHideInteractionHint.Broadcast();
 	}
 }
