@@ -5,6 +5,7 @@
 
 #include "PickupItems.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
+#include "FacilityBreach/PostProcess/Stencils/Stencils.h"
 
 // Sets default values
 APickupItem::APickupItem()
@@ -17,7 +18,8 @@ APickupItem::APickupItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 
-	MeshComponent->SetRenderCustomDepth(false);
+	MeshComponent->SetRenderCustomDepth(true);
+	MeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Glow));
 	
 }
 
@@ -34,7 +36,8 @@ void APickupItem::BeginPlay()
 
 	if (MeshComponent)
 	{
-		MeshComponent->SetRenderCustomDepth(false);
+		MeshComponent->SetRenderCustomDepth(true);
+		MeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Glow));
 	}
 	
 }
@@ -78,7 +81,7 @@ void APickupItem::OnFocus(APlayerController* PlayerController)
 {
 	if (MeshComponent)
 	{
-		MeshComponent->SetRenderCustomDepth(true);
+		MeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Outline));
 	}
 }
 
@@ -86,7 +89,7 @@ void APickupItem::OnFocusLost(APlayerController* PlayerController)
 {
 	if (MeshComponent)
 	{
-		MeshComponent->SetRenderCustomDepth(false);
+		MeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Glow));
 	}
 }
 
