@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "FacilityBreach/Actors/WayPoints/WayPoint.h"
 #include "GameFramework/Character.h"
-#include "NavigationSystem.h"
-#include "Runtime/AIModule/Classes/AIController.h"
 #include "EnemyGuardCharacter.generated.h"
 
 UCLASS()
@@ -21,7 +19,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void PossessedBy(AController* NewController) override;
+	TArray<TObjectPtr<AWayPoint>> GetWayPoints() const { return WayPoints; };
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,35 +27,9 @@ protected:
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStaticMeshComponent> DummyMeshComponent;
 
-	UPROPERTY(Category=AI, EditAnywhere)
+	UPROPERTY(Category=AI, EditInstanceOnly)
 	TArray<TObjectPtr<AWayPoint>> WayPoints;
 
-	
-
 private:
-
-	/** AI and NavSystem */
-	UNavigationSystemV1* CachedNavSystem;
-	UNavigationSystemV1* GetNavSystem();
-
-	AAIController* CachedAIController;
-	AAIController* GetAIController();
-
-	UFUNCTION()
-	void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
-
-	/** WayPoints */
-	TArray<FVector> WayPointLocations;
-
-	/**
-	 * 
-	 * @return true if there are any WayPoints
-	 */
-	bool BuildWayPointLocations();
-
-	int32 CurrentWayPointIndex = 0;
-	FVector CurrentWayPointLocation;
-
-	void GoToNextWayPoint();
 
 };
