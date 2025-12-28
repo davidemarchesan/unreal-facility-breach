@@ -13,6 +13,8 @@ void AEnemyGuardAIController::StartPatrol()
 
 	if (EnemyGuard && BuildWayPointLocations(EnemyGuard))
 	{
+		bLoopWayPoints = EnemyGuard->GetLoopWayPoints();
+
 		GoToNextWayPoint();
 	}
 }
@@ -32,7 +34,7 @@ bool AEnemyGuardAIController::BuildWayPointLocations(AEnemyGuardCharacter* Enemy
 {
 	WayPoints.Empty();
 	WayPoints = EnemyGuard->GetWayPoints();
-	
+
 	if (WayPoints.IsEmpty())
 	{
 		return false;
@@ -51,7 +53,7 @@ bool AEnemyGuardAIController::BuildWayPointLocations(AEnemyGuardCharacter* Enemy
 		if (WayPoints[i] != nullptr)
 		{
 			FNavLocation OutNavLocation;
-			
+
 			if (NavSystem->ProjectPointToNavigation(WayPoints[i]->GetActorLocation(), OutNavLocation, Extent))
 			{
 				WayPointLocations.Add(OutNavLocation.Location);
@@ -64,22 +66,52 @@ bool AEnemyGuardAIController::BuildWayPointLocations(AEnemyGuardCharacter* Enemy
 
 void AEnemyGuardAIController::GoToNextWayPoint()
 {
-	CurrentWayPointIndex++;
+	int32 NextWayPointIndex = CurrentWayPointIndex + WayPointOrder;
 
-	if (WayPointLocations.IsValidIndex(CurrentWayPointIndex) == false)
+	if (WayPointLocations.IsValidIndex(NextWayPointIndex))
 	{
-		CurrentWayPointIndex = 0;
+		CurrentWayPointIndex = NextWayPointIndex;
 	}
-	
-	CurrentWayPointLocation = WayPointLocations[CurrentWayPointIndex];
-	
-	
-	EPathFollowingRequestResult::Type Result = MoveToLocation(CurrentWayPointLocation);
-	
+	else
+	{
+		if (bLoopWayPoints == true)
+		{
+			CurrentWayPointIndex = 0;
+		}
+		else
+		{
+			if (NextWayPointIndex < 0)
+			{
+				// Next waypoint was below zero, go back from first to last
+				WayPointOrder = 1;
+			}
+
+			if (NextWayPointIndex >= WayPointLocations.Num())
+			{
+				// Next waypoint was above max, go back from last to first
+				WayPointOrder = -1;
+			}
+
+			NextWayPointIndex = CurrentWayPointIndex + WayPointOrder;
+			if (WayPointLocations.IsValidIndex(NextWayPointIndex))
+			{
+				CurrentWayPointIndex = NextWayPointIndex;
+			}
+			else
+			{
+				return;
+			}
+		}
+	}
+
+	const FVector NextWayPointLocation = WayPointLocations[CurrentWayPointIndex];
+
+	EPathFollowingRequestResult::Type Result = MoveToLocation(NextWayPointLocation);
+
 	if (Result == EPathFollowingRequestResult::Type::Failed)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyGuardAIController::GoToNextWayPoint() Failed for location %f, %f, %f"),
-		       CurrentWayPointLocation.X,
-		       CurrentWayPointLocation.Y, CurrentWayPointLocation.Z);
+		       NextWayPointLocation.X,
+		       NextWayPointLocation.Y, NextWayPointLocation.Z);
 	}
 }

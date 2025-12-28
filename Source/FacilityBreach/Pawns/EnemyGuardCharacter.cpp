@@ -28,12 +28,22 @@ void AEnemyGuardCharacter::BeginPlay()
 	{
 		AIController->StartPatrol();
 	}
-	
 }
 
 void AEnemyGuardCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	DrawDebugCone(
+		GetWorld(),
+		GetActorLocation(),
+		GetActorForwardVector(),
+		VisionRange,
+		FMath::DegreesToRadians(VisionAngleWidth),
+		FMath::DegreesToRadians(VisionAngleHeight),
+		3,
+		FColor::Red
+	);
 }
 
 // Called to bind functionality to input

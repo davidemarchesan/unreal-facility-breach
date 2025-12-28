@@ -28,18 +28,20 @@ protected:
 
 private:
 
+	// In game actors
 	TArray<TObjectPtr<AWayPoint>> WayPoints;
-
-	TArray<FVector> WayPointLocations;
 
 	/**
 	 * 
 	 * @return true if there are any WayPoints
 	 */
 	bool BuildWayPointLocations(AEnemyGuardCharacter* EnemyGuard);
+	TArray<FVector> WayPointLocations;
 
 	int32 CurrentWayPointIndex = 0;
-	FVector CurrentWayPointLocation;
+
+	bool bLoopWayPoints = true;		// true = start from first when on last waypoint; false = go back from last to first when on last waypoint 
+	int32 WayPointOrder = 1;		// 1 = from first to last; -1 = from last to first
 
 	void GoToNextWayPoint();
 	

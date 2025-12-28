@@ -19,7 +19,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	TArray<TObjectPtr<AWayPoint>> GetWayPoints() const { return WayPoints; };
+	TArray<TObjectPtr<AWayPoint>> GetWayPoints() const { return WayPoints; }
+
+	bool GetLoopWayPoints() const { return bLoopWayPoints; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,8 +29,20 @@ protected:
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStaticMeshComponent> DummyMeshComponent;
 
-	UPROPERTY(Category=AI, EditInstanceOnly)
+	UPROPERTY(Category="Patrol", EditInstanceOnly)
 	TArray<TObjectPtr<AWayPoint>> WayPoints;
+
+	UPROPERTY(Category="Patrol", EditAnywhere)
+	bool bLoopWayPoints = true;
+
+	UPROPERTY(Category="Patrol", EditAnywhere)
+	float VisionRange;
+
+	UPROPERTY(Category="Patrol", EditAnywhere, meta=(Units="degrees"))
+	float VisionAngleWidth;
+
+	UPROPERTY(Category="Patrol", EditAnywhere, meta=(Units="degrees"))
+	float VisionAngleHeight;
 
 private:
 
