@@ -6,6 +6,7 @@
 #include "FirstPersonCharacter.h"
 #include "Components/SphereComponent.h"
 #include "FacilityBreach/Actors/WayPoints/WayPoint.h"
+#include "FacilityBreach/AIControllers/EnemyGuardAIController.h"
 #include "GameFramework/Character.h"
 #include "EnemyGuardCharacter.generated.h"
 
@@ -20,10 +21,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	TArray<TObjectPtr<AWayPoint>> GetWayPoints() const { return WayPoints; }
-
-	bool GetLoopWayPoints() const { return bLoopWayPoints; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,6 +40,9 @@ protected:
 	UPROPERTY(Category="Patrol", EditAnywhere)
 	bool bLoopWayPoints = true;
 
+	UPROPERTY(Category="Patrol", EditAnywhere)
+	float VisionRange = 1000.f;
+	
 	UPROPERTY(Category="Patrol", EditAnywhere, meta=(Units="degrees"))
 	float VisionAngle;
 
@@ -50,6 +50,9 @@ private:
 
 	TObjectPtr<AFirstPersonCharacter> Player = nullptr;
 
-	void CheckPlayerPosition();
+	TObjectPtr<AEnemyGuardAIController> AIController;
+	
+	bool IsPlayerInVision();
+	bool bPlayerInVision = false;
 
 };

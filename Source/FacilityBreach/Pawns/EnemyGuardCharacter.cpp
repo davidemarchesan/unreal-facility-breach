@@ -11,7 +11,13 @@ AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectIniti
 	PrimaryActorTick.bCanEverTick = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-	SphereComponent->SetupAttachment(RootComponent);
+	if (SphereComponent)
+	{
+		SphereComponent->SetupAttachment(RootComponent);
+		SphereComponent->SetGenerateOverlapEvents(true);
+		SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+		SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	}
 
 	DummyMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("DummyMeshComponent");
 	if (DummyMeshComponent)
@@ -27,15 +33,19 @@ void AEnemyGuardCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AEnemyGuardAIController* AIController = Cast<AEnemyGuardAIController>(GetController()))
-	{
-		AIController->StartPatrol();
-	}
+	AIController = Cast<AEnemyGuardAIController>(GetController());
 
 	if (SphereComponent)
 	{
+		SphereComponent->SetSphereRadius(VisionRange);
+
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyGuardCharacter::OnComponentBeginOverlap);
 		SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AEnemyGuardCharacter::OnComponentEndOverlap);
+	}
+
+	if (AIController)
+	{
+		AIController->StartPatrol(WayPoints, bLoopWayPoints);
 	}
 }
 
@@ -43,74 +53,87 @@ void AEnemyGuardCharacter::OnComponentBeginOverlap(UPrimitiveComponent* Overlapp
                                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
                                                    bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AEnemyGuardCharacter::OnComponentBeginOverlap"));
 	Player = Cast<AFirstPersonCharacter>(OtherActor);
 }
 
 void AEnemyGuardCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AEnemyGuardCharacter::OnComponentEndOverlap"));
 	Player = nullptr;
 }
 
-void AEnemyGuardCharacter::CheckPlayerPosition()
+bool AEnemyGuardCharacter::IsPlayerInVision()
 {
-
 	if (Player == nullptr)
 	{
-		return;
+		return false;
 	}
-	
-	if (Player)
+
+	if (AIController == nullptr)
 	{
-		FVector PlayerLocation = Player->GetActorLocation();
+		return false;
+	}
 
-		FVector Direction = PlayerLocation - GetActorLocation();
-		Direction.Normalize();
+	FVector PlayerLocation = Player->GetActorLocation();
 
-		const float DotProduct = FVector::DotProduct(GetActorForwardVector(), Direction);
+	FVector Direction = PlayerLocation - GetActorLocation();
+	Direction.Normalize();
 
-		if (DotProduct >= 0)
+	const float DotProduct = FVector::DotProduct(GetActorForwardVector(), Direction);
+
+	if (DotProduct >= 0)
+	{
+		// Between 0 and 90 degrees
+		// Now check if it's in vision range
+		float Cos = FMath::Cos(FMath::DegreesToRadians(VisionAngle * 0.5f));
+
+		if (DotProduct >= Cos)
 		{
-			// Between 0 and 90 degrees
-			// Now check if it's in vision range
-			float Cos = FMath::Cos(FMath::DegreesToRadians(VisionAngle * 0.5f));
+			FHitResult OutHit;
+			bool bHit = GetWorld()->LineTraceSingleByChannel(
+				OutHit,
+				GetActorLocation(),
+				PlayerLocation,
+				ECC_Visibility
+			);
 
-			if (DotProduct >= Cos)
+			if (bHit)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("I CAN SEE YOU"));
+				if (const AActor* HitActor = OutHit.GetActor())
+				{
+					if (HitActor->IsA(AFirstPersonCharacter::StaticClass()))
+					{
+						return true;
+					}
+				}
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("cannot see you :("));
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("you are at my back :("));
 		}
 	}
+
+	return false;
 }
 
 void AEnemyGuardCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DrawDebugCone(
-		GetWorld(),
-		GetActorLocation(),
-		GetActorForwardVector(),
-		1000.f,
-		FMath::DegreesToRadians(VisionAngle),
-		FMath::DegreesToRadians(VisionAngle),
-		4,
-		FColor::Red
-	);
+	bool bSeen = IsPlayerInVision();
 
-	if (Player)
+	if (bPlayerInVision == false && bSeen == true)
 	{
-		CheckPlayerPosition();
+		if (Player && AIController)
+		{
+			bPlayerInVision = true;
+			AIController->OnTargetSeen(Player);
+		}
+	}
+	else if (bPlayerInVision == true && bSeen == false)
+	{
+		if (AIController)
+		{
+			bPlayerInVision = false;
+			AIController->OnTargetLost();
+		}
 	}
 }
 
