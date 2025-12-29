@@ -47,7 +47,7 @@ void AEnemyGuardAIController::OnMoveCompleted(FAIRequestID RequestID, const FPat
 
 	if (State == EAIGuardState::STATE_Patrol)
 	{
-		NextWayPoint();
+		OnPatrolCompleted();
 	}
 
 	if (State == EAIGuardState::STATE_Alert)
@@ -112,6 +112,41 @@ void AEnemyGuardAIController::EnterPatrol()
 {
 	SetState(EAIGuardState::STATE_Patrol);
 	MoveToWayPoint();
+}
+
+void AEnemyGuardAIController::OnPatrolCompleted()
+{
+	if (WayPoints.IsValidIndex(CurrentWayPointIndex))
+	{
+		AWayPoint* CurrentWayPoint = WayPoints[CurrentWayPointIndex];
+
+		if (CurrentWayPoint && CurrentWayPoint->StayInPositionTime > 0.f)
+		{
+
+			// Move when timer finishes
+			GetWorldTimerManager().ClearTimer(WayPointStayTimerHandle);
+			GetWorldTimerManager().SetTimer(
+				WayPointStayTimerHandle,
+				this,
+				&AEnemyGuardAIController::NextWayPoint,
+				CurrentWayPoint->StayInPositionTime,
+				false
+			);
+
+			// Do we need to face the same WayPoint direction
+			if (CurrentWayPoint->bFaceWayPointDirection == true)
+			{
+				if (APawn* ControlledActor = GetPawn())
+				{
+					ControlledActor->SetActorRotation(CurrentWayPoint->GetActorRotation());
+				}
+			}
+			
+			return;
+		}
+	}
+
+	NextWayPoint();
 }
 
 void AEnemyGuardAIController::NextWayPoint()

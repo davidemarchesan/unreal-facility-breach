@@ -70,13 +70,15 @@ private:
 
 	/** Patroling */
 	void EnterPatrol();
+	void OnPatrolCompleted();
 	void MoveToWayPoint();
 	void NextWayPoint();
+	FTimerHandle WayPointStayTimerHandle;
 
 	/** Suspiciouning */
 	void EnterSuspicious();
-	FTimerHandle SuspiciousTimerHandle;
 	void CheckSuspiciousness();
+	FTimerHandle SuspiciousTimerHandle;
 
 	/** Chasing */
 	void EnterChase();
