@@ -17,6 +17,10 @@ enum class EAIGuardState : uint8
 	STATE_Alert
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnterPatrol);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnterSuspicious);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnterChase);
+
 /**
  * 
  */
@@ -36,6 +40,10 @@ public:
 	void OnTargetLost();
 
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
+
+	FOnEnterPatrol OnEnterPatrol;
+	FOnEnterSuspicious OnEnterSuspicious;
+	FOnEnterChase OnEnterChase;
 
 protected:
 

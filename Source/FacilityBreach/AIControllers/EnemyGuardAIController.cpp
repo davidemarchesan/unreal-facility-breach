@@ -112,6 +112,8 @@ void AEnemyGuardAIController::EnterPatrol()
 {
 	SetState(EAIGuardState::STATE_Patrol);
 	MoveToWayPoint();
+
+	OnEnterPatrol.Broadcast();
 }
 
 void AEnemyGuardAIController::OnPatrolCompleted()
@@ -205,6 +207,8 @@ void AEnemyGuardAIController::EnterSuspicious()
 		2.f,
 		false
 	);
+
+	OnEnterSuspicious.Broadcast();
 }
 
 void AEnemyGuardAIController::CheckSuspiciousness()
@@ -228,6 +232,8 @@ void AEnemyGuardAIController::EnterChase()
 
 	SetState(EAIGuardState::STATE_Chase);
 	MoveToActor(TargetActor);
+
+	OnEnterChase.Broadcast();
 }
 
 void AEnemyGuardAIController::EnterAlert()

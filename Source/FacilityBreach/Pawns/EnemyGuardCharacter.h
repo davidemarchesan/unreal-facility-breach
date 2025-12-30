@@ -8,6 +8,9 @@
 #include "FacilityBreach/Actors/WayPoints/WayPoint.h"
 #include "FacilityBreach/AIControllers/EnemyGuardAIController.h"
 #include "GameFramework/Character.h"
+#include "Components/AudioComponent.h"
+#include "Components/WidgetComponent.h"
+#include "FacilityBreach/UI/Widgets/AlertFeedbackWidget.h"
 #include "EnemyGuardCharacter.generated.h"
 
 UCLASS()
@@ -28,6 +31,12 @@ protected:
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<USphereComponent> SphereComponent;
 
+	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAudioComponent> AudioComponent;
+
+	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UWidgetComponent> AlertFeedbackWidgetComponent;
+
 	UFUNCTION() void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
@@ -46,11 +55,17 @@ protected:
 	UPROPERTY(Category="Patrol", EditAnywhere, meta=(Units="degrees"))
 	float VisionAngle;
 
+	UFUNCTION() void OnEnterPatrol();
+	UFUNCTION() void OnEnterSuspicious();
+	UFUNCTION() void OnEnterChase();
+
 private:
 
 	TObjectPtr<AFirstPersonCharacter> Player = nullptr;
 
 	TObjectPtr<AEnemyGuardAIController> AIController;
+
+	TObjectPtr<UAlertFeedbackWidget> AlertFeedbackWidget;
 	
 	bool IsPlayerInVision();
 	bool bPlayerInVision = false;

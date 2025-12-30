@@ -18,6 +18,19 @@ AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectIniti
 		SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	}
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
+	if (AudioComponent)
+	{
+		AudioComponent->SetupAttachment(RootComponent);
+	}
+
+	AlertFeedbackWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("AlertFeedbackWidgetComponent");
+	if (AlertFeedbackWidgetComponent)
+	{
+		AlertFeedbackWidgetComponent->SetupAttachment(RootComponent);
+		AlertFeedbackWidgetComponent->SetVisibility(false);
+	}
+
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
@@ -42,6 +55,21 @@ void AEnemyGuardCharacter::BeginPlay()
 		{
 			AIController->StartPatrol(WayPoints, bLoopWayPoints);
 		}
+
+		AIController->OnEnterPatrol.AddDynamic(this, &AEnemyGuardCharacter::OnEnterPatrol);
+		AIController->OnEnterSuspicious.AddDynamic(this, &AEnemyGuardCharacter::OnEnterSuspicious);
+		AIController->OnEnterChase.AddDynamic(this, &AEnemyGuardCharacter::OnEnterChase);
+	}
+
+	if (AudioComponent)
+	{
+		AudioComponent->Play();
+	}
+
+	if (AlertFeedbackWidgetComponent)
+	{
+		AlertFeedbackWidgetComponent->SetVisibility(false);
+		AlertFeedbackWidget = Cast<UAlertFeedbackWidget>(AlertFeedbackWidgetComponent->GetUserWidgetObject());
 	}
 }
 
@@ -56,6 +84,35 @@ void AEnemyGuardCharacter::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
                                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Player = nullptr;
+}
+
+void AEnemyGuardCharacter::OnEnterPatrol()
+{
+	if (AlertFeedbackWidgetComponent)
+	{
+		AlertFeedbackWidgetComponent->SetVisibility(false);
+	}
+}
+
+void AEnemyGuardCharacter::OnEnterSuspicious()
+{
+	if (AlertFeedbackWidgetComponent)
+	{
+		if (AlertFeedbackWidget)
+		{
+			AlertFeedbackWidget->SetState(EAIGuardState::STATE_Suspicious);
+		}
+		AlertFeedbackWidgetComponent->SetVisibility(true);
+	}
+}
+
+void AEnemyGuardCharacter::OnEnterChase()
+{
+	if (AlertFeedbackWidgetComponent)
+	{
+		AlertFeedbackWidget->SetState(EAIGuardState::STATE_Chase);
+		AlertFeedbackWidgetComponent->SetVisibility(true);
+	}
 }
 
 bool AEnemyGuardCharacter::IsPlayerInVision()
