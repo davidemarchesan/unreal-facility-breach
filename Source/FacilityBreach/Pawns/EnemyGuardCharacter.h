@@ -26,14 +26,14 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UStaticMeshComponent> DummyMeshComponent;
-
-	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<USphereComponent> SphereComponent;
 
 	UFUNCTION() void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION() void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UPROPERTY(Category="Patrol", EditInstanceOnly)
+	bool bStartPatrolOnPlay = false;
+	
 	UPROPERTY(Category="Patrol", EditInstanceOnly)
 	TArray<TObjectPtr<AWayPoint>> WayPoints;
 

@@ -6,7 +6,6 @@
 #include "FacilityBreach/AIControllers/EnemyGuardAIController.h"
 
 AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer.DoNotCreateDefaultSubobject(ACharacter::MeshComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -17,12 +16,6 @@ AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectIniti
 		SphereComponent->SetGenerateOverlapEvents(true);
 		SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 		SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	}
-
-	DummyMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("DummyMeshComponent");
-	if (DummyMeshComponent)
-	{
-		DummyMeshComponent->SetupAttachment(GetCapsuleComponent());
 	}
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -45,7 +38,10 @@ void AEnemyGuardCharacter::BeginPlay()
 
 	if (AIController)
 	{
-		AIController->StartPatrol(WayPoints, bLoopWayPoints);
+		if (bStartPatrolOnPlay)
+		{
+			AIController->StartPatrol(WayPoints, bLoopWayPoints);
+		}
 	}
 }
 
