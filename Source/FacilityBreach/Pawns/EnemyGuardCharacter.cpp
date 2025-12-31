@@ -24,6 +24,12 @@ AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectIniti
 		AudioComponent->SetupAttachment(RootComponent);
 	}
 
+	AudioFeedbackComponent = CreateDefaultSubobject<UAudioComponent>("AudioFeedbackComponent");
+	if (AudioFeedbackComponent)
+	{
+		AudioFeedbackComponent->SetupAttachment(RootComponent);
+	}
+
 	AlertFeedbackWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("AlertFeedbackWidgetComponent");
 	if (AlertFeedbackWidgetComponent)
 	{
@@ -104,6 +110,12 @@ void AEnemyGuardCharacter::OnEnterSuspicious()
 		}
 		AlertFeedbackWidgetComponent->SetVisibility(true);
 	}
+
+	if (AudioFeedbackComponent && SoundOnSuspicious)
+	{
+		AudioFeedbackComponent->SetSound(SoundOnSuspicious);
+		AudioFeedbackComponent->Play();
+	}
 }
 
 void AEnemyGuardCharacter::OnEnterChase()
@@ -112,6 +124,12 @@ void AEnemyGuardCharacter::OnEnterChase()
 	{
 		AlertFeedbackWidget->SetState(EAIGuardState::STATE_Chase);
 		AlertFeedbackWidgetComponent->SetVisibility(true);
+	}
+
+	if (AudioFeedbackComponent && SoundOnChase)
+	{
+		AudioFeedbackComponent->SetSound(SoundOnChase);
+		AudioFeedbackComponent->Play();
 	}
 }
 
