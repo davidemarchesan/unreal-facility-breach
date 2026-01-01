@@ -15,7 +15,7 @@ void AFacilityBreachHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CharacterOwner = CastChecked<AFirstPersonCharacter>(GetOwningPawn());
+	CharacterOwner = Cast<AFirstPersonCharacter>(GetOwningPawn());
 
 	InitializeDelegatesSub();
 

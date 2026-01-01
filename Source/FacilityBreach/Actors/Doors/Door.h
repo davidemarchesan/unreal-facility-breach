@@ -14,7 +14,9 @@ UENUM(BlueprintType)
 enum class EDoorState : uint8
 {
 	DOOR_Closed,
+	DOOR_Opening,
 	DOOR_Open,
+	DOOR_Closing
 };
 
 UCLASS()
@@ -37,6 +39,11 @@ public:
 	virtual void OnFocusLost(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
 
+	EDoorState GetDoorState() { return DoorState; }
+
+	void OnOpenCompleted();
+	void OnCloseCompleted();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,6 +58,9 @@ protected:
 	UBoxComponent* BoxComponent;
 
 	/** Sliding animation */
+	UPROPERTY(Category="Animation", EditAnywhere)
+	TObjectPtr<UAnimMontage> AnimationMontage;
+	
 	UPROPERTY(Category="Animation", EditAnywhere)
 	TObjectPtr<UAnimationAsset> AnimationOpen;
 

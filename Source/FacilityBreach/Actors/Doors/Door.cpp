@@ -3,6 +3,7 @@
 
 #include "Door.h"
 
+#include "Animations/DoorAnimInstance.h"
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/PostProcess/Stencils/Stencils.h"
@@ -83,27 +84,16 @@ void ADoor::TryOpenDoor()
 		return;
 	}
 
-	if (SkeletalMeshComponent && AnimationOpen)
-	{
-		SkeletalMeshComponent->PlayAnimation(AnimationOpen, false);
-		SetDoorState(EDoorState::DOOR_Open);
-	}
+	SetDoorState(EDoorState::DOOR_Opening);
 }
 
 void ADoor::TryCloseDoor()
 {
-	if (DoorState != EDoorState::DOOR_Open)
+	if (DoorState == EDoorState::DOOR_Closed || DoorState == EDoorState::DOOR_Closing)
 	{
-		// Try again in 2 seconds ?
-		
 		return;
 	}
-
-	if (SkeletalMeshComponent && AnimationClose)
-	{
-		SkeletalMeshComponent->PlayAnimation(AnimationClose, false);
-		SetDoorState(EDoorState::DOOR_Closed);
-	}
+	SetDoorState(EDoorState::DOOR_Closing);
 }
 
 void ADoor::OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -196,4 +186,14 @@ void ADoor::OnFocusLost(APlayerController* PlayerController)
 	{
 		SkeletalMeshComponent->SetRenderCustomDepth(false);
 	}
+}
+
+void ADoor::OnOpenCompleted()
+{
+	SetDoorState(EDoorState::DOOR_Open);
+}
+
+void ADoor::OnCloseCompleted()
+{
+	SetDoorState(EDoorState::DOOR_Closed);
 }
