@@ -13,5 +13,17 @@ UCLASS()
 class FACILITYBREACH_API ULocalPlayerAudioSubsystem : public ULocalPlayerSubsystem
 {
 	GENERATED_BODY()
+
+public:
+
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	bool PlaySound2D(FName SoundName);
+
+	void OnItemPickUp();
+
+private:
+
+	TObjectPtr<const UDataTable> GameAudioDataTable;
 	
 };

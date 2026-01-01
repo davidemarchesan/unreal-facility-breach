@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "FacilityBreach/Actors/Portals/Portal.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
+#include "FacilityBreach/Subsystems/LocalPlayer/LocalPlayerAudioSubsystem.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -85,6 +86,9 @@ private:
 
 	UPROPERTY(Category = "Portal", EditDefaultsOnly)
 	TSubclassOf<APortal> PortalClass;
+
+	// Audio
+	TObjectPtr<ULocalPlayerAudioSubsystem> AudioSubsystem;
 
 	// Debug only
 	void Debug();

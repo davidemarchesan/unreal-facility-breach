@@ -34,6 +34,11 @@ void AFirstPersonController::BeginPlay()
 	{
 		FirstPersonCameraComponent = FirstPersonCharacter->GetCameraComponent();
 	}
+
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+	{
+		AudioSubsystem = LocalPlayer->GetSubsystem<ULocalPlayerAudioSubsystem>();
+	}
 }
 
 void AFirstPersonController::SetupInputComponent()
@@ -281,9 +286,11 @@ void AFirstPersonController::LineTrace()
 
 							return;
 						}
-					} else
+					}
+					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Does not implement interactable interface %s"), *LineTraceHitActor->GetName());
+						UE_LOG(LogTemp, Warning, TEXT("Does not implement interactable interface %s"),
+						       *LineTraceHitActor->GetName());
 					}
 				}
 			}
@@ -326,6 +333,10 @@ void AFirstPersonController::AddItemToInventory(FString ItemName, int32 Quantity
 		if (State->Inventory)
 		{
 			State->Inventory->AddItem(ItemName, Quantity);
+			if (AudioSubsystem)
+			{
+				AudioSubsystem->OnItemPickUp();
+			}
 		}
 	}
 }

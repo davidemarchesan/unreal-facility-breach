@@ -9,6 +9,6 @@ struct FGameAudioTableRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TObjectPtr<USoundCue> Sound;
+	TObjectPtr<USoundBase> Sound;
 	
 };
