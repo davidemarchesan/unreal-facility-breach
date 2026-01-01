@@ -14,9 +14,7 @@ UENUM(BlueprintType)
 enum class EDoorState : uint8
 {
 	DOOR_Closed,
-	DOOR_Opening,
 	DOOR_Open,
-	DOOR_Closing,
 };
 
 UCLASS()
@@ -47,15 +45,18 @@ protected:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USkeletalMeshComponent> SkeletalMeshComponent;
+
+	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* BoxComponent;
 
 	/** Sliding animation */
-	UPROPERTY(Category="Animation", EditAnywhere, meta=(ForceUnits="s"))
-	float AnimationDuration = 1.f;
+	UPROPERTY(Category="Animation", EditAnywhere)
+	TObjectPtr<UAnimationAsset> AnimationOpen;
 
 	UPROPERTY(Category="Animation", EditAnywhere)
-	float DoorSlidingVelocity = 1.f;
-
+	TObjectPtr<UAnimationAsset> AnimationClose;
+	
 	/** Interaction */
 	UPROPERTY(Category="Interaction", EditAnywhere)
 	bool bInteractable = false;
@@ -70,12 +71,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	EDoorState DoorState = EDoorState::DOOR_Closed;
-
+	
+	void TryOpenDoor();
+	void TryCloseDoor();
 	void SetDoorState(EDoorState NewState);
 
-	float AnimationTime = 0.f;
-	
-	float CurrentDoorTranslationOffest = 0.f;
+	// FTimerHandle TryCloseTimerHandle;
 
 	UFUNCTION()
 	void OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
