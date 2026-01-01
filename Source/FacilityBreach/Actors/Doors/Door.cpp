@@ -173,7 +173,7 @@ void ADoor::OnInteract(APlayerController* PlayerController)
 
 void ADoor::OnFocus(APlayerController* PlayerController)
 {
-	if (SkeletalMeshComponent)
+	if (DoorState == EDoorState::DOOR_Closed && SkeletalMeshComponent)
 	{
 		SkeletalMeshComponent->SetRenderCustomDepth(true);
 		SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Outline));

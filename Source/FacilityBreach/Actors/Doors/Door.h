@@ -59,9 +59,6 @@ protected:
 
 	/** Sliding animation */
 	UPROPERTY(Category="Animation", EditAnywhere)
-	TObjectPtr<UAnimMontage> AnimationMontage;
-	
-	UPROPERTY(Category="Animation", EditAnywhere)
 	TObjectPtr<UAnimationAsset> AnimationOpen;
 
 	UPROPERTY(Category="Animation", EditAnywhere)
