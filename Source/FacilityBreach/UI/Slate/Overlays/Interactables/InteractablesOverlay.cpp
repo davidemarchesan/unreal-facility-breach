@@ -7,81 +7,96 @@
 
 void SInteractablesOverlay::Construct(const FArguments& InArgs)
 {
-	FSlateFontInfo TextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	TextFont.Size = 24.f;
-	TextFont.OutlineSettings = FFontOutlineSettings(1.f, FLinearColor::Black);
+	FSlateFontInfo KeyTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
+	KeyTextFont.Size = 13.f;
 
-	const float KeyBoxSize = 60.f;
+	FSlateFontInfo HintTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
+	HintTextFont.Size = 15.f;
 
-	float ViewportHeight = 0.f;
+	const float ContainerWidth = 400.f;
+	const float ContainerPaddingLeft = 35.f;
+	const float HintBoxPadding = 9.f;
+	const float KeyBoxSize = 33.f;
 
+	FVector2D ViewportSize;
 	if (GEngine)
 	{
-		FVector2D ViewportSize;
 		GEngine->GameViewport->GetViewportSize(ViewportSize);
-
-		ViewportHeight = ViewportSize.Y;
 	}
 
 	ChildSlot
 	[
 
 		SAssignNew(RootOverlay, SOverlay)
-		.Visibility(EVisibility::Hidden)
+		.Visibility(EVisibility::Visible)
 
 		+ SOverlay::Slot()
 		.HAlign(HAlign_Center)
-		.VAlign(VAlign_Bottom)
+		.VAlign(VAlign_Center)
 		[
 
+			// Container at the center of the screen
+			// translated to the right
 			SNew(SBox)
-			.HeightOverride(ViewportHeight * 0.5f)
+			.WidthOverride(ContainerWidth)
+			.Padding(ContainerPaddingLeft, 0.f, 0.f, 0.f)
+			.RenderTransform(FSlateRenderTransform(FVector2D(ContainerWidth * 0.5f, 0.f)))
 			[
-				SNew(SOverlay)
 
-				+ SOverlay::Slot()
-				.HAlign(HAlign_Center)
-				.VAlign(VAlign_Center)
+				SNew(SHorizontalBox)
+
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
 				[
-					SNew(SHorizontalBox)
 
-					+ SHorizontalBox::Slot()
-					.VAlign(VAlign_Center)
-					.AutoWidth()
+					SNew(SBorder)
+					.Padding(HintBoxPadding)
+					.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Hint"))
 					[
 
-						SAssignNew(InputBox, SBox)
-						.HeightOverride(KeyBoxSize)
-						.WidthOverride(KeyBoxSize)
+						SNew(SHorizontalBox)
+
+						+ SHorizontalBox::Slot()
+						.VAlign(VAlign_Center)
+						.AutoWidth()
 						[
 
-							SNew(SBorder)
-							.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Key"))
-							.Padding(10.f)
+							SAssignNew(InputBox, SBox)
+							.HeightOverride(KeyBoxSize)
+							.WidthOverride(KeyBoxSize)
 							[
 
-								SNew(STextBlock)
-								.ColorAndOpacity(FLinearColor::White)
-								.Text(FText::FromString("E"))
-								.Font(TextFont)
-								.Justification(ETextJustify::Center)
+								SNew(SBorder)
+								.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Key"))
+								.Padding(7.f)
+								[
+
+									SNew(STextBlock)
+									.ColorAndOpacity(FLinearColor::Black)
+									.Text(FText::FromString("E"))
+									.Font(KeyTextFont)
+									.Justification(ETextJustify::Center)
+								]
 							]
+
 						]
 
-					]
+						+ SHorizontalBox::Slot()
+						.VAlign(VAlign_Center)
+						.Padding(10.f, 0.f, 0.f, 0.f)
+						.AutoWidth()
+						[
 
-					+ SHorizontalBox::Slot()
-					.VAlign(VAlign_Center)
-					.Padding(10.f, 0.f, 0.f, 0.f)
-					.AutoWidth()
-					[
+							SAssignNew(HintTextBlock, STextBlock)
+							.ColorAndOpacity(FLinearColor::White)
+							.Text(FText::FromString("Pick up item from overlay custom"))
+							.Font(HintTextFont)
+						]
 
-						SAssignNew(HintTextBlock, STextBlock)
-						.ColorAndOpacity(FLinearColor::White)
-						.Text(FText::FromString("Pick up item from overlay custom"))
-						.Font(TextFont)
+
 					]
 				]
+
 			]
 
 		]
@@ -91,7 +106,6 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 
 void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 {
-
 	if (Hint.Text.IsEmpty())
 	{
 		OnHideInteractionHint();

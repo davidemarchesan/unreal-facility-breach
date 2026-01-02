@@ -73,7 +73,8 @@ void FFacilityBreachStyle::InitializeBrushes()
 {
 	StyleInstance->Set("Brush.Ability.Slot.Enabled", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
 	StyleInstance->Set("Brush.Ability.Slot.Disabled", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("999999")), 5.f));
-
-	StyleInstance->Set("Brush.Interaction.Key", new FSlateRoundedBoxBrush(FLinearColor::Transparent, 5.f, FLinearColor::White, 5.f));
+	
+	StyleInstance->Set("Brush.Interaction.Hint", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
+	StyleInstance->Set("Brush.Interaction.Key", new FSlateRoundedBoxBrush(FLinearColor::White, 4.f));
 	
 }

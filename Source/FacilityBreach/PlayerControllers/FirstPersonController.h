@@ -73,7 +73,7 @@ private:
 	UCameraComponent* FirstPersonCameraComponent;
 
 	// Line trace
-	float LineTraceRayLength = 170.f;
+	float LineTraceRayLength = 250.f;
 	void LineTrace();
 	AActor* LineTraceHitActor = nullptr;
 
