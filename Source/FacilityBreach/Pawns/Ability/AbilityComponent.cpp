@@ -135,13 +135,14 @@ void UAbilityComponent::Dash()
 
 void UAbilityComponent::Scan()
 {
-	if (FAbilityState* State = AbilityStates.Find(EAbilityType::ABILITY_Dash))
+	if (FAbilityState* State = AbilityStates.Find(EAbilityType::ABILITY_Scan))
 	{
 		if (State->HasCharges() == false)
 		{
 			return;
 		}
 
+		ConsumeAbilityCharge(EAbilityType::ABILITY_Scan, 1);
 		if (WorldScanSubsystem && CharacterOwner)
 		{
 			WorldScanSubsystem->StartScan(CharacterOwner->GetActorLocation());

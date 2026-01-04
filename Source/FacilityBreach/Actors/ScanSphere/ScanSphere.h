@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FacilityBreach/Pawns/EnemyGuardCharacter.h"
 #include "GameFramework/Actor.h"
 #include "ScanSphere.generated.h"
 
@@ -32,6 +33,11 @@ private:
 	float Speed = 400.f;
 
 	float MaxRadius = 500.f;
-	
+	float OverlapMargin = 1000.f;
+
+	TArray<AEnemyGuardCharacter*> AlreadyDetectedEnemies;
+
+	float AccumulatedTime = 0.f;
+	float UpdateInterval = 0.05f; // Seconds
 
 };

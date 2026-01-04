@@ -2,8 +2,8 @@
 
 
 #include "EnemyGuardCharacter.h"
-#include "Components/CapsuleComponent.h"
 #include "FacilityBreach/AIControllers/EnemyGuardAIController.h"
+#include "FacilityBreach/PostProcess/Stencils/Stencils.h"
 
 AEnemyGuardCharacter::AEnemyGuardCharacter(const FObjectInitializer& ObjectInitializer)
 {
@@ -212,4 +212,25 @@ void AEnemyGuardCharacter::Tick(float DeltaTime)
 void AEnemyGuardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AEnemyGuardCharacter::SetDetected()
+{
+	if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+	{
+		SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Detected));
+		SkeletalMeshComponent->SetRenderCustomDepth(true);
+
+		GetWorldTimerManager().ClearTimer(DetectedTimerHandle);
+		GetWorldTimerManager().SetTimer(DetectedTimerHandle, this, &AEnemyGuardCharacter::SetUndetected, 2.f);
+	}
+}
+
+void AEnemyGuardCharacter::SetUndetected()
+{
+	if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+	{
+		SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Custom));
+		SkeletalMeshComponent->SetRenderCustomDepth(false);
+	}
 }
