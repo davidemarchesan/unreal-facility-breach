@@ -49,11 +49,6 @@ void AFirstPersonController::SetupInputComponent()
 	{
 		if (FirstPersonInputConfig)
 		{
-			// EnhancedInput->BindAction(FirstPersonInputConfig->IA_PrimaryAction, ETriggerEvent::Triggered, this,
-			//                           &AFirstPersonController::PrimaryAction);
-			// EnhancedInput->BindAction(FirstPersonInputConfig->IA_SecondaryAction, ETriggerEvent::Triggered, this,
-			//                           &AFirstPersonController::SecondaryAction);
-
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Move, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Move);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Look, ETriggerEvent::Triggered, this,
@@ -64,8 +59,12 @@ void AFirstPersonController::SetupInputComponent()
 
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Interact, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Interact);
+
+			// Abilities
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Dash, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Dash);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Scan, ETriggerEvent::Triggered, this,
+									  &AFirstPersonController::Scan);
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -84,90 +83,6 @@ void AFirstPersonController::InitializeMappingContexts()
 			if (FirstPersonInputMappingContext)
 			{
 				InputSystem->AddMappingContext(FirstPersonInputMappingContext, 1);
-			}
-		}
-	}
-}
-
-void AFirstPersonController::PrimaryAction()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Primary action!"));
-
-	if (PortalOne != nullptr)
-	{
-		PortalOne->Destroy();
-	}
-
-	const FVector Forward = FirstPersonCameraComponent->GetForwardVector().GetSafeNormal();
-
-	const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
-	const FVector End = Start + (Forward * PortalLineTraceLength);
-
-	FHitResult OutHit;
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		OutHit,
-		Start,
-		End,
-		ECC_Visibility
-	);
-
-	if (bHit)
-	{
-		if (PortalClass)
-		{
-			PortalOne = GetWorld()->SpawnActor<APortal>(PortalClass, OutHit.Location, OutHit.Normal.Rotation());
-			if (PortalOne)
-			{
-				PortalOne->SetType(EPortalType::PORTAL_Blue);
-
-				if (PortalTwo)
-				{
-					PortalOne->LinkPortal(PortalTwo);
-					PortalTwo->LinkPortal(PortalOne);
-				}
-			}
-		}
-	}
-}
-
-void AFirstPersonController::SecondaryAction()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Secondary action!"));
-
-	if (PortalTwo != nullptr)
-	{
-		PortalTwo->Destroy();
-	}
-
-	const FVector Forward = FirstPersonCameraComponent->GetForwardVector().GetSafeNormal();
-
-	const FVector Start = FirstPersonCameraComponent->GetComponentLocation();
-	const FVector End = Start + (Forward * PortalLineTraceLength);
-
-	FHitResult OutHit;
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		OutHit,
-		Start,
-		End,
-		ECC_Visibility
-	);
-
-	if (bHit)
-	{
-		if (PortalClass)
-		{
-			PortalTwo = GetWorld()->SpawnActor<APortal>(PortalClass, OutHit.Location, OutHit.Normal.Rotation());
-			if (PortalTwo)
-			{
-				PortalTwo->SetType(EPortalType::PORTAL_Red);
-
-				if (PortalOne)
-				{
-					PortalOne->LinkPortal(PortalTwo);
-					PortalTwo->LinkPortal(PortalOne);
-				}
 			}
 		}
 	}
@@ -231,6 +146,14 @@ void AFirstPersonController::Dash()
 	if (FirstPersonCharacter != nullptr)
 	{
 		FirstPersonCharacter->Dash();
+	}
+}
+
+void AFirstPersonController::Scan()
+{
+	if (FirstPersonCharacter != nullptr)
+	{
+		FirstPersonCharacter->Scan();
 	}
 }
 

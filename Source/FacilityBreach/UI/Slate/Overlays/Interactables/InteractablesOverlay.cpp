@@ -14,7 +14,9 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 	HintTextFont.Size = 15.f;
 
 	const float ContainerWidth = 400.f;
-	const float ContainerPaddingLeft = 35.f;
+	const float ContainerPaddingLeft = 100.f;
+	const float ContainerPaddingTop = 35.f;
+	
 	const float HintBoxPadding = 9.f;
 	const float KeyBoxSize = 33.f;
 
@@ -39,7 +41,7 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 			// translated to the right
 			SNew(SBox)
 			.WidthOverride(ContainerWidth)
-			.Padding(ContainerPaddingLeft, 0.f, 0.f, 0.f)
+			.Padding(ContainerPaddingLeft, ContainerPaddingTop, 0.f, 0.f)
 			.RenderTransform(FSlateRenderTransform(FVector2D(ContainerWidth * 0.5f, 0.f)))
 			[
 

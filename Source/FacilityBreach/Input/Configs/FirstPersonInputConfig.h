@@ -34,6 +34,9 @@ public:
 	UInputAction* IA_Dash;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Scan;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Debug;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")

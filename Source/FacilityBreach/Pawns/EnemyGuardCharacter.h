@@ -25,6 +25,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetDetected();
+	void SetUndetected();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -78,5 +81,7 @@ private:
 	
 	bool IsPlayerInVision();
 	bool bPlayerInVision = false;
+
+	FTimerHandle DetectedTimerHandle;
 
 };

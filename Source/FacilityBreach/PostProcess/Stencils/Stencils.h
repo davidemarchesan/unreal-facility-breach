@@ -9,5 +9,6 @@ enum class EStencilType : uint8
 	STENCIL_Custom = 0,
 	STENCIL_Outline = 1,
 	STENCIL_Glow = 2,
-	STENCIL_OutlineGlow = 3
+	STENCIL_OutlineGlow = 3,
+	STENCIL_Detected = 4
 };

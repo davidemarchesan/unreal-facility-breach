@@ -6,6 +6,7 @@
 #include "Abilities.h"
 #include "Components/ActorComponent.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/Subsystems/World/WorldScanSubsystem.h"
 #include "AbilityComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownStart, EAbilityType, AbilityType, float, Seconds);
@@ -70,6 +71,9 @@ public:
 	/** Try to perform dash */
 	void Dash();
 
+	/** Try to perform scan */
+	void Scan();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -79,26 +83,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<EAbilityType, FAbilityState> AbilityStates;
 
-	// Todo: delete
-	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="s"))
-	float DashCooldown;
-
-	// Todo: delete
-	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite)
-	int32 DashCharges;
-
 private:
 	TObjectPtr<UFirstPersonMovementComponent> CachedMovementComponent;
 	TObjectPtr<UFirstPersonMovementComponent> GetMovementComponent();
 
 	void InitializeAbilities();
-
-	// todo: delete
-	float DashCurrentCooldown;
-
-	// todo: delete
-	UPROPERTY(Category="Dash", VisibleAnywhere)
-	int32 DashCurrentCharges = 0;
 	
 	void AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd = 1);
 
@@ -106,9 +95,7 @@ private:
 
 	void StartAbilityCooldown(EAbilityType AbilityType);
 
-	// todo: delete
-	void ChargeDashUp(float deltaTime);
-
-	// todo: delete
-	bool bChargeDashUp = false;
+	/** Subsystems */
+	TObjectPtr<UWorldScanSubsystem> WorldScanSubsystem;
+	
 };

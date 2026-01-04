@@ -46,9 +46,16 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 void AFirstPersonCharacter::Dash()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Character: Dash!"));
 	if (AbilityComponent)
 	{
 		AbilityComponent->Dash();
+	}
+}
+
+void AFirstPersonCharacter::Scan()
+{
+	if (AbilityComponent)
+	{
+		AbilityComponent->Scan();
 	}
 }
