@@ -24,6 +24,8 @@ void UAbilityComponent::BeginPlay()
 
 	CharacterOwner = Cast<AFirstPersonCharacter>(GetOwner());
 
+	WorldScanSubsystem = GetWorld()->GetSubsystem<UWorldScanSubsystem>();
+
 	InitializeAbilities();
 }
 
@@ -140,15 +142,10 @@ void UAbilityComponent::Scan()
 			return;
 		}
 
-		if (AScanSphere* ScanSphere = GetWorld()->SpawnActor<AScanSphere>(FVector::ZeroVector, FRotator::ZeroRotator))
+		if (WorldScanSubsystem && CharacterOwner)
 		{
-			ConsumeAbilityCharge(EAbilityType::ABILITY_Dash, 1);
-			ScanSphere->StartScan();
-			if (CharacterOwner->ScanPostProcessMaterial)
-			{
-				CharacterOwner->ScanPostProcessMaterial->SetScalarParameterValue(
-					"StartTime", GetWorld()->GetTimeSeconds());
-			}
+			WorldScanSubsystem->StartScan(CharacterOwner->GetActorLocation());
 		}
+		
 	}
 }

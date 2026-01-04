@@ -17,7 +17,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void StartScan();
+	void StartScan(float InSpeed, float InMaxRadius);
 
 protected:
 	
@@ -29,7 +29,7 @@ private:
 
 	float StartTime;
 
-	float GrowingSpeed = 400.f;
+	float Speed = 400.f;
 
 	float MaxRadius = 500.f;
 	

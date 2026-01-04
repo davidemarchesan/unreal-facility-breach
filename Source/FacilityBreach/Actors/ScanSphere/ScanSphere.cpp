@@ -3,15 +3,25 @@
 
 #include "ScanSphere.h"
 
-#include "Engine/OverlapResult.h"
-
 AScanSphere::AScanSphere()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	if (SceneComponent)
+	{
+		RootComponent = SceneComponent;
+	}
+	
+	SetHidden(true);
+	SetCanBeDamaged(false);
 }
 
-void AScanSphere::StartScan()
+void AScanSphere::StartScan(float InSpeed, float InMaxRadius)
 {
+
+	Speed = InSpeed;
+	MaxRadius = InMaxRadius;
 	
 	StartTime = GetWorld()->GetTimeSeconds();
 	bScanning = true;
@@ -59,7 +69,7 @@ void AScanSphere::Tick(float DeltaTime)
 
 	const float ElapsedTime = (GetWorld()->GetTimeSeconds() - StartTime);
 	
-	const float Radius = ElapsedTime * GrowingSpeed;
+	const float Radius = ElapsedTime * Speed;
 
 	UE_LOG(LogTemp, Warning, TEXT("ElapsedTime: %f | Radius: %f"), ElapsedTime, Radius);
 	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Red);
@@ -67,5 +77,6 @@ void AScanSphere::Tick(float DeltaTime)
 	if (Radius >= MaxRadius)
 	{
 		bScanning = false;
+		Destroy();
 	}
 }

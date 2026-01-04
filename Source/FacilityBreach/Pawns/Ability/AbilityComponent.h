@@ -6,6 +6,7 @@
 #include "Abilities.h"
 #include "Components/ActorComponent.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/Subsystems/World/WorldScanSubsystem.h"
 #include "AbilityComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAbilityCooldownStart, EAbilityType, AbilityType, float, Seconds);
@@ -94,9 +95,7 @@ private:
 
 	void StartAbilityCooldown(EAbilityType AbilityType);
 
-	// todo: delete
-	void ChargeDashUp(float deltaTime);
-
-	// todo: delete
-	bool bChargeDashUp = false;
+	/** Subsystems */
+	TObjectPtr<UWorldScanSubsystem> WorldScanSubsystem;
+	
 };

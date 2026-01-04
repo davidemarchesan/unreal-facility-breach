@@ -35,7 +35,6 @@ public:
 	void Dash();
 
 	void Scan();
-	TObjectPtr<UMaterialInstanceDynamic> ScanPostProcessMaterial;
 	
 private:
 
@@ -43,12 +42,8 @@ private:
 	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UAbilityComponent> AbilityComponent;
 
-	UPROPERTY(Category="Camera", EditAnywhere, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UMaterialInstance> ScanPostProcessMaterialInstance;
-
 	/** Custom camera component */
 	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
-
-	void InitializePostProcessMaterials();
+	
 };
