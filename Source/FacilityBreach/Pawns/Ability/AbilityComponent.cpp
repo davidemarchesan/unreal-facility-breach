@@ -3,6 +3,7 @@
 
 #include "AbilityComponent.h"
 
+#include "FacilityBreach/Actors/ScanSphere/ScanSphere.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 
 // Sets default values for this component's properties
@@ -126,6 +127,28 @@ void UAbilityComponent::Dash()
 		if (UFirstPersonMovementComponent* MovementComponent = GetMovementComponent())
 		{
 			MovementComponent->DoDash();
+		}
+	}
+}
+
+void UAbilityComponent::Scan()
+{
+	if (FAbilityState* State = AbilityStates.Find(EAbilityType::ABILITY_Dash))
+	{
+		if (State->HasCharges() == false)
+		{
+			return;
+		}
+
+		if (AScanSphere* ScanSphere = GetWorld()->SpawnActor<AScanSphere>(FVector::ZeroVector, FRotator::ZeroRotator))
+		{
+			ConsumeAbilityCharge(EAbilityType::ABILITY_Dash, 1);
+			ScanSphere->StartScan();
+			if (CharacterOwner->ScanPostProcessMaterial)
+			{
+				CharacterOwner->ScanPostProcessMaterial->SetScalarParameterValue(
+					"StartTime", GetWorld()->GetTimeSeconds());
+			}
 		}
 	}
 }

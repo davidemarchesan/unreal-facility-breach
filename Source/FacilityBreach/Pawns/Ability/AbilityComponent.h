@@ -70,6 +70,9 @@ public:
 	/** Try to perform dash */
 	void Dash();
 
+	/** Try to perform scan */
+	void Scan();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -79,26 +82,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<EAbilityType, FAbilityState> AbilityStates;
 
-	// Todo: delete
-	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite, meta=(ForceUnits="s"))
-	float DashCooldown;
-
-	// Todo: delete
-	UPROPERTY(Category="Dash", EditAnywhere, BlueprintReadWrite)
-	int32 DashCharges;
-
 private:
 	TObjectPtr<UFirstPersonMovementComponent> CachedMovementComponent;
 	TObjectPtr<UFirstPersonMovementComponent> GetMovementComponent();
 
 	void InitializeAbilities();
-
-	// todo: delete
-	float DashCurrentCooldown;
-
-	// todo: delete
-	UPROPERTY(Category="Dash", VisibleAnywhere)
-	int32 DashCurrentCharges = 0;
 	
 	void AddChargeToAbility(EAbilityType AbilityType, int32 ChargesToAdd = 1);
 

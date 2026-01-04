@@ -7,7 +7,8 @@ UENUM(BlueprintType)
 enum class EAbilityType : uint8
 {
 	ABILITY_Dash,
-	ABILITY_Invisibility
+	ABILITY_Invisibility,
+	ABILITY_Scan
 };
 
 USTRUCT(BlueprintType)

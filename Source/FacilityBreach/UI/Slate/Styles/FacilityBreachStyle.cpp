@@ -55,6 +55,10 @@ void FFacilityBreachStyle::InitializeIcons()
 			"Ability.Invisibility.Icon",
 			"/Game/UI/Assets/Icons/Abilities/Icon_Invisibility",
 			FVector2D(128.f, 128.f)),
+		FStyleIconData(
+			"Ability.Scan.Icon",
+			"/Game/UI/Assets/Icons/Abilities/Icon_Radar",
+			FVector2D(128.f, 128.f)),
 
 		FStyleIconData(
 			"General.Awareness.Icon",

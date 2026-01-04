@@ -21,16 +21,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-private:
-
-	/** Component responsible for abilities' (like dash) settings, like cooldown, charges etc. */
-	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilityComponent> AbilityComponent;
-
-	/** Custom camera component */
-	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
-
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -43,5 +33,22 @@ public:
 	FORCEINLINE UCameraComponent* GetCameraComponent() const { return FirstPersonCameraComponent; }
 	
 	void Dash();
+
+	void Scan();
+	TObjectPtr<UMaterialInstanceDynamic> ScanPostProcessMaterial;
 	
+private:
+
+	/** Component responsible for abilities' (like dash) settings, like cooldown, charges etc. */
+	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UAbilityComponent> AbilityComponent;
+
+	UPROPERTY(Category="Camera", EditAnywhere, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UMaterialInstance> ScanPostProcessMaterialInstance;
+
+	/** Custom camera component */
+	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+
+	void InitializePostProcessMaterials();
 };

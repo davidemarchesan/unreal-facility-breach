@@ -54,10 +54,6 @@ private:
 	TObjectPtr<UFirstPersonInputConfig> FirstPersonInputConfig;
 
 	// Input Actions triggers
-	void PrimaryAction();
-	
-	void SecondaryAction();
-	
 	void Move(const FInputActionValue& Value);
 	
 	void Look(const FInputActionValue& Value);
@@ -68,6 +64,8 @@ private:
 
 	void Dash();
 
+	void Scan();
+
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;
 	UCameraComponent* FirstPersonCameraComponent;
@@ -76,17 +74,7 @@ private:
 	float LineTraceRayLength = 250.f;
 	void LineTrace();
 	AActor* LineTraceHitActor = nullptr;
-
-	// Portals
-	TObjectPtr<APortal> PortalOne;
-	TObjectPtr<APortal> PortalTwo;
-
-	UPROPERTY(Category = "Portal", EditDefaultsOnly)
-	float PortalLineTraceLength = 10.f;
-
-	UPROPERTY(Category = "Portal", EditDefaultsOnly)
-	TSubclassOf<APortal> PortalClass;
-
+	
 	// Audio
 	TObjectPtr<ULocalPlayerAudioSubsystem> AudioSubsystem;
 
