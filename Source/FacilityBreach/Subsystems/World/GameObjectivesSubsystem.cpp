@@ -8,13 +8,14 @@
 
 void UGameObjectivesSubsystem::LoadGameObjectives()
 {
-	if (AGameObjectivesManager* GameObjectivesManager = Cast<AGameObjectivesManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AGameObjectivesManager::StaticClass())))
+	if (AGameObjectivesManager* GameObjectivesManager = Cast<AGameObjectivesManager>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), AGameObjectivesManager::StaticClass())))
 	{
 		GameObjectives = GameObjectivesManager->GetGameObjectives();
 
 		if (GameObjectives.Num() == 0)
 		{
-			UE_LOG(LogTemp, Error, TEXT("UGameObjectivesSubsystem: No Objectives set in Objectives manager"));	
+			UE_LOG(LogTemp, Error, TEXT("UGameObjectivesSubsystem: No Objectives set in Objectives manager"));
 		}
 	}
 	else
@@ -44,10 +45,21 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 		UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: SetGameObjective %s"), *GameObjective->ID.ToString());
 		if (GameObjective->ID == ID)
 		{
-			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GameObjective->Goals);
+			// Separating data vs status
+			TArray<FGameObjectiveGoalState> GoalStates;
+
+			for (FGameObjectiveGoal& Goal : GameObjective->Goals)
+			{
+				GoalStates.Add(FGameObjectiveGoalState(Goal.ID, Goal.Title, Goal.Actions, Goal.ActorTags, Goal.Count));
+			}
+
+			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GoalStates);
 			CurrentObjectiveState.bActive = true;
+
 			UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: set a new objective"));
-			// todo: update ui
+
+			// Update UI
+			OnGameObjectiveUpdate.Broadcast(CurrentObjectiveState);
 		}
 	}
 }
@@ -60,8 +72,9 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 	{
 		Tags.Append(Tag.ToString());
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: I received %s action from actor with these tags %s"), *Action.ToString(), *Tags);
+
+	UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: I received %s action from actor with these tags %s"),
+	       *Action.ToString(), *Tags);
 
 	if (CurrentObjectiveState.bActive == false)
 	{
@@ -81,10 +94,10 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 		return;
 	}
 
-	
-	for (FGameObjectiveGoal& Goal : CurrentObjectiveState.Goals)
-	{
+	bool bUpdateUI = false;
 
+	for (FGameObjectiveGoalState& Goal : CurrentObjectiveState.Goals)
+	{
 		if (Goal.Actions.Contains(Action) == false)
 		{
 			continue;
@@ -94,33 +107,45 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 		{
 			if (Actor->Tags.Contains(RequiredTag))
 			{
-				Goal.bCompleted = true;
-				UE_LOG(LogTemp, Warning, TEXT("Goal %s has been completed"), *Goal.ID.ToString());
+				Goal.CurrentCount++;
+				bUpdateUI = true;
+				UE_LOG(LogTemp, Warning, TEXT("Goal %s has been done %d times"), *Goal.ID.ToString(), Goal.CurrentCount);
+
+				if (Goal.CurrentCount == Goal.Count)
+				{
+					Goal.bCompleted = true;
+					UE_LOG(LogTemp, Warning, TEXT("Goal %s has been completed"), *Goal.ID.ToString());
+				}
+				
 				break;
 			}
 		}
-		
 	}
 
 	bool bAllGoalsCompleted = true;
-	for (FGameObjectiveGoal& Goal : CurrentObjectiveState.Goals)
+	for (FGameObjectiveGoalState& Goal : CurrentObjectiveState.Goals)
 	{
-
 		if (Goal.bCompleted == false)
 		{
 			bAllGoalsCompleted = false;
 			break;
 		}
-		
 	}
 
 	if (bAllGoalsCompleted == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("All goals completed, objective %s completed"), *CurrentObjectiveState.ID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("All goals completed, objective %s completed"),
+		       *CurrentObjectiveState.ID.ToString());
+
+		CurrentObjectiveState.bCompleted = true;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("objective %s still missing goals"), *CurrentObjectiveState.ID.ToString());
 	}
-	
+
+	if (bUpdateUI == true)
+	{
+		OnGameObjectiveUpdate.Broadcast(CurrentObjectiveState);
+	}
 }

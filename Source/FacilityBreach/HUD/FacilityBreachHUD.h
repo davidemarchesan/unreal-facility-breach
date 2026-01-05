@@ -39,6 +39,9 @@ private:
 	void InitializeDelegatesInteractables();
 	UFUNCTION() void OnShowInteractionHint(FInteractionHint Hint);
 	UFUNCTION() void OnHideInteractionHint();
+
+	void InitializeDelegatesGameObjectives();
+	UFUNCTION() void OnGameObjectiveUpdate(FGameObjectiveState CurrentObjectiveState);
 	
 	/** Overlays */
 	void InitializeOverlays();

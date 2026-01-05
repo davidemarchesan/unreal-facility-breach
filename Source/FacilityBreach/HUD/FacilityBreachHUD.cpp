@@ -7,6 +7,7 @@
 #include "Engine/GameViewportClient.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 
 #include "Widgets/SOverlay.h"
@@ -26,6 +27,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 {
 	InitializeDelegatesAbilities();
 	InitializeDelegatesInteractables();
+	InitializeDelegatesGameObjectives();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -96,6 +98,23 @@ void AFacilityBreachHUD::OnHideInteractionHint()
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesGameObjectives()
+{
+	if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("subscribing to game obj subsystem"));
+		Subsystem->OnGameObjectiveUpdate.AddDynamic(this, &AFacilityBreachHUD::OnGameObjectiveUpdate);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveUpdate(FGameObjectiveState CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->UpdateGameObjective(CurrentObjectiveState);
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
@@ -162,5 +181,14 @@ void AFacilityBreachHUD::InitializeOverlayGameObjectives()
 	if (GameObjectivesOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(GameObjectivesOverlay.ToSharedRef());
+
+		if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
+		{
+			const FGameObjectiveState& CurrentObjectiveState = Subsystem->GetCurrentObjectiveState();
+			if (GameObjectivesOverlay)
+			{
+				GameObjectivesOverlay->UpdateGameObjective(CurrentObjectiveState);
+			}
+		}
 	}
 }

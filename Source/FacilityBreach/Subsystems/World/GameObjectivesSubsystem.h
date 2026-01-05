@@ -7,6 +7,8 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GameObjectivesSubsystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveUpdate, FGameObjectiveState, CurrentObjectiveState);
+
 /**
  * 
  */
@@ -23,7 +25,9 @@ public:
 
 	void Emit(AActor* Actor, FName Action);
 
-	
+	FOnGameObjectiveUpdate OnGameObjectiveUpdate;
+
+	const FGameObjectiveState& GetCurrentObjectiveState() { return CurrentObjectiveState; }
 
 protected:
 
