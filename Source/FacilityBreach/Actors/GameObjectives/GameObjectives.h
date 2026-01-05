@@ -3,17 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameObjectives.generated.h"
 
-UENUM(BlueprintType)
-enum class EGameObjectiveGoalAction : uint8
-{
-	GENERAL_Interact = 0,
-
-	DOOR_Open = 10,
-	DOOR_Close = 11,
-
-	NONE = 255
-};
-
 USTRUCT(BlueprintType)
 struct FGameObjectiveGoal
 {
@@ -25,11 +14,14 @@ struct FGameObjectiveGoal
 	UPROPERTY(EditAnywhere)
 	FText Title = FText::GetEmpty();
 
-	UPROPERTY(EditAnywhere)
-	TArray<EGameObjectiveGoalAction> Actions;
+	UPROPERTY(EditAnywhere, meta=(ToolTip="Actions that can complete this goal"))
+	TArray<FName> Actions;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta=(ToolTip="Required tags that Actor needs to have to satisfy this goal"))
 	TArray<FName> ActorTags;
+
+	UPROPERTY(EditAnywhere, meta=(ToolTip="How many times does this goal have to be done before being set as completed"))
+	int32 Count = 1;
 
 	UPROPERTY(EditAnywhere)
 	bool bCompleted = false;

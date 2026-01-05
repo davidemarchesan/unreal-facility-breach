@@ -196,7 +196,7 @@ void ADoor::OnOpenCompleted()
 
 	if (GameObjectivesSubsystem)
 	{
-		GameObjectivesSubsystem->Emit(this, EGameObjectiveGoalAction::DOOR_Open);
+		GameObjectivesSubsystem->Emit(this, "Door.Open");
 	}
 }
 
@@ -206,6 +206,6 @@ void ADoor::OnCloseCompleted()
 
 	if (GameObjectivesSubsystem)
 	{
-		GameObjectivesSubsystem->Emit(this, EGameObjectiveGoalAction::DOOR_Close);
+		GameObjectivesSubsystem->Emit(this, "Door.Close");
 	}
 }

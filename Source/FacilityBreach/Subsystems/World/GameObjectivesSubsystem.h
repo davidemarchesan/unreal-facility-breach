@@ -21,7 +21,7 @@ public:
 
 	void SetGameObjective(FName ID);
 
-	void Emit(AActor* Actor, EGameObjectiveGoalAction Action);
+	void Emit(AActor* Actor, FName Action);
 
 	
 

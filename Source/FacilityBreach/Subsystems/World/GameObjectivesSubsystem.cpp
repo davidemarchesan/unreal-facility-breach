@@ -52,7 +52,7 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 	}
 }
 
-void UGameObjectivesSubsystem::Emit(AActor* Actor, EGameObjectiveGoalAction Action)
+void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 {
 	FString Tags = "";
 
@@ -61,7 +61,7 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, EGameObjectiveGoalAction Acti
 		Tags.Append(Tag.ToString());
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: I received %s action from actor with these tags %s"), *UEnum::GetValueAsString(Action), *Tags);
+	UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: I received %s action from actor with these tags %s"), *Action.ToString(), *Tags);
 
 	if (CurrentObjectiveState.bActive == false)
 	{

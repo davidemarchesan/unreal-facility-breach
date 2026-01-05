@@ -103,6 +103,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayCrosshair();
 		InitializeOverlayAbilities();
 		InitializeOverlayInteractables();
+		InitializeOverlayGameObjectives();
 	}
 }
 
@@ -151,5 +152,15 @@ void AFacilityBreachHUD::InitializeOverlayInteractables()
 	if (InteractablesOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(InteractablesOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayGameObjectives()
+{
+	GameObjectivesOverlay = SNew(SGameObjectivesOverlay);
+
+	if (GameObjectivesOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(GameObjectivesOverlay.ToSharedRef());
 	}
 }

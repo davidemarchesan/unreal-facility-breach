@@ -7,6 +7,7 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
+#include "FacilityBreach/UI/Slate/Overlays/GameObjectives/GameObjectivesOverlay.h"
 #include "FacilityBreach/UI/Slate/Overlays/Interactables/InteractablesOverlay.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
@@ -44,8 +45,10 @@ private:
 	void InitializeOverlayCrosshair();
 	void InitializeOverlayAbilities();
 	void InitializeOverlayInteractables();
+	void InitializeOverlayGameObjectives();
 
 	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;
 	TSharedPtr<SInteractablesOverlay> InteractablesOverlay;
+	TSharedPtr<SGameObjectivesOverlay> GameObjectivesOverlay;
 	
 };
