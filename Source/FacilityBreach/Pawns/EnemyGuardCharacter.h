@@ -61,6 +61,12 @@ protected:
 	UPROPERTY(Category="Patrol", EditAnywhere, meta=(Units="degrees"))
 	float VisionAngle;
 
+	UPROPERTY(Category="Patrol", EditAnywhere)
+	float StandardSpeed = 300.f;
+
+	UPROPERTY(Category="Patrol", EditAnywhere)
+	float ChaseSpeed = 500.f;
+
 	UFUNCTION() void OnEnterPatrol();
 	UFUNCTION() void OnEnterSuspicious();
 	UFUNCTION() void OnEnterChase();
@@ -86,5 +92,9 @@ private:
 	bool bPlayerInVision = false;
 
 	FTimerHandle DetectedTimerHandle;
+
+	void SetPatrolSpeed();
+	void SetChaseSpeed();
+	void SetSpeed(float InSpeed);
 
 };

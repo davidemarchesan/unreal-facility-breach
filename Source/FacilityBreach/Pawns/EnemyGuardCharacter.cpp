@@ -77,6 +77,8 @@ void AEnemyGuardCharacter::BeginPlay()
 		AlertFeedbackWidgetComponent->SetVisibility(false);
 		AlertFeedbackWidget = Cast<UAlertFeedbackWidget>(AlertFeedbackWidgetComponent->GetUserWidgetObject());
 	}
+
+	SetPatrolSpeed();
 }
 
 void AEnemyGuardCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -98,6 +100,8 @@ void AEnemyGuardCharacter::OnEnterPatrol()
 	{
 		AlertFeedbackWidgetComponent->SetVisibility(false);
 	}
+	
+	SetPatrolSpeed();
 }
 
 void AEnemyGuardCharacter::OnEnterSuspicious()
@@ -116,6 +120,8 @@ void AEnemyGuardCharacter::OnEnterSuspicious()
 		AudioFeedbackComponent->SetSound(SoundOnSuspicious);
 		AudioFeedbackComponent->Play();
 	}
+
+	SetPatrolSpeed();
 }
 
 void AEnemyGuardCharacter::OnEnterChase()
@@ -131,6 +137,8 @@ void AEnemyGuardCharacter::OnEnterChase()
 		AudioFeedbackComponent->SetSound(SoundOnChase);
 		AudioFeedbackComponent->Play();
 	}
+	
+	SetChaseSpeed();
 }
 
 bool AEnemyGuardCharacter::IsPlayerInVision()
@@ -182,6 +190,24 @@ bool AEnemyGuardCharacter::IsPlayerInVision()
 	}
 
 	return false;
+}
+
+void AEnemyGuardCharacter::SetPatrolSpeed()
+{
+	SetSpeed(StandardSpeed);
+}
+
+void AEnemyGuardCharacter::SetChaseSpeed()
+{
+	SetSpeed(ChaseSpeed);
+}
+
+void AEnemyGuardCharacter::SetSpeed(float InSpeed)
+{
+	if (UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+	{
+		MovementComponent->MaxFlySpeed = InSpeed;
+	}
 }
 
 void AEnemyGuardCharacter::Tick(float DeltaTime)
