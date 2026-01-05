@@ -210,11 +210,6 @@ void AFirstPersonController::LineTrace()
 							return;
 						}
 					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Does not implement interactable interface %s"),
-						       *LineTraceHitActor->GetName());
-					}
 				}
 			}
 		}

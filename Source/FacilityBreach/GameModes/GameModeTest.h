@@ -13,5 +13,15 @@ UCLASS()
 class FACILITYBREACH_API AGameModeTest : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+
+protected:
+
+	virtual void BeginPlay() override;
+
+private:
+
+	UFUNCTION() void OnPlayerDeath();
 	
 };

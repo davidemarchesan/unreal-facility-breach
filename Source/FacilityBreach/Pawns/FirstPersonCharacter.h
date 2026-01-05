@@ -11,6 +11,8 @@
 class UAbilityComponent;
 class UCameraComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+
 UCLASS()
 class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter
 {
@@ -35,8 +37,12 @@ public:
 
 	void Scan();
 
+	FOnDeath OnDeath;
+
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION() void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 private:
 
@@ -50,5 +56,8 @@ private:
 
 	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAudioComponent> AudioComponent;
+
+	bool bDead = false;
+	void Die();
 	
 };

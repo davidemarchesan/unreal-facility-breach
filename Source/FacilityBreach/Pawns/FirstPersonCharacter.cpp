@@ -3,6 +3,7 @@
 
 #include "FirstPersonCharacter.h"
 
+#include "EnemyGuardCharacter.h"
 #include "Ability/AbilityComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SceneComponent.h"
@@ -36,6 +37,33 @@ AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectIni
 void AFirstPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->OnComponentHit.AddDynamic(this, &AFirstPersonCharacter::OnComponentHit);
+	}
+}
+
+void AFirstPersonCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Firstpersoncharacter someone touched me"));
+
+	if (bDead == true)
+	{
+		return;
+	}
+	
+	if (AEnemyGuardCharacter* Enemy = Cast<AEnemyGuardCharacter>(OtherActor))
+	{
+		Die();
+	}
+}
+
+void AFirstPersonCharacter::Die()
+{
+	bDead = true;
+	OnDeath.Broadcast();
 }
 
 // Called every frame
