@@ -49,6 +49,8 @@ void ADoor::BeginPlay()
 	{
 		SkeletalMeshComponent->SetRenderCustomDepth(false);
 	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 }
 
 bool ADoor::HasRequiredItems(AFirstPersonController* Controller)
@@ -191,9 +193,19 @@ void ADoor::OnFocusLost(APlayerController* PlayerController)
 void ADoor::OnOpenCompleted()
 {
 	SetDoorState(EDoorState::DOOR_Open);
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, EGameObjectiveGoalAction::DOOR_Open);
+	}
 }
 
 void ADoor::OnCloseCompleted()
 {
 	SetDoorState(EDoorState::DOOR_Closed);
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, EGameObjectiveGoalAction::DOOR_Close);
+	}
 }

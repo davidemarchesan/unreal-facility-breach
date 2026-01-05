@@ -7,6 +7,7 @@
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "GameFramework/Actor.h"
 #include "Door.generated.h"
 
@@ -83,12 +84,9 @@ private:
 	void TryCloseDoor();
 	void SetDoorState(EDoorState NewState);
 
-	// FTimerHandle TryCloseTimerHandle;
+	UFUNCTION() void OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION() void OnPlayerEndOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION()
-	void OnPlayerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnPlayerEndOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 	
 };
