@@ -24,6 +24,12 @@ AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectIni
 
 	// Ability component
 	AbilityComponent = CreateDefaultSubobject<UAbilityComponent>(FName("AbilityComponent"));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
+	if (AudioComponent)
+	{
+		AudioComponent->SetupAttachment(RootComponent);
+	}
 }
 
 // Called when the game starts or when spawned

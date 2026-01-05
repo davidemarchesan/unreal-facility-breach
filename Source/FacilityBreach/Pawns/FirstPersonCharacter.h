@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "FacilityBreach/Pawns/Movement/FirstPersonMovementComponent.h"
+#include "Components/AudioComponent.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UAbilityComponent;
@@ -17,11 +18,7 @@ class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter
 
 public:
 	AFirstPersonCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-protected:
-	virtual void BeginPlay() override;
-
-public:
+	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -32,9 +29,14 @@ public:
 
 	FORCEINLINE UCameraComponent* GetCameraComponent() const { return FirstPersonCameraComponent; }
 	
+	FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
+	
 	void Dash();
 
 	void Scan();
+
+protected:
+	virtual void BeginPlay() override;
 	
 private:
 
@@ -45,5 +47,8 @@ private:
 	/** Custom camera component */
 	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+
+	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UAudioComponent> AudioComponent;
 	
 };

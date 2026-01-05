@@ -71,6 +71,9 @@ protected:
 	UPROPERTY(Category="Audio", EditAnywhere)
 	TObjectPtr<USoundBase> SoundOnChase;
 
+	UPROPERTY(Category="Audio", EditAnywhere)
+	TObjectPtr<USoundBase> SoundOnDetected;
+
 private:
 
 	TObjectPtr<AFirstPersonCharacter> Player = nullptr;

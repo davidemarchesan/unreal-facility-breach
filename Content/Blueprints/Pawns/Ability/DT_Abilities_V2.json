@@ -1,0 +1,20 @@
+[
+	{
+		"Name": "NewRow",
+		"Type": "ABILITY_Dash",
+		"MaxCharges": 2,
+		"Cooldown": 5,
+		"bIsRechargeable": true,
+		"Icon": "Ability.Dash.Icon",
+		"Sound": null
+	},
+	{
+		"Name": "NewRow_0",
+		"Type": "ABILITY_Scan",
+		"MaxCharges": 10,
+		"Cooldown": 15,
+		"bIsRechargeable": true,
+		"Icon": "Ability.Scan.Icon",
+		"Sound": null
+	}
+]

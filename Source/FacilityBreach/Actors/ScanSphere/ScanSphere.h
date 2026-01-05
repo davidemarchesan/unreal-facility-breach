@@ -33,7 +33,7 @@ private:
 	float Speed = 400.f;
 
 	float MaxRadius = 500.f;
-	float OverlapMargin = 1000.f;
+	float OverlapMargin = 800.f;
 
 	TArray<AEnemyGuardCharacter*> AlreadyDetectedEnemies;
 

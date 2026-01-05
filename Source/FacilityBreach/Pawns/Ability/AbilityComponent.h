@@ -83,6 +83,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TMap<EAbilityType, FAbilityState> AbilityStates;
 
+	UPROPERTY(VisibleAnywhere)
+	TMap<EAbilityType, TObjectPtr<USoundBase>> AbilitySoundEffects;
+
 private:
 	TObjectPtr<UFirstPersonMovementComponent> CachedMovementComponent;
 	TObjectPtr<UFirstPersonMovementComponent> GetMovementComponent();
@@ -94,6 +97,8 @@ private:
 	void ConsumeAbilityCharge(EAbilityType AbilityType, int32 ChargesToConsume = 1);
 
 	void StartAbilityCooldown(EAbilityType AbilityType);
+
+	void PlayAbilitySound(EAbilityType AbilityType);
 
 	/** Subsystems */
 	TObjectPtr<UWorldScanSubsystem> WorldScanSubsystem;

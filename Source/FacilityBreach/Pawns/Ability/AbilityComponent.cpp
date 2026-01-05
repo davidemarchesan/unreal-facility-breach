@@ -2,18 +2,11 @@
 
 
 #include "AbilityComponent.h"
-
-#include "FacilityBreach/Actors/ScanSphere/ScanSphere.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 
-// Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -49,10 +42,17 @@ void UAbilityComponent::InitializeAbilities()
 		AbilitiesDataTable->ForeachRow<FAbilityTableRow>("Abilities Look Up",
 		                                                 [this](const FName& Key, const FAbilityTableRow& Value)
 		                                                 {
+			                                                 // Creating state
 			                                                 const FAbilityState State = FAbilityState(
 				                                                 Value.MaxCharges, Value.Cooldown,
 				                                                 Value.bIsRechargeable);
 			                                                 AbilityStates.Add(Value.Type, State);
+
+			                                                 // Creating sound effects map
+			                                                 if (Value.Sound != nullptr)
+			                                                 {
+				                                                 AbilitySoundEffects.Add(Value.Type, Value.Sound);
+			                                                 }
 		                                                 });
 	}
 }
@@ -94,6 +94,21 @@ void UAbilityComponent::StartAbilityCooldown(EAbilityType AbilityType)
 	}
 }
 
+void UAbilityComponent::PlayAbilitySound(EAbilityType AbilityType)
+{
+	if (UAudioComponent* Audio = CharacterOwner->GetAudioComponent())
+	{
+		if (TObjectPtr<USoundBase>* SoundPtr = AbilitySoundEffects.Find(AbilityType))
+		{
+			if (USoundBase* Sound = SoundPtr->Get())
+			{
+				Audio->SetSound(Sound);
+				Audio->Play();
+			}
+		}
+	}
+}
+
 // Called every frame
 void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
@@ -129,6 +144,7 @@ void UAbilityComponent::Dash()
 		if (UFirstPersonMovementComponent* MovementComponent = GetMovementComponent())
 		{
 			MovementComponent->DoDash();
+			PlayAbilitySound(EAbilityType::ABILITY_Dash);
 		}
 	}
 }
@@ -146,7 +162,7 @@ void UAbilityComponent::Scan()
 		if (WorldScanSubsystem && CharacterOwner)
 		{
 			WorldScanSubsystem->StartScan(CharacterOwner->GetActorLocation());
+			PlayAbilitySound(EAbilityType::ABILITY_Scan);
 		}
-		
 	}
 }

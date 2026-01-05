@@ -224,6 +224,12 @@ void AEnemyGuardCharacter::SetDetected()
 		GetWorldTimerManager().ClearTimer(DetectedTimerHandle);
 		GetWorldTimerManager().SetTimer(DetectedTimerHandle, this, &AEnemyGuardCharacter::SetUndetected, 2.f);
 	}
+
+	if (AudioFeedbackComponent && SoundOnDetected)
+	{
+		AudioFeedbackComponent->SetSound(SoundOnDetected);
+		AudioFeedbackComponent->Play();
+	}
 }
 
 void AEnemyGuardCharacter::SetUndetected()
