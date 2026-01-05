@@ -16,7 +16,7 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 	const float ContainerWidth = 400.f;
 	const float ContainerPaddingLeft = 100.f;
 	const float ContainerPaddingTop = 35.f;
-	
+
 	const float HintBoxPadding = 9.f;
 	const float KeyBoxSize = 33.f;
 
@@ -62,30 +62,35 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 						.VAlign(VAlign_Center)
 						.AutoWidth()
 						[
-
+							
 							SAssignNew(InputBox, SBox)
-							.HeightOverride(KeyBoxSize)
-							.WidthOverride(KeyBoxSize)
+							.Padding(0.f, 0.f, 10.f, 0.f)
 							[
-
-								SNew(SBorder)
-								.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Key"))
-								.Padding(7.f)
+								SNew(SBox)
+								.HeightOverride(KeyBoxSize)
+								.WidthOverride(KeyBoxSize)
 								[
 
-									SNew(STextBlock)
-									.ColorAndOpacity(FLinearColor::Black)
-									.Text(FText::FromString("E"))
-									.Font(KeyTextFont)
-									.Justification(ETextJustify::Center)
+									SNew(SBorder)
+									.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Key"))
+									.Padding(7.f)
+									[
+
+										SNew(STextBlock)
+										.ColorAndOpacity(FLinearColor::Black)
+										.Text(FText::FromString("E"))
+										.Font(KeyTextFont)
+										.Justification(ETextJustify::Center)
+									]
 								]
 							]
+
 
 						]
 
 						+ SHorizontalBox::Slot()
 						.VAlign(VAlign_Center)
-						.Padding(10.f, 0.f, 0.f, 0.f)
+						
 						.AutoWidth()
 						[
 
@@ -94,7 +99,6 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 							.Text(FText::FromString("Pick up item from overlay custom"))
 							.Font(HintTextFont)
 						]
-
 
 					]
 				]
@@ -112,14 +116,14 @@ void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 	{
 		OnHideInteractionHint();
 	}
-	
+
 	if (HintTextBlock)
 	{
 		HintTextBlock->SetText(Hint.Text);
 	}
 	if (InputBox)
 	{
-		InputBox->SetVisibility(Hint.bShowInput ? EVisibility::Visible : EVisibility::Hidden);
+		InputBox->SetVisibility(Hint.bShowInput ? EVisibility::Visible : EVisibility::Collapsed);
 	}
 	if (RootOverlay)
 	{
