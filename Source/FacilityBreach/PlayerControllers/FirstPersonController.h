@@ -7,6 +7,7 @@
 #include "FacilityBreach/Actors/Portals/Portal.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Subsystems/LocalPlayer/LocalPlayerAudioSubsystem.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -75,8 +76,10 @@ private:
 	void LineTrace();
 	AActor* LineTraceHitActor = nullptr;
 	
-	// Audio
-	TObjectPtr<ULocalPlayerAudioSubsystem> AudioSubsystem;
+	// Subsystems
+	void LoadSubsystems();
+	ULocalPlayerAudioSubsystem* AudioSubsystem;
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 
 	// Debug only
 	void Debug();

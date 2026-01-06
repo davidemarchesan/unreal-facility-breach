@@ -9,6 +9,7 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/FirstPersonPawn.h"
 #include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void AFirstPersonController::Tick(float DeltaSeconds)
@@ -35,10 +36,7 @@ void AFirstPersonController::BeginPlay()
 		FirstPersonCameraComponent = FirstPersonCharacter->GetCameraComponent();
 	}
 
-	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
-	{
-		AudioSubsystem = LocalPlayer->GetSubsystem<ULocalPlayerAudioSubsystem>();
-	}
+	LoadSubsystems();
 }
 
 void AFirstPersonController::SetupInputComponent()
@@ -225,6 +223,21 @@ void AFirstPersonController::LineTrace()
 			}
 		}
 		OnHideInteractionHint.Broadcast();
+	}
+}
+
+void AFirstPersonController::LoadSubsystems()
+{
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+	{
+		AudioSubsystem = LocalPlayer->GetSubsystem<ULocalPlayerAudioSubsystem>();
+	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
+	if (GameObjectivesSubsystem && AudioSubsystem)
+	{
+		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddDynamic(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddDynamic(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
 	}
 }
 

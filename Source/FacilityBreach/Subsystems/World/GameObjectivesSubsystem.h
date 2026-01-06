@@ -8,6 +8,8 @@
 #include "GameObjectivesSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveUpdate, FGameObjectiveState, CurrentObjectiveState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveCompleted, FGameObjectiveState, CurrentObjectiveState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveGoalCompleted, FGameObjectiveState, CurrentObjectiveState);
 
 /**
  * 
@@ -28,6 +30,8 @@ public:
 	void Emit(AActor* Actor, FGameplayTag ActionGameplayTag);
 
 	FOnGameObjectiveUpdate OnGameObjectiveUpdate;
+	FOnGameObjectiveCompleted OnGameObjectiveCompleted;
+	FOnGameObjectiveGoalCompleted OnGameObjectiveGoalCompleted;
 
 	const FGameObjectiveState& GetCurrentObjectiveState() { return CurrentObjectiveState; }
 
@@ -41,6 +45,7 @@ private:
 
 	void LoadGameObjectives();
 
+	void LoadSubsystems();
 
 public:
 

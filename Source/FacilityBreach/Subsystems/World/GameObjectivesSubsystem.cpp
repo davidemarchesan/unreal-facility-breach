@@ -42,7 +42,7 @@ void UGameObjectivesSubsystem::PostInitialize()
 	Super::PostInitialize();
 
 	LoadGameObjectives();
-
+	
 	SetGameObjective("Test.1");
 }
 
@@ -113,6 +113,7 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTa
 
 	// Wether to update UI
 	bool bUpdateUI = false;
+	bool bLeastOneGoalCompleted = false;
 
 	TScriptInterface<IGameplayTagAssetInterface> TagInterface = TScriptInterface<
 		IGameplayTagAssetInterface>(Actor);
@@ -140,6 +141,7 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTa
 					if (Goal.CurrentCount == Goal.Count)
 					{
 						Goal.bCompleted = true;
+						bLeastOneGoalCompleted = true;
 					}
 
 					break;
@@ -162,6 +164,10 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTa
 	if (bAllGoalsCompleted == true)
 	{
 		CurrentObjectiveState.bCompleted = true;
+		OnGameObjectiveCompleted.Broadcast(CurrentObjectiveState);
+	} else if (bLeastOneGoalCompleted == true)
+	{
+		OnGameObjectiveGoalCompleted.Broadcast(CurrentObjectiveState);
 	}
 
 	if (bUpdateUI == true)

@@ -102,7 +102,6 @@ void AFacilityBreachHUD::InitializeDelegatesGameObjectives()
 {
 	if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("subscribing to game obj subsystem"));
 		Subsystem->OnGameObjectiveUpdate.AddDynamic(this, &AFacilityBreachHUD::OnGameObjectiveUpdate);
 	}
 }
