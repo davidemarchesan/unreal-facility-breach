@@ -6,9 +6,8 @@
 
 void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 {
-
 	const FGameObjectiveGoalState Goal = InArgs._Goal;
-	
+
 	FSlateFontInfo TitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
 	TitleFont.Size = 12.f;
 	TitleFont.OutlineSettings = FFontOutlineSettings(1, FLinearColor(0.f, 0.f, 0.f, 0.6));
@@ -18,10 +17,14 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 
 	const float GoalBoxWidth = 350.f;
 
-	FText GoalText = Goal.bCompleted ? FText::FromString("Completed") : FText::FromString(FString::Printf(TEXT("%d/%d"), Goal.CurrentCount, Goal.Count));
+	FText GoalText = Goal.bCompleted
+		                 ? FText::FromString("Completed")
+		                 : FText::FromString(FString::Printf(TEXT("%d/%d"), Goal.CurrentCount, Goal.Count));
 
-	const float ProgressBarWidth = Goal.CurrentCount > 0 ? static_cast<float>(Goal.CurrentCount) / static_cast<float>(Goal.Count) : 0.f;
-	
+	const float ProgressBarWidth = Goal.CurrentCount > 0
+		                               ? static_cast<float>(Goal.CurrentCount) / static_cast<float>(Goal.Count)
+		                               : 0.f;
+
 	ChildSlot
 	[
 		SNew(SBox)
@@ -55,39 +58,44 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 
 					SNew(SOverlay)
 
-					// Actual progressbar
+					+ SOverlay::Slot()
+					.HAlign(HAlign_Fill)
+					.VAlign(VAlign_Fill)
+					[
+						SNew(SBox)
+						.WidthOverride(GoalBoxWidth)
+						[
+							SNew(SBorder)
+							.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Goal.ProgressBar.Background"))
+						]
+					]
+
 					+ SOverlay::Slot()
 					.HAlign(HAlign_Left)
 					.VAlign(VAlign_Fill)
 					[
 						SNew(SBox)
-						.WidthOverride(ProgressBarWidth * GoalBoxWidth)
+						.WidthOverride(GoalBoxWidth * ProgressBarWidth)
 						[
+
 							SNew(SBorder)
 							.BorderImage(
-								FFacilityBreachStyle::Get().GetBrush("Brush.Goal.ProgressBar.InProgress"))
+								FFacilityBreachStyle::Get().GetBrush(Goal.bCompleted ? "Brush.Goal.ProgressBar.Completed" : "Brush.Goal.ProgressBar.InProgress"))
+
 						]
 					]
 
-					// Background
 					+ SOverlay::Slot()
 					.HAlign(HAlign_Fill)
 					.VAlign(VAlign_Fill)
 					[
-
-						SNew(SBorder)
-						.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Goal.ProgressBar.Background"))
+						SNew(SBox)
+						.Padding(9.f, 3.f)
 						[
-
-							SNew(SBox)
-							.Padding(9.f, 3.f)
-							[
-
-								SNew(STextBlock)
-								.Font(ProgressBarFont)
-								.ColorAndOpacity(FLinearColor::White)
-								.Text(GoalText)
-							]
+							SNew(STextBlock)
+							.Font(ProgressBarFont)
+							.ColorAndOpacity(Goal.CurrentCount > 0 ? FLinearColor::Black : FLinearColor::White)
+							.Text(GoalText)
 						]
 					]
 
