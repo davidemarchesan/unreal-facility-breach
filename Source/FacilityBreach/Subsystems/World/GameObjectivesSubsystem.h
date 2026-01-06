@@ -18,12 +18,14 @@ class FACILITYBREACH_API UGameObjectivesSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 public:
+
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	
 	virtual void PostInitialize() override;
 
 	void SetGameObjective(FName ID);
 
-	void Emit(AActor* Actor, FName Action);
+	void Emit(AActor* Actor, FGameplayTag ActionGameplayTag);
 
 	FOnGameObjectiveUpdate OnGameObjectiveUpdate;
 
@@ -38,5 +40,14 @@ private:
 	TArray<UGameObjective*> GameObjectives;
 
 	void LoadGameObjectives();
+
+
+public:
+
+	/** Action Tags */
+	inline static FGameplayTag Tag_Action_GeneralInteract;
+	inline static FGameplayTag Tag_Action_DoorOpen;
+	inline static FGameplayTag Tag_Action_DoorClose;
+	/** End Action Tags */
 	
 };

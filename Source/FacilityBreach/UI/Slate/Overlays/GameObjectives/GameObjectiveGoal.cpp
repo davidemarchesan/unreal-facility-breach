@@ -21,7 +21,6 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 	FText GoalText = Goal.bCompleted ? FText::FromString("Completed") : FText::FromString(FString::Printf(TEXT("%d/%d"), Goal.CurrentCount, Goal.Count));
 
 	const float ProgressBarWidth = Goal.CurrentCount > 0 ? static_cast<float>(Goal.CurrentCount) / static_cast<float>(Goal.Count) : 0.f;
-	UE_LOG(LogTemp, Warning, TEXT("ProgressBarWidth: %d / %d = %f"), Goal.CurrentCount, Goal.Count, ProgressBarWidth);
 	
 	ChildSlot
 	[

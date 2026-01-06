@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "Components/BoxComponent.h"
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
@@ -21,7 +22,7 @@ enum class EDoorState : uint8
 };
 
 UCLASS()
-class FACILITYBREACH_API ADoor : public AActor, public IInteractableInterface
+class FACILITYBREACH_API ADoor : public AActor, public IInteractableInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 	
@@ -39,6 +40,10 @@ public:
 	virtual void OnFocus(APlayerController* PlayerController) override;
 	virtual void OnFocusLost(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
+
+	/* IGameplayTagAssetInterface */
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	/* END IGameplayTagAssetInterface */
 
 	EDoorState GetDoorState() { return DoorState; }
 
@@ -74,6 +79,10 @@ protected:
 
 	bool HasRequiredItems(AFirstPersonController* Controller);
 	FItemTableRow* RequiredItem;
+
+	/** Gameplay Tags */
+	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
+	FGameplayTagContainer GameplayTags;
 
 private:
 

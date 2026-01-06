@@ -3,6 +3,7 @@
 
 #include "GameObjectivesSubsystem.h"
 
+#include "GameplayTagAssetInterface.h"
 #include "FacilityBreach/Actors/GameObjectives/GameObjectivesManager.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -21,6 +22,18 @@ void UGameObjectivesSubsystem::LoadGameObjectives()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("UGameObjectivesSubsystem: Did not found a Game Objectives manager"));
+	}
+}
+
+void UGameObjectivesSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	if (UGameplayTagsManager* GameplayTagsManager = UGameplayTagsManager::GetIfAllocated())
+	{
+		Tag_Action_GeneralInteract = GameplayTagsManager->RequestGameplayTag("Action.General.Interact");
+		Tag_Action_DoorOpen = GameplayTagsManager->RequestGameplayTag("Action.Door.Open");
+		Tag_Action_DoorClose = GameplayTagsManager->RequestGameplayTag("Action.Door.Close");
 	}
 }
 
@@ -50,7 +63,8 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 
 			for (FGameObjectiveGoal& Goal : GameObjective->Goals)
 			{
-				GoalStates.Add(FGameObjectiveGoalState(Goal.ID, Goal.Title, Goal.Actions, Goal.ActorTags, Goal.Count));
+				GoalStates.Add(FGameObjectiveGoalState(Goal.ID, Goal.Title, Goal.ActionGameplayTags,
+				                                       Goal.ActorGameplayTags, Goal.Count));
 			}
 
 			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GoalStates);
@@ -64,17 +78,20 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 	}
 }
 
-void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
+void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTag)
 {
 	FString Tags = "";
 
-	for (FName& Tag : Actor->Tags)
+	if (Actor == nullptr)
 	{
-		Tags.Append(Tag.ToString());
+		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: I received %s action from actor with these tags %s"),
-	       *Action.ToString(), *Tags);
+	if (Actor->Implements<UGameplayTagAssetInterface>() == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: Actor does not implement the gameplay tag interface"));
+		return;
+	}
 
 	if (CurrentObjectiveState.bActive == false)
 	{
@@ -94,34 +111,44 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 		return;
 	}
 
+	// Wether to update UI
 	bool bUpdateUI = false;
 
-	for (FGameObjectiveGoalState& Goal : CurrentObjectiveState.Goals)
+	TScriptInterface<IGameplayTagAssetInterface> TagInterface = TScriptInterface<
+		IGameplayTagAssetInterface>(Actor);
+
+	if (TagInterface)
 	{
-		if (Goal.Actions.Contains(Action) == false)
+		for (FGameObjectiveGoalState& Goal : CurrentObjectiveState.Goals)
 		{
-			continue;
-		}
-
-		for (FName& RequiredTag : Goal.ActorTags)
-		{
-			if (Actor->Tags.Contains(RequiredTag))
+			if (Goal.ActionGameplayTags.HasTagExact(ActionGameplayTag) == false)
 			{
-				Goal.CurrentCount++;
-				bUpdateUI = true;
-				UE_LOG(LogTemp, Warning, TEXT("Goal %s has been done %d times"), *Goal.ID.ToString(), Goal.CurrentCount);
+				// The action is not relevant for this goal
+				continue;
+			}
 
-				if (Goal.CurrentCount == Goal.Count)
+			for (FGameplayTag RequiredTag : Goal.ActorGameplayTags)
+			{
+				FGameplayTagContainer OutActorGameplayTags;
+				TagInterface->GetOwnedGameplayTags(OutActorGameplayTags);
+
+				if (OutActorGameplayTags.HasTagExact(RequiredTag))
 				{
-					Goal.bCompleted = true;
-					UE_LOG(LogTemp, Warning, TEXT("Goal %s has been completed"), *Goal.ID.ToString());
+					Goal.CurrentCount++;
+					bUpdateUI = true; // A goal has changed, update UI
+
+					if (Goal.CurrentCount == Goal.Count)
+					{
+						Goal.bCompleted = true;
+					}
+
+					break;
 				}
-				
-				break;
 			}
 		}
 	}
 
+	// Check if all goals are completed
 	bool bAllGoalsCompleted = true;
 	for (FGameObjectiveGoalState& Goal : CurrentObjectiveState.Goals)
 	{
@@ -134,14 +161,7 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FName Action)
 
 	if (bAllGoalsCompleted == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("All goals completed, objective %s completed"),
-		       *CurrentObjectiveState.ID.ToString());
-
 		CurrentObjectiveState.bCompleted = true;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("objective %s still missing goals"), *CurrentObjectiveState.ID.ToString());
 	}
 
 	if (bUpdateUI == true)

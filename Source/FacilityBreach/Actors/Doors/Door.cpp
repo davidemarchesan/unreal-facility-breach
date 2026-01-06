@@ -190,13 +190,18 @@ void ADoor::OnFocusLost(APlayerController* PlayerController)
 	}
 }
 
+void ADoor::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
+}
+
 void ADoor::OnOpenCompleted()
 {
 	SetDoorState(EDoorState::DOOR_Open);
 
 	if (GameObjectivesSubsystem)
 	{
-		GameObjectivesSubsystem->Emit(this, "Door.Open");
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_DoorOpen);
 	}
 }
 
@@ -206,6 +211,6 @@ void ADoor::OnCloseCompleted()
 
 	if (GameObjectivesSubsystem)
 	{
-		GameObjectivesSubsystem->Emit(this, "Door.Close");
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_DoorClose);
 	}
 }

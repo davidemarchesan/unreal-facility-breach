@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "GameplayTagsManager.h"
 #include "GameObjectives.generated.h"
 
 USTRUCT(BlueprintType)
@@ -15,10 +17,10 @@ struct FGameObjectiveGoal
 	FText Title = FText::GetEmpty();
 
 	UPROPERTY(EditAnywhere, meta=(ToolTip="Actions that can complete this goal"))
-	TArray<FName> Actions;
+	FGameplayTagContainer ActionGameplayTags;
 
-	UPROPERTY(EditAnywhere, meta=(ToolTip="Required tags that Actor needs to have to satisfy this goal"))
-	TArray<FName> ActorTags;
+	UPROPERTY(EditAnywhere, meta=(ToolTip="List of gameplay tags that Actor should have in order to satisfy this goal"))
+	FGameplayTagContainer ActorGameplayTags;
 
 	UPROPERTY(EditAnywhere,
 		meta=(ToolTip="How many times does this goal have to be done before being set as completed"))
@@ -59,10 +61,10 @@ struct FGameObjectiveGoalState
 	FText Title = FText::GetEmpty();
 
 	UPROPERTY(EditAnywhere)
-	TArray<FName> Actions;
+	FGameplayTagContainer ActionGameplayTags;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FName> ActorTags;
+	FGameplayTagContainer ActorGameplayTags;
 
 	UPROPERTY(EditAnywhere)
 	int32 Count = 1;
@@ -76,11 +78,11 @@ struct FGameObjectiveGoalState
 	// Default constructor
 	FGameObjectiveGoalState() = default;
 
-	FGameObjectiveGoalState(FName InID, const FText& InTitle, const TArray<FName>& InActions, const TArray<FName>& InActorTags, const int32 InCount)
+	FGameObjectiveGoalState(FName InID, const FText& InTitle, const FGameplayTagContainer& InActionGameplayTags, const FGameplayTagContainer& InActorGameplayTags, const int32 InCount)
 		: ID(InID)
 		  , Title(InTitle)
-		  , Actions(InActions)
-		  , ActorTags(InActorTags)
+		  , ActionGameplayTags(InActionGameplayTags)
+		  , ActorGameplayTags(InActorGameplayTags)
 		  , Count(InCount)
 	{
 	}
@@ -112,3 +114,12 @@ struct FGameObjectiveState
 	{
 	}
 };
+
+
+
+namespace GameObjectiveGoalActions
+{
+	inline UGameplayTagsManager& GameplayTagsManager = UGameplayTagsManager::Get();
+	
+	static const FGameplayTag DoorOpen = GameplayTagsManager.RequestGameplayTag("Action.Door.Open");
+}

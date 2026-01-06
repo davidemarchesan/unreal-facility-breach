@@ -16,13 +16,7 @@ void SGameObjectivesOverlay::Construct(const FArguments& InArgs)
 		[
 
 			SAssignNew(GoalsVerticalBox, SVerticalBox)
-
-			// Goal active
-			+ SVerticalBox::Slot()
-			[
-				SNew(SGameObjectiveGoal)
-			]
-
+			
 		]
 	];
 }
@@ -42,6 +36,7 @@ void SGameObjectivesOverlay::UpdateGameObjective(const FGameObjectiveState& Curr
 		for (FGameObjectiveGoalState Goal : CurrentObjectiveState.Goals)
 		{
 			GoalsVerticalBox->AddSlot()
+			.Padding(0.f, 5.f)
 			[
 				SNew(SGameObjectiveGoal)
 				.Goal(Goal)
