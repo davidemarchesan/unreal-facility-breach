@@ -103,7 +103,7 @@ void SAbilitySlot::Tick(const FGeometry& AllottedGeometry, const double InCurren
 
 void SAbilitySlot::OnAbilityCooldownStart(float Seconds)
 {
-	if (CooldownTextBlock && ChargingShroudBox)
+	if (CooldownTextBlock.IsValid() && ChargingShroudBox.IsValid())
 	{
 		CooldownTotalSeconds = Seconds;
 		CooldownStartTime = FSlateApplication::Get().GetCurrentTime();
@@ -120,7 +120,7 @@ void SAbilitySlot::OnAbilityCooldownStart(float Seconds)
 void SAbilitySlot::OnAbilityCooldownEnd()
 {
 	bCooldownStarted = false;
-	if (CooldownTextBlock && ChargingShroudBox)
+	if (CooldownTextBlock.IsValid() && ChargingShroudBox.IsValid())
 	{
 		CooldownTextBlock->SetVisibility(EVisibility::Hidden);
 		ChargingShroudBox->SetVisibility(EVisibility::Hidden);
@@ -129,12 +129,12 @@ void SAbilitySlot::OnAbilityCooldownEnd()
 
 void SAbilitySlot::OnAbilityChargesChange(int32 Charges)
 {
-	if (ChargesTextBlock)
+	if (ChargesTextBlock.IsValid())
 	{
 		ChargesTextBlock->SetText(FText::AsNumber(Charges));
 	}
 
-	if (IconBorder)
+	if (IconBorder.IsValid())
 	{
 		IconBorder->SetBorderImage(
 			FFacilityBreachStyle::Get().GetBrush(Charges > 0
@@ -152,7 +152,7 @@ void SAbilitySlot::UpdateCooldown(float InCooldown)
 	CooldownTextBlock->SetText(FText::AsNumber(CooldownShown));
 
 	// BoxWidth is also the 100% height
-	if (ChargingShroudBox)
+	if (ChargingShroudBox.IsValid())
 	{
 		float NewHeight = (AbilitySlotSize * Cooldown) / CooldownTotalSeconds;
 		ChargingShroudBox->SetHeightOverride(NewHeight);

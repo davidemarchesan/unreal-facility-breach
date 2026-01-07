@@ -117,15 +117,15 @@ void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 		OnHideInteractionHint();
 	}
 
-	if (HintTextBlock)
+	if (HintTextBlock.IsValid())
 	{
 		HintTextBlock->SetText(Hint.Text);
 	}
-	if (InputBox)
+	if (InputBox.IsValid())
 	{
 		InputBox->SetVisibility(Hint.bShowInput ? EVisibility::Visible : EVisibility::Collapsed);
 	}
-	if (RootOverlay)
+	if (RootOverlay.IsValid())
 	{
 		RootOverlay->SetVisibility(EVisibility::Visible);
 	}
@@ -133,11 +133,11 @@ void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 
 void SInteractablesOverlay::OnHideInteractionHint()
 {
-	if (HintTextBlock)
+	if (HintTextBlock.IsValid())
 	{
 		HintTextBlock->SetText(FText::GetEmpty());
 	}
-	if (RootOverlay)
+	if (RootOverlay.IsValid())
 	{
 		RootOverlay->SetVisibility(EVisibility::Hidden);
 	}
