@@ -1,15 +1,11 @@
 #include "InventoryOverlay.h"
 
 #include "InventorySlot.h"
-#include "IPropertyTable.h"
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 #include "Widgets/Layout/SUniformGridPanel.h"
 
 void SInventoryOverlay::Construct(const FArguments& InArgs)
 {
-	FSlateFontInfo TitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	TitleFont.Size = 22.f;
-
 	// Populating grid
 	GridPanel = SNew(SUniformGridPanel)
 		.SlotPadding(10.f);
@@ -61,7 +57,7 @@ void SInventoryOverlay::Construct(const FArguments& InArgs)
 						.AutoHeight()
 						[
 							SNew(STextBlock)
-							.Font(TitleFont)
+							.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.SemiBold.h4"))
 							.ColorAndOpacity(FLinearColor::White)
 							.Text(FText::FromString("Inventory"))
 						]

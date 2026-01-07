@@ -177,6 +177,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayInteractables();
 		InitializeOverlayGameObjectives();
 		InitializeOverlayInventory();
+		InitializeOverlayTutorial();
 	}
 }
 
@@ -254,5 +255,15 @@ void AFacilityBreachHUD::InitializeOverlayInventory()
 	if (InventoryOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(InventoryOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayTutorial()
+{
+	TutorialOverlay = SNew(STutorialOverlay);
+
+	if (TutorialOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(TutorialOverlay.ToSharedRef());
 	}
 }

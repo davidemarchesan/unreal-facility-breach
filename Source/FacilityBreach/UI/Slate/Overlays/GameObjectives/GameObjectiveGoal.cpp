@@ -11,12 +11,10 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 	const int32 Count = InArgs._Count;
 	const FText Title = InArgs._Title;
 
-	FSlateFontInfo TitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	TitleFont.Size = 12.f;
+	FSlateFontInfo TitleFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p");
 	TitleFont.OutlineSettings = FFontOutlineSettings(1, FLinearColor(0.f, 0.f, 0.f, 0.6));
 
-	FSlateFontInfo ProgressBarFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	ProgressBarFont.Size = 10.f;
+	FSlateFontInfo ProgressBarFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.help");
 
 	const float GoalBoxWidth = 350.f;
 

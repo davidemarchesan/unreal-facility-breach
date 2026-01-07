@@ -3,9 +3,16 @@
 
 #include "FacilityBreachStyle.h"
 
+#include "Engine/Font.h"
 #include "Styling/SlateStyleRegistry.h"
 
 TSharedPtr<FSlateStyleSet> FFacilityBreachStyle::StyleInstance = nullptr;
+
+struct FStyleFontData
+{
+	FString Name;
+	FString Source;
+};
 
 struct FStyleIconData
 {
@@ -23,6 +30,7 @@ void FFacilityBreachStyle::Initialize()
 
 	StyleInstance = MakeShareable(new FSlateStyleSet("FacilityBreachStyle"));
 
+	InitializeFonts();
 	InitializeIcons();
 	InitializeBrushes();
 
@@ -42,6 +50,58 @@ void FFacilityBreachStyle::Shutdown()
 const ISlateStyle& FFacilityBreachStyle::Get()
 {
 	return *StyleInstance;
+}
+
+void FFacilityBreachStyle::InitializeFonts()
+{
+	const TArray<FStyleFontData> StyleFonts = {
+		FStyleFontData(
+			"Font.Light",
+			"/Game/UI/Assets/Fonts/FiraCode/FiraCode-Light_Font.FiraCode-Light_Font"
+		),
+		FStyleFontData(
+			"Font.Regular",
+			"/Game/UI/Assets/Fonts/FiraCode/FiraCode-Regular_Font.FiraCode-Regular_Font"
+		),
+		FStyleFontData(
+			"Font.Medium",
+			"/Game/UI/Assets/Fonts/FiraCode/FiraCode-Medium_Font.FiraCode-Medium_Font"
+		),
+		FStyleFontData(
+			"Font.SemiBold",
+			"/Game/UI/Assets/Fonts/FiraCode/FiraCode-SemiBold_Font.FiraCode-SemiBold_Font"
+		),
+		FStyleFontData(
+			"Font.Bold",
+			"/Game/UI/Assets/Fonts/FiraCode/FiraCode-Bold_Font.FiraCode-Bold_Font"
+		),
+	};
+
+	const TMap<FString, float> FontSizes = {
+		{"help", 10.f},
+		{"p", 14.f},
+		{"h1", 24.f},
+		{"h2", 22.f},
+		{"h3", 20.f},
+		{"h4", 18.f},
+	};
+
+	for (const FStyleFontData& StyleFont : StyleFonts)
+	{
+		for (const TPair<FString, float>& FontSize : FontSizes)
+		{
+			FString StyleFontName = StyleFont.Name + "." + FontSize.Key;
+			// Example: FB.Font.Regular.sm or FB.Font.Regular.md
+
+			StyleInstance->Set(*StyleFontName, FSlateFontInfo(
+								   LoadObject<UFont>(
+									   nullptr, *StyleFont.Source),
+								   FontSize.Value
+							   )
+			);
+		}
+	}
+	
 }
 
 void FFacilityBreachStyle::InitializeIcons()

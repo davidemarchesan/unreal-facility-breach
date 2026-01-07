@@ -11,8 +11,7 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 	const int32 Charges = InArgs._Charges;
 	const FName Icon = InArgs._Icon;
 
-	FSlateFontInfo CooldownTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	CooldownTextFont.Size = 16.f;
+	FSlateFontInfo CooldownTextFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.h2");
 	CooldownTextFont.OutlineSettings = FFontOutlineSettings(1.f, FLinearColor::Black);
 
 	ChildSlot

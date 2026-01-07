@@ -7,11 +7,8 @@
 
 void SInteractablesOverlay::Construct(const FArguments& InArgs)
 {
-	FSlateFontInfo KeyTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	KeyTextFont.Size = 13.f;
-
-	FSlateFontInfo HintTextFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	HintTextFont.Size = 15.f;
+	FSlateFontInfo KeyTextFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p");
+	FSlateFontInfo HintTextFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p");
 
 	const float ContainerWidth = 400.f;
 	const float ContainerPaddingLeft = 100.f;
@@ -62,7 +59,7 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 						.VAlign(VAlign_Center)
 						.AutoWidth()
 						[
-							
+
 							SAssignNew(InputBox, SBox)
 							.Padding(0.f, 0.f, 10.f, 0.f)
 							[
@@ -73,14 +70,22 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 
 									SNew(SBorder)
 									.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Interaction.Key"))
-									.Padding(7.f)
+									.Padding(0.f)
 									[
 
-										SNew(STextBlock)
-										.ColorAndOpacity(FLinearColor::Black)
-										.Text(FText::FromString("E"))
-										.Font(KeyTextFont)
-										.Justification(ETextJustify::Center)
+										SNew(SOverlay)
+
+										+ SOverlay::Slot()
+										.HAlign(HAlign_Center)
+										.VAlign(VAlign_Center)
+										[
+											SNew(STextBlock)
+											.ColorAndOpacity(FLinearColor::Black)
+											.Text(FText::FromString("E"))
+											.Font(KeyTextFont)
+											.Justification(ETextJustify::Center)
+										]
+
 									]
 								]
 							]
@@ -90,7 +95,7 @@ void SInteractablesOverlay::Construct(const FArguments& InArgs)
 
 						+ SHorizontalBox::Slot()
 						.VAlign(VAlign_Center)
-						
+
 						.AutoWidth()
 						[
 

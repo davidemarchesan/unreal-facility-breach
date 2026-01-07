@@ -8,13 +8,6 @@ void SGameObjectiveBanner::Construct(const FArguments& InArgs)
 {
 	const EVisibility Visibility = InArgs._Visibility;
 	const FText Title = InArgs._Title;
-
-	FSlateFontInfo TitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	TitleFont.Size = 20.f;
-	TitleFont.LetterSpacing = 1.f;
-
-	FSlateFontInfo SubtitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
-	SubtitleFont.Size = 13.f;
 	
 	ChildSlot
 	[
@@ -34,7 +27,7 @@ void SGameObjectiveBanner::Construct(const FArguments& InArgs)
 				.VAlign(VAlign_Center)
 				[
 					SAssignNew(TitleTextBlock, STextBlock)
-					.Font(TitleFont)
+					.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.SemiBold.h1"))
 					.ColorAndOpacity(FLinearColor::White)
 					.Justification(ETextJustify::Center)
 					.TransformPolicy(ETextTransformPolicy::ToUpper)
@@ -46,7 +39,7 @@ void SGameObjectiveBanner::Construct(const FArguments& InArgs)
 				.VAlign(VAlign_Center)
 				[
 					SAssignNew(SubtitleTextBlock, STextBlock)
-					.Font(SubtitleFont)
+					.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p"))
 					.ColorAndOpacity(FLinearColor::White)
 					.Justification(ETextJustify::Center)
 					.Text(Title)
