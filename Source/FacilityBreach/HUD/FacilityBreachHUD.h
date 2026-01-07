@@ -7,6 +7,7 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/Ability/Abilities.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
+#include "FacilityBreach/UI/Slate/Overlays/GameObjectives/GameObjectivesOverlay.h"
 #include "FacilityBreach/UI/Slate/Overlays/Interactables/InteractablesOverlay.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
@@ -38,14 +39,21 @@ private:
 	void InitializeDelegatesInteractables();
 	UFUNCTION() void OnShowInteractionHint(FInteractionHint Hint);
 	UFUNCTION() void OnHideInteractionHint();
+
+	void InitializeDelegatesGameObjectives();
+	UFUNCTION() void OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveUpdate(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState);
 	
 	/** Overlays */
 	void InitializeOverlays();
 	void InitializeOverlayCrosshair();
 	void InitializeOverlayAbilities();
 	void InitializeOverlayInteractables();
+	void InitializeOverlayGameObjectives();
 
 	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;
 	TSharedPtr<SInteractablesOverlay> InteractablesOverlay;
+	TSharedPtr<SGameObjectivesOverlay> GameObjectivesOverlay;
 	
 };

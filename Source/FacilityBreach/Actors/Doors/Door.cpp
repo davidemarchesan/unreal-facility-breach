@@ -49,6 +49,8 @@ void ADoor::BeginPlay()
 	{
 		SkeletalMeshComponent->SetRenderCustomDepth(false);
 	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 }
 
 bool ADoor::HasRequiredItems(AFirstPersonController* Controller)
@@ -188,12 +190,27 @@ void ADoor::OnFocusLost(APlayerController* PlayerController)
 	}
 }
 
+void ADoor::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
+}
+
 void ADoor::OnOpenCompleted()
 {
 	SetDoorState(EDoorState::DOOR_Open);
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_DoorOpen);
+	}
 }
 
 void ADoor::OnCloseCompleted()
 {
 	SetDoorState(EDoorState::DOOR_Closed);
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_DoorClose);
+	}
 }

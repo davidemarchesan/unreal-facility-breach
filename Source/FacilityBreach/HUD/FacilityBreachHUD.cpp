@@ -7,6 +7,7 @@
 #include "Engine/GameViewportClient.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 
 #include "Widgets/SOverlay.h"
@@ -26,6 +27,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 {
 	InitializeDelegatesAbilities();
 	InitializeDelegatesInteractables();
+	InitializeDelegatesGameObjectives();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -96,6 +98,40 @@ void AFacilityBreachHUD::OnHideInteractionHint()
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesGameObjectives()
+{
+	if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
+	{
+		Subsystem->OnGameObjectiveNew.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveNew);
+		Subsystem->OnGameObjectiveUpdate.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveUpdate);
+		Subsystem->OnGameObjectiveCompleted.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveCompleted);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->OnGameObjectiveNew(CurrentObjectiveState);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveUpdate(const FGameObjectiveState& CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->OnGameObjectiveUpdate(CurrentObjectiveState);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->OnGameObjectiveCompleted(CurrentObjectiveState);
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
@@ -103,6 +139,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayCrosshair();
 		InitializeOverlayAbilities();
 		InitializeOverlayInteractables();
+		InitializeOverlayGameObjectives();
 	}
 }
 
@@ -151,5 +188,24 @@ void AFacilityBreachHUD::InitializeOverlayInteractables()
 	if (InteractablesOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(InteractablesOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayGameObjectives()
+{
+	GameObjectivesOverlay = SNew(SGameObjectivesOverlay);
+
+	if (GameObjectivesOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(GameObjectivesOverlay.ToSharedRef());
+
+		if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
+		{
+			const FGameObjectiveState& CurrentObjectiveState = Subsystem->GetCurrentObjectiveState();
+			if (GameObjectivesOverlay)
+			{
+				GameObjectivesOverlay->OnGameObjectiveNew(CurrentObjectiveState);
+			}
+		}
 	}
 }

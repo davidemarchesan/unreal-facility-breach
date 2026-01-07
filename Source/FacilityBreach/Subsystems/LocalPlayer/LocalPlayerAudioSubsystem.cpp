@@ -4,6 +4,7 @@
 #include "LocalPlayerAudioSubsystem.h"
 
 #include "FacilityBreach/Audio/Audio.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULocalPlayerAudioSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -38,4 +39,19 @@ bool ULocalPlayerAudioSubsystem::PlaySound2D(FName SoundName)
 void ULocalPlayerAudioSubsystem::OnItemPickUp()
 {
 	PlaySound2D("PickUp");
+}
+
+void ULocalPlayerAudioSubsystem::OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState)
+{
+	PlaySound2D("GameObjective.New");
+}
+
+void ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState)
+{
+	PlaySound2D("GameObjective.Completed");
+}
+
+void ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted(const FGameObjectiveState& CurrentObjectiveState)
+{
+	PlaySound2D("GameObjective.Goal.Completed");
 }

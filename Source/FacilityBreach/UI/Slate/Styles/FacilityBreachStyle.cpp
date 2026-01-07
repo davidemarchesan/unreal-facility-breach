@@ -81,4 +81,11 @@ void FFacilityBreachStyle::InitializeBrushes()
 	StyleInstance->Set("Brush.Interaction.Hint", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
 	StyleInstance->Set("Brush.Interaction.Key", new FSlateRoundedBoxBrush(FLinearColor::White, 4.f));
 	
+	StyleInstance->Set("Brush.Goal.ProgressBar.Background", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3), 4.f, FLinearColor(1.f, 1.f, 1.f, 0.7), 2.f));
+	StyleInstance->Set("Brush.Goal.ProgressBar.InProgress", new FSlateRoundedBoxBrush(FLinearColor::Yellow, 4.f, FLinearColor::Transparent, 2.f));
+	StyleInstance->Set("Brush.Goal.ProgressBar.Completed", new FSlateRoundedBoxBrush(FLinearColor::White, 4.f, FLinearColor::Transparent, 2.f));
+
+	StyleInstance->Set("Brush.Objective.Banner.New", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
+	StyleInstance->Set("Brush.Objective.Banner.Completed", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
+	
 }

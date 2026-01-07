@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FacilityBreach/Actors/GameObjectives/GameObjectives.h"
 #include "Subsystems/LocalPlayerSubsystem.h"
 #include "LocalPlayerAudioSubsystem.generated.h"
 
@@ -18,9 +19,14 @@ public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+
 	bool PlaySound2D(FName SoundName);
 
 	void OnItemPickUp();
+
+	UFUNCTION() void OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveGoalCompleted(const FGameObjectiveState& CurrentObjectiveState);
 
 private:
 

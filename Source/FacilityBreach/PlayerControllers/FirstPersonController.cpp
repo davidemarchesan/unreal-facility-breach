@@ -9,6 +9,7 @@
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
 #include "FacilityBreach/Pawns/FirstPersonPawn.h"
 #include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void AFirstPersonController::Tick(float DeltaSeconds)
@@ -35,10 +36,7 @@ void AFirstPersonController::BeginPlay()
 		FirstPersonCameraComponent = FirstPersonCharacter->GetCameraComponent();
 	}
 
-	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
-	{
-		AudioSubsystem = LocalPlayer->GetSubsystem<ULocalPlayerAudioSubsystem>();
-	}
+	LoadSubsystems();
 }
 
 void AFirstPersonController::SetupInputComponent()
@@ -64,7 +62,7 @@ void AFirstPersonController::SetupInputComponent()
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Dash, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Dash);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Scan, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::Scan);
+			                          &AFirstPersonController::Scan);
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -228,11 +226,32 @@ void AFirstPersonController::LineTrace()
 	}
 }
 
+void AFirstPersonController::LoadSubsystems()
+{
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+	{
+		AudioSubsystem = LocalPlayer->GetSubsystem<ULocalPlayerAudioSubsystem>();
+	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
+	if (GameObjectivesSubsystem && AudioSubsystem)
+	{
+		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
+		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
+	}
+}
+
 void AFirstPersonController::Debug()
 {
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->SetGameObjective("Test.2");
+	}
+
 	FFacilityBreachStyle::Shutdown();
 	FFacilityBreachStyle::Initialize();
-
+	
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(
