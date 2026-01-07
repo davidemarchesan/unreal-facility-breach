@@ -38,6 +38,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Debug;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Tab;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_PrimaryAction;

@@ -64,6 +64,10 @@ void AFirstPersonController::SetupInputComponent()
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Scan, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Scan);
 
+			// Others
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Tab, ETriggerEvent::Triggered, this,
+									  &AFirstPersonController::ToggleInventory);
+
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Debug);
@@ -153,6 +157,11 @@ void AFirstPersonController::Scan()
 	{
 		FirstPersonCharacter->Scan();
 	}
+}
+
+void AFirstPersonController::ToggleInventory()
+{
+	OnInventoryToggle.Broadcast();
 }
 
 void AFirstPersonController::LineTrace()

@@ -7,6 +7,7 @@
 #include "Engine/GameViewportClient.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
+#include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 
@@ -28,6 +29,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 	InitializeDelegatesAbilities();
 	InitializeDelegatesInteractables();
 	InitializeDelegatesGameObjectives();
+	InitializeDelegatesInventory();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -132,6 +134,40 @@ void AFacilityBreachHUD::OnGameObjectiveCompleted(const FGameObjectiveState& Cur
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesInventory()
+{
+	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(GetOwningPlayerController()))
+	{
+
+		Controller->OnInventoryToggle.AddUObject(this, &AFacilityBreachHUD::OnInventoryToggle);
+		
+		if (AFirstPersonPlayerState* PlayerState = Controller->GetPlayerState<
+			AFirstPersonPlayerState>())
+		{
+			if (PlayerState->Inventory)
+			{
+				PlayerState->Inventory->OnAddItem.AddUObject(this, &AFacilityBreachHUD::OnInventoryAddItem);
+			}
+		}
+	}
+}
+
+void AFacilityBreachHUD::OnInventoryToggle()
+{
+	if (InventoryOverlay.IsValid())
+	{
+		InventoryOverlay->OnToggle();
+	}
+}
+
+void AFacilityBreachHUD::OnInventoryAddItem(FString ItemName)
+{
+	if (InventoryOverlay.IsValid())
+	{
+		InventoryOverlay->OnAddItem(ItemName);
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
@@ -140,6 +176,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayAbilities();
 		InitializeOverlayInteractables();
 		InitializeOverlayGameObjectives();
+		InitializeOverlayInventory();
 	}
 }
 
@@ -207,5 +244,15 @@ void AFacilityBreachHUD::InitializeOverlayGameObjectives()
 				GameObjectivesOverlay->OnGameObjectiveNew(CurrentObjectiveState);
 			}
 		}
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayInventory()
+{
+	InventoryOverlay = SNew(SInventoryOverlay);
+
+	if (InventoryOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(InventoryOverlay.ToSharedRef());
 	}
 }

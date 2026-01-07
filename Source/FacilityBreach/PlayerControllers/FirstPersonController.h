@@ -20,6 +20,8 @@ class AFirstPersonCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShowInteractionHint, FInteractionHint, Hint);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHideInteractionHint);
 
+DECLARE_MULTICAST_DELEGATE(FOnInventoryToggle);
+
 /**
  * 
  */
@@ -35,6 +37,8 @@ public:
 	/** Delegates */
 	FOnShowInteractionHint OnShowInteractionHint;
 	FOnHideInteractionHint OnHideInteractionHint;
+
+	FOnInventoryToggle OnInventoryToggle;
 
 protected:
 
@@ -66,6 +70,8 @@ private:
 	void Dash();
 
 	void Scan();
+
+	void ToggleInventory();
 
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;

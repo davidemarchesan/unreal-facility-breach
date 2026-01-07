@@ -11,6 +11,8 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddItem(FString ItemName, int32 Quantity)
 {
 	Items.Add(ItemName, Quantity);
+
+	OnAddItem.Broadcast(ItemName);
 }
 
 bool UInventoryComponent::HasItem(FString ItemName, int32 QuantityRequired)

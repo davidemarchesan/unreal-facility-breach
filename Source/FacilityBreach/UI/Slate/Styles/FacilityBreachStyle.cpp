@@ -87,5 +87,9 @@ void FFacilityBreachStyle::InitializeBrushes()
 
 	StyleInstance->Set("Brush.Objective.Banner.New", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
 	StyleInstance->Set("Brush.Objective.Banner.Completed", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
+
+	StyleInstance->Set("Brush.Inventory.Background", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14FF")), 5.f));
+	StyleInstance->Set("Brush.Inventory.Slot.Background", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f, FLinearColor::Transparent, 1.f));
+	StyleInstance->Set("Brush.Inventory.Slot.Background.Active", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f, FLinearColor::White, 1.f));
 	
 }

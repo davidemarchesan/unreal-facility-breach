@@ -9,6 +9,7 @@
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 #include "FacilityBreach/UI/Slate/Overlays/GameObjectives/GameObjectivesOverlay.h"
 #include "FacilityBreach/UI/Slate/Overlays/Interactables/InteractablesOverlay.h"
+#include "FacilityBreach/UI/Slate/Overlays/Inventory/InventoryOverlay.h"
 #include "GameFramework/HUD.h"
 #include "FacilityBreachHUD.generated.h"
 
@@ -44,6 +45,10 @@ private:
 	UFUNCTION() void OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState);
 	UFUNCTION() void OnGameObjectiveUpdate(const FGameObjectiveState& CurrentObjectiveState);
 	UFUNCTION() void OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState);
+
+	void InitializeDelegatesInventory();
+	UFUNCTION() void OnInventoryToggle();
+	UFUNCTION() void OnInventoryAddItem(FString ItemName);
 	
 	/** Overlays */
 	void InitializeOverlays();
@@ -51,9 +56,11 @@ private:
 	void InitializeOverlayAbilities();
 	void InitializeOverlayInteractables();
 	void InitializeOverlayGameObjectives();
+	void InitializeOverlayInventory();
 
 	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;
 	TSharedPtr<SInteractablesOverlay> InteractablesOverlay;
 	TSharedPtr<SGameObjectivesOverlay> GameObjectivesOverlay;
+	TSharedPtr<SInventoryOverlay> InventoryOverlay;
 	
 };

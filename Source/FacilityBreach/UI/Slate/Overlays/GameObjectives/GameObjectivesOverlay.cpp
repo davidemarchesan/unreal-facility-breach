@@ -2,7 +2,6 @@
 
 #include "GameObjectiveBanner.h"
 #include "GameObjectiveGoal.h"
-#include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void SGameObjectivesOverlay::Construct(const FArguments& InArgs)
 {
