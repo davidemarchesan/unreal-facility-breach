@@ -46,39 +46,37 @@ public:
 	FName ID;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FGameObjectiveGoal> Goals;
-};
-
-USTRUCT(BlueprintType)
-struct FGameObjectiveGoalState
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FName ID;
-
-	UPROPERTY(EditAnywhere)
 	FText Title = FText::GetEmpty();
 
 	UPROPERTY(EditAnywhere)
+	TArray<FGameObjectiveGoal> Goals;
+};
+
+USTRUCT()
+struct FGameObjectiveGoalState
+{
+
+	GENERATED_BODY()
+	
+	FName ID;
+
+	FText Title = FText::GetEmpty();
+
 	FGameplayTagContainer ActionGameplayTags;
 
-	UPROPERTY(EditAnywhere)
 	FGameplayTagContainer ActorGameplayTags;
 
-	UPROPERTY(EditAnywhere)
 	int32 Count = 1;
 
-	UPROPERTY(EditAnywhere)
 	int32 CurrentCount = 0;
 
-	UPROPERTY(EditAnywhere)
 	bool bCompleted = false;
 
 	// Default constructor
 	FGameObjectiveGoalState() = default;
 
-	FGameObjectiveGoalState(FName InID, const FText& InTitle, const FGameplayTagContainer& InActionGameplayTags, const FGameplayTagContainer& InActorGameplayTags, const int32 InCount)
+	FGameObjectiveGoalState(FName InID, const FText& InTitle, const FGameplayTagContainer& InActionGameplayTags,
+	                        const FGameplayTagContainer& InActorGameplayTags, const int32 InCount)
 		: ID(InID)
 		  , Title(InTitle)
 		  , ActionGameplayTags(InActionGameplayTags)
@@ -88,38 +86,37 @@ struct FGameObjectiveGoalState
 	}
 };
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FGameObjectiveState
 {
-	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	GENERATED_BODY()
+	
 	FName ID;
 
-	UPROPERTY(EditAnywhere)
+	FText Title = FText::GetEmpty();
+
 	TArray<FGameObjectiveGoalState> Goals;
 
-	UPROPERTY(EditAnywhere)
 	bool bCompleted = false;
 
-	UPROPERTY(EditAnywhere)
 	bool bActive = false;
 
 	// Constructor
 	FGameObjectiveState() = default;
 
-	FGameObjectiveState(const FName InID, const TArray<FGameObjectiveGoalState>& InGoals)
+	FGameObjectiveState(const FName InID, const FText& InTitle, const TArray<FGameObjectiveGoalState>& InGoals)
 		: ID(InID)
+		  , Title(InTitle)
 		  , Goals(InGoals)
 	{
 	}
 };
 
 
-
 namespace GameObjectiveGoalActions
 {
 	inline UGameplayTagsManager& GameplayTagsManager = UGameplayTagsManager::Get();
-	
+
 	static const FGameplayTag DoorOpen = GameplayTagsManager.RequestGameplayTag("Action.Door.Open");
 }

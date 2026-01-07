@@ -41,12 +41,17 @@ void ULocalPlayerAudioSubsystem::OnItemPickUp()
 	PlaySound2D("PickUp");
 }
 
-void ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted(FGameObjectiveState CurrentObjectiveState)
+void ULocalPlayerAudioSubsystem::OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState)
+{
+	PlaySound2D("GameObjective.New");
+}
+
+void ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState)
 {
 	PlaySound2D("GameObjective.Completed");
 }
 
-void ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted(FGameObjectiveState CurrentObjectiveState)
+void ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted(const FGameObjectiveState& CurrentObjectiveState)
 {
 	PlaySound2D("GameObjective.Goal.Completed");
 }

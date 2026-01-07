@@ -1,12 +1,15 @@
-#include "GameObjectiveGoal.h"
+// Fill out your copyright notice in the Description page of Project Settings.
 
-#include <string>
+#include "GameObjectiveGoal.h"
 
 #include "FacilityBreach/UI/Slate/Styles/FacilityBreachStyle.h"
 
 void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 {
-	const FGameObjectiveGoalState Goal = InArgs._Goal;
+	const bool bCompleted = InArgs._Completed;
+	const int32 CurrentCount = InArgs._CurrentCount;
+	const int32 Count = InArgs._Count;
+	const FText Title = InArgs._Title;
 
 	FSlateFontInfo TitleFont = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText").Font;
 	TitleFont.Size = 12.f;
@@ -17,12 +20,12 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 
 	const float GoalBoxWidth = 350.f;
 
-	FText GoalText = Goal.bCompleted
+	FText GoalText = bCompleted
 		                 ? FText::FromString("Completed")
-		                 : FText::FromString(FString::Printf(TEXT("%d/%d"), Goal.CurrentCount, Goal.Count));
+		                 : FText::FromString(FString::Printf(TEXT("%d/%d"), CurrentCount, Count));
 
-	const float ProgressBarWidth = Goal.CurrentCount > 0
-		                               ? static_cast<float>(Goal.CurrentCount) / static_cast<float>(Goal.Count)
+	const float ProgressBarWidth = CurrentCount > 0
+		                               ? static_cast<float>(CurrentCount) / static_cast<float>(Count)
 		                               : 0.f;
 
 	ChildSlot
@@ -45,7 +48,7 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 					.Font(TitleFont)
 					.AutoWrapText(true)
 					.ColorAndOpacity(FLinearColor::White)
-					.Text(Goal.Title)
+					.Text(Title)
 				]
 			]
 
@@ -80,7 +83,7 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 
 							SNew(SBorder)
 							.BorderImage(
-								FFacilityBreachStyle::Get().GetBrush(Goal.bCompleted ? "Brush.Goal.ProgressBar.Completed" : "Brush.Goal.ProgressBar.InProgress"))
+								FFacilityBreachStyle::Get().GetBrush(bCompleted ? "Brush.Goal.ProgressBar.Completed" : "Brush.Goal.ProgressBar.InProgress"))
 
 						]
 					]
@@ -94,7 +97,7 @@ void SGameObjectiveGoal::Construct(const FArguments& InArgs)
 						[
 							SNew(STextBlock)
 							.Font(ProgressBarFont)
-							.ColorAndOpacity(Goal.CurrentCount > 0 ? FLinearColor::Black : FLinearColor::White)
+							.ColorAndOpacity(CurrentCount > 0 ? FLinearColor::Black : FLinearColor::White)
 							.Text(GoalText)
 						]
 					]

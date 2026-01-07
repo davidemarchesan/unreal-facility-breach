@@ -7,9 +7,10 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GameObjectivesSubsystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveUpdate, FGameObjectiveState, CurrentObjectiveState);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveCompleted, FGameObjectiveState, CurrentObjectiveState);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveGoalCompleted, FGameObjectiveState, CurrentObjectiveState);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveNew, const FGameObjectiveState&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveUpdate, const FGameObjectiveState&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveCompleted, const FGameObjectiveState&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameObjectiveGoalCompleted, const FGameObjectiveState&);
 
 /**
  * 
@@ -29,6 +30,7 @@ public:
 
 	void Emit(AActor* Actor, FGameplayTag ActionGameplayTag);
 
+	FOnGameObjectiveNew OnGameObjectiveNew;
 	FOnGameObjectiveUpdate OnGameObjectiveUpdate;
 	FOnGameObjectiveCompleted OnGameObjectiveCompleted;
 	FOnGameObjectiveGoalCompleted OnGameObjectiveGoalCompleted;

@@ -24,8 +24,9 @@ public:
 
 	void OnItemPickUp();
 
-	UFUNCTION() void OnGameObjectiveCompleted(FGameObjectiveState CurrentObjectiveState);
-	UFUNCTION() void OnGameObjectiveGoalCompleted(FGameObjectiveState CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveGoalCompleted(const FGameObjectiveState& CurrentObjectiveState);
 
 private:
 

@@ -62,7 +62,7 @@ void AFirstPersonController::SetupInputComponent()
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Dash, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Dash);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Scan, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::Scan);
+			                          &AFirstPersonController::Scan);
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -236,16 +236,22 @@ void AFirstPersonController::LoadSubsystems()
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 	if (GameObjectivesSubsystem && AudioSubsystem)
 	{
-		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddDynamic(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
-		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddDynamic(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
+		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
 	}
 }
 
 void AFirstPersonController::Debug()
 {
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->SetGameObjective("Test.2");
+	}
+
 	FFacilityBreachStyle::Shutdown();
 	FFacilityBreachStyle::Initialize();
-
+	
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(

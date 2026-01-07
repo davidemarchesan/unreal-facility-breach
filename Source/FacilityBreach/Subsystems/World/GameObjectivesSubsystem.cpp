@@ -42,7 +42,7 @@ void UGameObjectivesSubsystem::PostInitialize()
 	Super::PostInitialize();
 
 	LoadGameObjectives();
-	
+
 	SetGameObjective("Test.1");
 }
 
@@ -55,7 +55,6 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 
 	for (UGameObjective* GameObjective : GameObjectives)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: SetGameObjective %s"), *GameObjective->ID.ToString());
 		if (GameObjective->ID == ID)
 		{
 			// Separating data vs status
@@ -67,13 +66,13 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 				                                       Goal.ActorGameplayTags, Goal.Count));
 			}
 
-			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GoalStates);
+			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GameObjective->Title, GoalStates);
 			CurrentObjectiveState.bActive = true;
 
-			UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: set a new objective"));
+			UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: SetGameObjective %s"), *GameObjective->ID.ToString());
 
 			// Update UI
-			OnGameObjectiveUpdate.Broadcast(CurrentObjectiveState);
+			OnGameObjectiveNew.Broadcast(CurrentObjectiveState);
 		}
 	}
 }
@@ -170,7 +169,7 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTa
 		OnGameObjectiveGoalCompleted.Broadcast(CurrentObjectiveState);
 	}
 
-	if (bUpdateUI == true)
+	if (bUpdateUI == true && bAllGoalsCompleted == false)
 	{
 		OnGameObjectiveUpdate.Broadcast(CurrentObjectiveState);
 	}

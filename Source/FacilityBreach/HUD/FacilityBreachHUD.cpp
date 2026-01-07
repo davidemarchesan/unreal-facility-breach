@@ -102,15 +102,33 @@ void AFacilityBreachHUD::InitializeDelegatesGameObjectives()
 {
 	if (UGameObjectivesSubsystem* Subsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>())
 	{
-		Subsystem->OnGameObjectiveUpdate.AddDynamic(this, &AFacilityBreachHUD::OnGameObjectiveUpdate);
+		Subsystem->OnGameObjectiveNew.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveNew);
+		Subsystem->OnGameObjectiveUpdate.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveUpdate);
+		Subsystem->OnGameObjectiveCompleted.AddUObject(this, &AFacilityBreachHUD::OnGameObjectiveCompleted);
 	}
 }
 
-void AFacilityBreachHUD::OnGameObjectiveUpdate(FGameObjectiveState CurrentObjectiveState)
+void AFacilityBreachHUD::OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState)
 {
 	if (GameObjectivesOverlay)
 	{
-		GameObjectivesOverlay->UpdateGameObjective(CurrentObjectiveState);
+		GameObjectivesOverlay->OnGameObjectiveNew(CurrentObjectiveState);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveUpdate(const FGameObjectiveState& CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->OnGameObjectiveUpdate(CurrentObjectiveState);
+	}
+}
+
+void AFacilityBreachHUD::OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState)
+{
+	if (GameObjectivesOverlay)
+	{
+		GameObjectivesOverlay->OnGameObjectiveCompleted(CurrentObjectiveState);
 	}
 }
 
@@ -186,7 +204,7 @@ void AFacilityBreachHUD::InitializeOverlayGameObjectives()
 			const FGameObjectiveState& CurrentObjectiveState = Subsystem->GetCurrentObjectiveState();
 			if (GameObjectivesOverlay)
 			{
-				GameObjectivesOverlay->UpdateGameObjective(CurrentObjectiveState);
+				GameObjectivesOverlay->OnGameObjectiveNew(CurrentObjectiveState);
 			}
 		}
 	}

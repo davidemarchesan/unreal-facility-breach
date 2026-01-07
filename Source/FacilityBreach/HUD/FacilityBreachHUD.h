@@ -41,7 +41,9 @@ private:
 	UFUNCTION() void OnHideInteractionHint();
 
 	void InitializeDelegatesGameObjectives();
-	UFUNCTION() void OnGameObjectiveUpdate(FGameObjectiveState CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveUpdate(const FGameObjectiveState& CurrentObjectiveState);
+	UFUNCTION() void OnGameObjectiveCompleted(const FGameObjectiveState& CurrentObjectiveState);
 	
 	/** Overlays */
 	void InitializeOverlays();
