@@ -43,6 +43,9 @@ public:
 	UInputAction* IA_Tab;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Back;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_PrimaryAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")

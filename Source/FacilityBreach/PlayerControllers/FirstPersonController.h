@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
-#include "FacilityBreach/Actors/Portals/Portal.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Subsystems/LocalPlayer/LocalPlayerAudioSubsystem.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
@@ -72,6 +71,8 @@ private:
 	void Scan();
 
 	void ToggleInventory();
+
+	void Back();
 
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;

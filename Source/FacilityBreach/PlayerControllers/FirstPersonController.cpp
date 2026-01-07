@@ -4,6 +4,7 @@
 #include "FirstPersonController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "FacilityBreach/HUD/FacilityBreachHUD.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
@@ -66,7 +67,10 @@ void AFirstPersonController::SetupInputComponent()
 
 			// Others
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Tab, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::ToggleInventory);
+			                          &AFirstPersonController::ToggleInventory);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Back, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Back);
+			
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -164,6 +168,24 @@ void AFirstPersonController::ToggleInventory()
 	OnInventoryToggle.Broadcast();
 }
 
+void AFirstPersonController::Back()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AFirstPersonController::Back()"));
+	if (AFacilityBreachHUD* HUD = Cast<AFacilityBreachHUD>(GetHUD()))
+	{
+		if (IsPaused())
+		{
+			HUD->OnTutorialHide();
+			SetPause(false);
+		}
+		else
+		{
+			SetPause(true);
+			HUD->OnTutorialShow(FText::FromString("Doors"), FText::FromString("Tutorial from controller"));
+		}
+	}
+}
+
 void AFirstPersonController::LineTrace()
 {
 	if (FirstPersonCameraComponent)
@@ -245,9 +267,12 @@ void AFirstPersonController::LoadSubsystems()
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 	if (GameObjectivesSubsystem && AudioSubsystem)
 	{
-		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
-		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
-		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,
+		                                                       &ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
+		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,
+		                                                             &ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(
+			AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
 	}
 }
 
@@ -260,7 +285,7 @@ void AFirstPersonController::Debug()
 
 	FFacilityBreachStyle::Shutdown();
 	FFacilityBreachStyle::Initialize();
-	
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(

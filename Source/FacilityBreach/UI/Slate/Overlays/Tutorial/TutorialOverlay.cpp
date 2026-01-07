@@ -34,10 +34,10 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 						+ SVerticalBox::Slot()
 						.AutoHeight()
 						[
-							SNew(STextBlock)
+							SAssignNew(TitleTextBlock, STextBlock)
 							.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.SemiBold.h4"))
 							.ColorAndOpacity(FLinearColor::Yellow)
-							.Text(FText::Format(FText::FromString("Tutorial - {0}"), Title))
+							.Text(FText::GetEmpty())
 						]
 
 						+ SVerticalBox::Slot()
@@ -45,7 +45,7 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 						[
 							SNew(SBox)
 							[
-								SNew(STextBlock)
+								SAssignNew(DescriptionTextBlock, STextBlock)
 								.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p"))
 								.ColorAndOpacity(FLinearColor::White)
 								.Text(Description)
@@ -70,4 +70,22 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 			]
 		]
 	];
+}
+
+void STutorialOverlay::OnShow(FText InTitle, FText InDescription)
+{
+	if (MainOverlay.IsValid() && TitleTextBlock.IsValid() && DescriptionTextBlock.IsValid())
+	{
+		TitleTextBlock->SetText(FText::Format(FText::FromString("Tutorial - {0}"), InTitle));
+		DescriptionTextBlock->SetText(InDescription);
+		MainOverlay->SetVisibility(EVisibility::Visible);
+	}
+}
+
+void STutorialOverlay::OnHide()
+{
+	if (MainOverlay.IsValid())
+	{
+		MainOverlay->SetVisibility(EVisibility::Collapsed);
+	}
 }

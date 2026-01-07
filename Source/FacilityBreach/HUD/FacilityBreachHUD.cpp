@@ -168,6 +168,26 @@ void AFacilityBreachHUD::OnInventoryAddItem(FString ItemName)
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesTutorial()
+{
+}
+
+void AFacilityBreachHUD::OnTutorialShow(FText Title, FText Description)
+{
+	if (TutorialOverlay.IsValid())
+	{
+		TutorialOverlay->OnShow(Title, Description);
+	}
+}
+
+void AFacilityBreachHUD::OnTutorialHide()
+{
+	if (TutorialOverlay.IsValid())
+	{
+		TutorialOverlay->OnHide();
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)

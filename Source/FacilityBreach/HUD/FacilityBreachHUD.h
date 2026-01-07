@@ -26,6 +26,9 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION() void OnTutorialShow(FText Title, FText Description);
+	UFUNCTION() void OnTutorialHide();
+
 private:
 
 	TObjectPtr<AFirstPersonCharacter> CharacterOwner;
@@ -52,6 +55,7 @@ private:
 	UFUNCTION() void OnInventoryAddItem(FString ItemName);
 
 	void InitializeDelegatesTutorial();
+	
 	
 	/** Overlays */
 	void InitializeOverlays();
