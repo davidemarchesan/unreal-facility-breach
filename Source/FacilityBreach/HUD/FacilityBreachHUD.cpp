@@ -9,6 +9,7 @@
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
+#include "FacilityBreach/Subsystems/World/TutorialSubsystem.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
 
 #include "Widgets/SOverlay.h"
@@ -30,6 +31,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 	InitializeDelegatesInteractables();
 	InitializeDelegatesGameObjectives();
 	InitializeDelegatesInventory();
+	InitializeDelegatesTutorial();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -170,9 +172,14 @@ void AFacilityBreachHUD::OnInventoryAddItem(FString ItemName)
 
 void AFacilityBreachHUD::InitializeDelegatesTutorial()
 {
+	if (UTutorialSubsystem* Subsystem = GetWorld()->GetSubsystem<UTutorialSubsystem>())
+	{
+		Subsystem->OnTutorialShow.AddUObject(this, &AFacilityBreachHUD::OnTutorialShow);
+		Subsystem->OnTutorialHide.AddUObject(this, &AFacilityBreachHUD::OnTutorialHide);
+	}
 }
 
-void AFacilityBreachHUD::OnTutorialShow(FText Title, FText Description)
+void AFacilityBreachHUD::OnTutorialShow(const FText& Title, const FText& Description)
 {
 	if (TutorialOverlay.IsValid())
 	{

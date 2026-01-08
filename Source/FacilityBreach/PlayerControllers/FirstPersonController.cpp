@@ -171,18 +171,17 @@ void AFirstPersonController::ToggleInventory()
 void AFirstPersonController::Back()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AFirstPersonController::Back()"));
-	if (AFacilityBreachHUD* HUD = Cast<AFacilityBreachHUD>(GetHUD()))
+
+	if (IsPaused())
 	{
-		if (IsPaused())
+
+		if (bShowingTutorial == true && TutorialSubsystem)
 		{
-			HUD->OnTutorialHide();
+			TutorialSubsystem->HideTutorial();
+			bShowingTutorial = false;
 			SetPause(false);
 		}
-		else
-		{
-			SetPause(true);
-			HUD->OnTutorialShow(FText::FromString("Doors"), FText::FromString("Tutorial from controller"));
-		}
+		
 	}
 }
 
@@ -274,6 +273,18 @@ void AFirstPersonController::LoadSubsystems()
 		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(
 			AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
 	}
+
+	TutorialSubsystem = GetWorld()->GetSubsystem<UTutorialSubsystem>();
+	if (TutorialSubsystem)
+	{
+		TutorialSubsystem->OnTutorialShow.AddUObject(this, &AFirstPersonController::OnTutorialShow);
+	}
+}
+
+void AFirstPersonController::OnTutorialShow(const FText& Title, const FText& Description)
+{
+	SetPause(true);
+	bShowingTutorial = true;
 }
 
 void AFirstPersonController::Debug()

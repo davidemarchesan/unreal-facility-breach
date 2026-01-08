@@ -12,8 +12,8 @@ void SGameObjectiveBanner::Construct(const FArguments& InArgs)
 	ChildSlot
 	[
 		SAssignNew(MainBox, SBox)
-		.WidthOverride(400.f)
-		.Padding(10.f)
+		.MinDesiredWidth(500.f)
+		.Padding(30.f, 10.f)
 		.Visibility(Visibility)
 		[
 			SAssignNew(MainBorder, SBorder)

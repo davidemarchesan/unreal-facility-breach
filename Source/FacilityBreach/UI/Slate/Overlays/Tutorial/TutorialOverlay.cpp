@@ -11,7 +11,7 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 	ChildSlot
 	[
 		SAssignNew(MainOverlay, SOverlay)
-		.Visibility(EVisibility::Visible)
+		.Visibility(EVisibility::Collapsed)
 
 		+ SOverlay::Slot()
 		.HAlign(HAlign_Center)
