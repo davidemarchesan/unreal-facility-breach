@@ -285,6 +285,11 @@ void AFirstPersonController::OnTutorialShow(const FText& Title, const FText& Des
 {
 	SetPause(true);
 	bShowingTutorial = true;
+
+	if (AudioSubsystem)
+	{
+		AudioSubsystem->PlaySound2D("Tutorial.Show");
+	}
 }
 
 void AFirstPersonController::Debug()

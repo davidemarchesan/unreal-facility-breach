@@ -38,7 +38,7 @@ bool ULocalPlayerAudioSubsystem::PlaySound2D(FName SoundName)
 
 void ULocalPlayerAudioSubsystem::OnItemPickUp()
 {
-	PlaySound2D("PickUp");
+	PlaySound2D("Item.PickUp");
 }
 
 void ULocalPlayerAudioSubsystem::OnGameObjectiveNew(const FGameObjectiveState& CurrentObjectiveState)
