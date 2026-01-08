@@ -3,7 +3,6 @@
 
 #include "Door.h"
 
-#include "Animations/DoorAnimInstance.h"
 #include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/PostProcess/Stencils/Stencils.h"
@@ -177,8 +176,8 @@ void ADoor::OnFocus(APlayerController* PlayerController)
 {
 	if (DoorState == EDoorState::DOOR_Closed && SkeletalMeshComponent)
 	{
-		SkeletalMeshComponent->SetRenderCustomDepth(true);
 		SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Outline));
+		SkeletalMeshComponent->SetRenderCustomDepth(true);
 	}
 }
 

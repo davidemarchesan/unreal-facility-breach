@@ -120,6 +120,7 @@ void SInteractablesOverlay::OnShowInteractionHint(FInteractionHint Hint)
 	if (Hint.Text.IsEmpty())
 	{
 		OnHideInteractionHint();
+		return;
 	}
 
 	if (HintTextBlock.IsValid())
@@ -144,6 +145,6 @@ void SInteractablesOverlay::OnHideInteractionHint()
 	}
 	if (RootOverlay.IsValid())
 	{
-		RootOverlay->SetVisibility(EVisibility::Hidden);
+		RootOverlay->SetVisibility(EVisibility::Collapsed);
 	}
 }

@@ -215,6 +215,20 @@ void AFirstPersonController::LineTrace()
 				if (LineTraceHitActor != nullptr && OutHit.GetActor() == LineTraceHitActor)
 				{
 					// Same actor
+					if (LineTraceHitActor->Implements<UInteractableInterface>())
+					{
+						TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
+							IInteractableInterface>(LineTraceHitActor);
+						if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
+						{
+							FInteractionHint InteractionHint = InteractableScriptInterface->GetHint(this);
+							OnShowInteractionHint.Broadcast(InteractionHint);
+
+							InteractableScriptInterface->OnFocus(this);
+
+							return;
+						}
+					}
 					return;
 				}
 
@@ -242,6 +256,7 @@ void AFirstPersonController::LineTrace()
 			}
 		}
 
+		// Hit nothing
 		if (LineTraceHitActor && LineTraceHitActor->Implements<UInteractableInterface>())
 		{
 			TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<

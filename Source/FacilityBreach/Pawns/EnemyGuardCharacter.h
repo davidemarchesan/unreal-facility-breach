@@ -10,11 +10,12 @@
 #include "GameFramework/Character.h"
 #include "Components/AudioComponent.h"
 #include "Components/WidgetComponent.h"
+#include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/UI/Widgets/AlertFeedbackWidget.h"
 #include "EnemyGuardCharacter.generated.h"
 
 UCLASS()
-class FACILITYBREACH_API AEnemyGuardCharacter : public ACharacter
+class FACILITYBREACH_API AEnemyGuardCharacter : public ACharacter, public IInteractableInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,17 @@ public:
 
 	void SetDetected();
 	void SetUndetected();
+
+	bool IsDeactivated() const { return bDeactivated; }
+
+	/* InteractableInterface */
+	virtual bool IsInteractable() override { return true; };
+	virtual FInteractionHint GetHint(APlayerController* PlayerController) override;
+
+	virtual void OnInteract(APlayerController* PlayerController) override;
+	virtual void OnFocus(APlayerController* PlayerController) override;
+	virtual void OnFocusLost(APlayerController* PlayerController) override;
+	/* END InteractableInterface */
 
 protected:
 	virtual void BeginPlay() override;
@@ -80,6 +92,9 @@ protected:
 	UPROPERTY(Category="Audio", EditAnywhere)
 	TObjectPtr<USoundBase> SoundOnDetected;
 
+	UPROPERTY(Category="Audio", EditAnywhere)
+	TObjectPtr<USoundBase> SoundOnDeactivated;
+
 private:
 
 	TObjectPtr<AFirstPersonCharacter> Player = nullptr;
@@ -89,6 +104,7 @@ private:
 	TObjectPtr<UAlertFeedbackWidget> AlertFeedbackWidget;
 	
 	bool IsPlayerInVision();
+	bool IsPlayerBehind();
 	bool bPlayerInVision = false;
 
 	FTimerHandle DetectedTimerHandle;
@@ -96,5 +112,8 @@ private:
 	void SetPatrolSpeed();
 	void SetChaseSpeed();
 	void SetSpeed(float InSpeed);
+
+	bool bDeactivated = false;
+	void Deactivate();
 
 };

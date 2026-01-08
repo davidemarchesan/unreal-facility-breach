@@ -2,6 +2,8 @@
 
 
 #include "EnemyGuardCharacter.h"
+
+#include "Components/CapsuleComponent.h"
 #include "FacilityBreach/AIControllers/EnemyGuardAIController.h"
 #include "FacilityBreach/PostProcess/Stencils/Stencils.h"
 
@@ -53,6 +55,15 @@ void AEnemyGuardCharacter::BeginPlay()
 
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyGuardCharacter::OnComponentBeginOverlap);
 		SphereComponent->OnComponentEndOverlap.AddDynamic(this, &AEnemyGuardCharacter::OnComponentEndOverlap);
+
+		TArray<AActor*> OverlappingActors;
+		TSubclassOf<AFirstPersonCharacter> ClassFilter = AFirstPersonCharacter::StaticClass();
+		SphereComponent->GetOverlappingActors(OverlappingActors, ClassFilter);
+
+		if (OverlappingActors.Num() > 0)
+		{
+			Player = Cast<AFirstPersonCharacter>(OverlappingActors[0]);
+		}
 	}
 
 	if (AIController)
@@ -100,7 +111,7 @@ void AEnemyGuardCharacter::OnEnterPatrol()
 	{
 		AlertFeedbackWidgetComponent->SetVisibility(false);
 	}
-	
+
 	SetPatrolSpeed();
 }
 
@@ -137,7 +148,7 @@ void AEnemyGuardCharacter::OnEnterChase()
 		AudioFeedbackComponent->SetSound(SoundOnChase);
 		AudioFeedbackComponent->Play();
 	}
-	
+
 	SetChaseSpeed();
 }
 
@@ -192,6 +203,51 @@ bool AEnemyGuardCharacter::IsPlayerInVision()
 	return false;
 }
 
+bool AEnemyGuardCharacter::IsPlayerBehind()
+{
+	if (Player == nullptr)
+	{
+		return false;
+	}
+
+	FVector PlayerLocation = Player->GetActorLocation();
+
+	FVector Direction = PlayerLocation - GetActorLocation();
+	Direction.Normalize();
+
+	const float DotProduct = FVector::DotProduct(GetActorForwardVector(), Direction);
+
+	if (DotProduct < 0)
+	{
+		// Between 90 and 180 degrees
+		float Cos = FMath::Cos(FMath::DegreesToRadians(40.f * 0.5f)) * -1.f; // -1.f = Negative
+
+		if (DotProduct <= Cos)
+		{
+			FHitResult OutHit;
+			bool bHit = GetWorld()->LineTraceSingleByChannel(
+				OutHit,
+				GetActorLocation(),
+				PlayerLocation,
+				ECC_Visibility
+			);
+
+			if (bHit)
+			{
+				if (const AActor* HitActor = OutHit.GetActor())
+				{
+					if (HitActor->IsA(AFirstPersonCharacter::StaticClass()))
+					{
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 void AEnemyGuardCharacter::SetPatrolSpeed()
 {
 	SetSpeed(StandardSpeed);
@@ -208,6 +264,38 @@ void AEnemyGuardCharacter::SetSpeed(float InSpeed)
 	{
 		MovementComponent->MaxFlySpeed = InSpeed;
 	}
+}
+
+void AEnemyGuardCharacter::Deactivate()
+{
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CapsuleComp->SetSimulatePhysics(true);
+	}
+	
+	if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+	{
+		SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		SkeletalMeshComponent->SetSimulatePhysics(true);
+		SkeletalMeshComponent->bPauseAnims = true;
+		
+		SkeletalMeshComponent->SetRenderCustomDepth(false);
+	}
+
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		MovementComponent->DisableMovement();
+	}
+
+	if (AudioComponent && SoundOnDeactivated)
+	{
+		AudioComponent->SetSound(SoundOnDeactivated);
+		AudioComponent->Play();
+	}
+
+	bDeactivated = true;
 }
 
 void AEnemyGuardCharacter::Tick(float DeltaTime)
@@ -262,7 +350,56 @@ void AEnemyGuardCharacter::SetUndetected()
 {
 	if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
 	{
-		SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Custom));
+		SkeletalMeshComponent->SetRenderCustomDepth(false);
+	}
+}
+
+FInteractionHint AEnemyGuardCharacter::GetHint(APlayerController* PlayerController)
+{
+	if (IsPlayerBehind() && bDeactivated == false)
+	{
+		return FInteractionHint(FText::FromString("Deactivate"));
+	}
+	else
+	{
+		return FInteractionHint();
+	}
+}
+
+void AEnemyGuardCharacter::OnInteract(APlayerController* PlayerController)
+{
+	if (bDeactivated == true)
+	{
+		return;
+	}
+	
+	if (IsPlayerBehind())
+	{
+		Deactivate();
+	}
+}
+
+void AEnemyGuardCharacter::OnFocus(APlayerController* PlayerController)
+{
+	if (bDeactivated == true)
+	{
+		return;
+	}
+	
+	if (IsPlayerBehind())
+	{
+		if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+		{
+			SkeletalMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Outline));
+			SkeletalMeshComponent->SetRenderCustomDepth(true);
+		}
+	}
+}
+
+void AEnemyGuardCharacter::OnFocusLost(APlayerController* PlayerController)
+{
+	if (USkeletalMeshComponent* SkeletalMeshComponent = GetMesh())
+	{
 		SkeletalMeshComponent->SetRenderCustomDepth(false);
 	}
 }
