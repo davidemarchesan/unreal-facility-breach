@@ -343,6 +343,21 @@ void AFirstPersonController::AddItemToInventory(FString ItemName, int32 Quantity
 	}
 }
 
+void AFirstPersonController::AddItemToInventory(AActor* Actor, FItemTableRow* Item, int32 Quantity)
+{
+	if (AFirstPersonPlayerState* State = GetPlayerState<AFirstPersonPlayerState>())
+	{
+		if (State->Inventory)
+		{
+			State->Inventory->AddItem(Actor, Item, Quantity);
+			if (AudioSubsystem)
+			{
+				AudioSubsystem->OnItemPickUp();
+			}
+		}
+	}
+}
+
 bool AFirstPersonController::HasItemInInventory(FString ItemName, int32 QuantityRequired)
 {
 	if (AFirstPersonPlayerState* State = GetPlayerState<AFirstPersonPlayerState>())

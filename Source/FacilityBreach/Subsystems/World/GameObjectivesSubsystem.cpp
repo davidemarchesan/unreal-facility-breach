@@ -23,8 +23,14 @@ void UGameObjectivesSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	if (UGameplayTagsManager* GameplayTagsManager = UGameplayTagsManager::GetIfAllocated())
 	{
 		Tag_Action_GeneralInteract = GameplayTagsManager->RequestGameplayTag("Action.General.Interact");
+		Tag_Action_Overlap_Begin = GameplayTagsManager->RequestGameplayTag("Action.Overlap.Begin");
 		Tag_Action_DoorOpen = GameplayTagsManager->RequestGameplayTag("Action.Door.Open");
 		Tag_Action_DoorClose = GameplayTagsManager->RequestGameplayTag("Action.Door.Close");
+		Tag_Action_Item_PickUp = GameplayTagsManager->RequestGameplayTag("Action.Item.PickUp");
+		Tag_Action_Ability_Scan = GameplayTagsManager->RequestGameplayTag("Action.Ability.Scan");
+		Tag_Action_Ability_Dash = GameplayTagsManager->RequestGameplayTag("Action.Ability.Dash");
+		Tag_Action_Input_Jump = GameplayTagsManager->RequestGameplayTag("Action.Input.Jump");
+		Tag_Action_Enemy_Deactivated = GameplayTagsManager->RequestGameplayTag("Action.Enemy.Deactivated");
 	}
 }
 

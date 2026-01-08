@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "PickupItems.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "GameFramework/Actor.h"
 #include "PickupItem.generated.h"
 
 UCLASS()
-class FACILITYBREACH_API APickupItem : public AActor, public IInteractableInterface
+class FACILITYBREACH_API APickupItem : public AActor, public IInteractableInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,10 @@ public:
 	virtual void OnFocusLost(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
 
+	/* IGameplayTagAssetInterface */
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	/* END IGameplayTagAssetInterface */
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,6 +40,10 @@ protected:
 
 	UPROPERTY(Category = "Item", EditAnywhere);
 	FDataTableRowHandle ItemTableRow;
+
+	/** Gameplay Tags */
+	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
+	FGameplayTagContainer GameplayTags;
 
 private:
 	FItemTableRow* Item;

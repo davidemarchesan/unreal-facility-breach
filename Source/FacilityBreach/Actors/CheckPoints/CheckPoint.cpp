@@ -37,6 +37,11 @@ void UCheckPointTrigger_GameObjective::Execute()
 	}
 }
 
+void ACheckPoint::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
+}
+
 void ACheckPoint::BeginPlay()
 {
 	Super::BeginPlay();
@@ -45,6 +50,8 @@ void ACheckPoint::BeginPlay()
 	{
 		BoxCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACheckPoint::OnComponentBeginOverlap);
 	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 }
 
 void ACheckPoint::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -55,6 +62,11 @@ void ACheckPoint::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	if (bFireOnce == true && bFired == true)
 	{
 		return;
+	}
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_Overlap_Begin);
 	}
 
 	if (Triggers.Num() > 0)

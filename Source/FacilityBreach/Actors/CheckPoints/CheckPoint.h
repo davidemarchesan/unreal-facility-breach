@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "Engine/TriggerBox.h"
 #include "FacilityBreach/Actors/GameObjectives/GameObjectives.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/Subsystems/World/TutorialSubsystem.h"
 #include "CheckPoint.generated.h"
 
@@ -49,11 +51,15 @@ public:
  * 
  */
 UCLASS()
-class FACILITYBREACH_API ACheckPoint : public ATriggerBox
+class FACILITYBREACH_API ACheckPoint : public ATriggerBox, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
 public:
+
+	/* IGameplayTagAssetInterface */
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	/* END IGameplayTagAssetInterface */
 	
 protected:
 
@@ -65,10 +71,16 @@ protected:
 	UPROPERTY(EditAnywhere, Instanced, Category="Trigger")
 	TArray<TObjectPtr<UCheckPointTrigger>> Triggers;
 
+	/** Gameplay Tags */
+	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
+	FGameplayTagContainer GameplayTags;
+
 private:
 
 	bool bFired = false;
 
 	UFUNCTION() void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 	
 };

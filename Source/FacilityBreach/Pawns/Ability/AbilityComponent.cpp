@@ -18,6 +18,7 @@ void UAbilityComponent::BeginPlay()
 	CharacterOwner = Cast<AFirstPersonCharacter>(GetOwner());
 
 	WorldScanSubsystem = GetWorld()->GetSubsystem<UWorldScanSubsystem>();
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 
 	InitializeAbilities();
 }
@@ -145,6 +146,11 @@ void UAbilityComponent::Dash()
 		{
 			MovementComponent->DoDash();
 			PlayAbilitySound(EAbilityType::ABILITY_Dash);
+
+			if (GameObjectivesSubsystem && CharacterOwner)
+			{
+				GameObjectivesSubsystem->Emit(CharacterOwner, GameObjectivesSubsystem->Tag_Action_Ability_Dash);
+			}
 		}
 	}
 }
@@ -163,6 +169,11 @@ void UAbilityComponent::Scan()
 		{
 			WorldScanSubsystem->StartScan(CharacterOwner->GetActorLocation());
 			PlayAbilitySound(EAbilityType::ABILITY_Scan);
+
+			if (GameObjectivesSubsystem && CharacterOwner)
+			{
+				GameObjectivesSubsystem->Emit(CharacterOwner, GameObjectivesSubsystem->Tag_Action_Ability_Scan);
+			}
 		}
 	}
 }

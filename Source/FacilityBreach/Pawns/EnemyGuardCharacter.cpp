@@ -90,6 +90,8 @@ void AEnemyGuardCharacter::BeginPlay()
 	}
 
 	SetPatrolSpeed();
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 }
 
 void AEnemyGuardCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -296,6 +298,11 @@ void AEnemyGuardCharacter::Deactivate()
 	}
 
 	bDeactivated = true;
+	
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_Enemy_Deactivated);
+	}
 }
 
 void AEnemyGuardCharacter::Tick(float DeltaTime)
@@ -402,4 +409,9 @@ void AEnemyGuardCharacter::OnFocusLost(APlayerController* PlayerController)
 	{
 		SkeletalMeshComponent->SetRenderCustomDepth(false);
 	}
+}
+
+void AEnemyGuardCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
 }

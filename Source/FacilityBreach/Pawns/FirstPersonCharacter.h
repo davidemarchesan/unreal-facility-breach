@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
 #include "FacilityBreach/Pawns/Movement/FirstPersonMovementComponent.h"
 #include "Components/AudioComponent.h"
+#include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FirstPersonCharacter.generated.h"
 
 class UAbilityComponent;
@@ -14,7 +16,7 @@ class UCameraComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS()
-class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter
+class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -32,6 +34,8 @@ public:
 	FORCEINLINE UCameraComponent* GetCameraComponent() const { return FirstPersonCameraComponent; }
 	
 	FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
+
+	virtual void Jump() override;
 	
 	void Dash();
 
@@ -39,10 +43,18 @@ public:
 
 	FOnDeath OnDeath;
 
+	/* IGameplayTagAssetInterface */
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	/* END IGameplayTagAssetInterface */
+
 protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION() void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	/** Gameplay Tags */
+	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
+	FGameplayTagContainer GameplayTags;
 	
 private:
 
@@ -56,6 +68,8 @@ private:
 
 	UPROPERTY(Category="Character", VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UAudioComponent> AudioComponent;
+
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 
 	bool bDead = false;
 	void Die();

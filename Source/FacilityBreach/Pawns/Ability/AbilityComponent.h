@@ -102,5 +102,6 @@ private:
 
 	/** Subsystems */
 	TObjectPtr<UWorldScanSubsystem> WorldScanSubsystem;
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 	
 };

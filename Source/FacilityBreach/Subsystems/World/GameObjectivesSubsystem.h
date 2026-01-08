@@ -54,8 +54,14 @@ public:
 
 	/** Action Tags */
 	inline static FGameplayTag Tag_Action_GeneralInteract;
+	inline static FGameplayTag Tag_Action_Overlap_Begin;
 	inline static FGameplayTag Tag_Action_DoorOpen;
 	inline static FGameplayTag Tag_Action_DoorClose;
+	inline static FGameplayTag Tag_Action_Item_PickUp;
+	inline static FGameplayTag Tag_Action_Ability_Scan;
+	inline static FGameplayTag Tag_Action_Ability_Dash;
+	inline static FGameplayTag Tag_Action_Input_Jump;
+	inline static FGameplayTag Tag_Action_Enemy_Deactivated;
 	/** End Action Tags */
 	
 };

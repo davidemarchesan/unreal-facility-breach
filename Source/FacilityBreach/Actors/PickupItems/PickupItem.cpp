@@ -70,7 +70,7 @@ void APickupItem::OnInteract(APlayerController* PlayerController)
 
 	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(PlayerController))
 	{
-		Controller->AddItemToInventory(Item->Name);
+		Controller->AddItemToInventory(this, Item);
 		Destroy();
 	}
 
@@ -91,5 +91,10 @@ void APickupItem::OnFocusLost(APlayerController* PlayerController)
 	{
 		MeshComponent->SetCustomDepthStencilValue(static_cast<int32>(EStencilType::STENCIL_Glow));
 	}
+}
+
+void APickupItem::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "FacilityBreach/Actors/PickupItems/PickupItems.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Subsystems/LocalPlayer/LocalPlayerAudioSubsystem.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
@@ -101,6 +102,7 @@ public:
 
 	/** Inventory */
 	void AddItemToInventory(FString ItemName, int32 Quantity = 1);
+	void AddItemToInventory(AActor* Actor, FItemTableRow* Item, int32 Quantity = 1);
 	bool HasItemInInventory(FString ItemName, int32 QuantityRequired = 1);
 	
 };

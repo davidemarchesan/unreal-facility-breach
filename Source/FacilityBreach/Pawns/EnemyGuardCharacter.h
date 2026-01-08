@@ -15,7 +15,7 @@
 #include "EnemyGuardCharacter.generated.h"
 
 UCLASS()
-class FACILITYBREACH_API AEnemyGuardCharacter : public ACharacter, public IInteractableInterface
+class FACILITYBREACH_API AEnemyGuardCharacter : public ACharacter, public IInteractableInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -39,6 +39,10 @@ public:
 	virtual void OnFocus(APlayerController* PlayerController) override;
 	virtual void OnFocusLost(APlayerController* PlayerController) override;
 	/* END InteractableInterface */
+
+	/* IGameplayTagAssetInterface */
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	/* END IGameplayTagAssetInterface */
 
 protected:
 	virtual void BeginPlay() override;
@@ -95,6 +99,10 @@ protected:
 	UPROPERTY(Category="Audio", EditAnywhere)
 	TObjectPtr<USoundBase> SoundOnDeactivated;
 
+	/** Gameplay Tags */
+	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
+	FGameplayTagContainer GameplayTags;
+
 private:
 
 	TObjectPtr<AFirstPersonCharacter> Player = nullptr;
@@ -115,5 +123,7 @@ private:
 
 	bool bDeactivated = false;
 	void Deactivate();
+
+	UGameObjectivesSubsystem* GameObjectivesSubsystem;
 
 };

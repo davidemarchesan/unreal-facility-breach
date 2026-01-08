@@ -33,6 +33,11 @@ AFirstPersonCharacter::AFirstPersonCharacter(const FObjectInitializer& ObjectIni
 	}
 }
 
+void AFirstPersonCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = GameplayTags;
+}
+
 // Called when the game starts or when spawned
 void AFirstPersonCharacter::BeginPlay()
 {
@@ -42,6 +47,8 @@ void AFirstPersonCharacter::BeginPlay()
 	{
 		CapsuleComp->OnComponentHit.AddDynamic(this, &AFirstPersonCharacter::OnComponentHit);
 	}
+
+	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 }
 
 void AFirstPersonCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -75,6 +82,16 @@ void AFirstPersonCharacter::Tick(float DeltaTime)
 void AFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AFirstPersonCharacter::Jump()
+{
+	Super::Jump();
+
+	if (GameObjectivesSubsystem)
+	{
+		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_Input_Jump);
+	}
 }
 
 void AFirstPersonCharacter::Dash()

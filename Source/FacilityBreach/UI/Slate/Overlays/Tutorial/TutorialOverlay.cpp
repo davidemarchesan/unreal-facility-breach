@@ -48,6 +48,7 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 								SAssignNew(DescriptionTextBlock, STextBlock)
 								.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.p"))
 								.ColorAndOpacity(FLinearColor::White)
+								.AutoWrapText(true)
 								.Text(Description)
 							]
 						]
