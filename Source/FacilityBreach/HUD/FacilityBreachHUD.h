@@ -52,6 +52,8 @@ private:
 	UFUNCTION() void OnInventoryAddItem(FString ItemName);
 
 	void InitializeDelegatesTutorial();
+	UFUNCTION() void OnTutorialShow(const FText& Title, const FText& Description);
+	UFUNCTION() void OnTutorialHide();
 	
 	/** Overlays */
 	void InitializeOverlays();

@@ -13,15 +13,6 @@ void UGameObjectivesSubsystem::LoadGameObjectives()
 		UGameplayStatics::GetActorOfClass(GetWorld(), AGameObjectivesManager::StaticClass())))
 	{
 		GameObjectives = GameObjectivesManager->GetGameObjectives();
-
-		if (GameObjectives.Num() == 0)
-		{
-			UE_LOG(LogTemp, Error, TEXT("UGameObjectivesSubsystem: No Objectives set in Objectives manager"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UGameObjectivesSubsystem: Did not found a Game Objectives manager"));
 	}
 }
 
@@ -42,8 +33,7 @@ void UGameObjectivesSubsystem::PostInitialize()
 	Super::PostInitialize();
 
 	LoadGameObjectives();
-
-	SetGameObjective("Test.1");
+	
 }
 
 void UGameObjectivesSubsystem::SetGameObjective(FName ID)
@@ -57,24 +47,28 @@ void UGameObjectivesSubsystem::SetGameObjective(FName ID)
 	{
 		if (GameObjective->ID == ID)
 		{
-			// Separating data vs status
-			TArray<FGameObjectiveGoalState> GoalStates;
-
-			for (FGameObjectiveGoal& Goal : GameObjective->Goals)
-			{
-				GoalStates.Add(FGameObjectiveGoalState(Goal.ID, Goal.Title, Goal.ActionGameplayTags,
-				                                       Goal.ActorGameplayTags, Goal.Count));
-			}
-
-			CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GameObjective->Title, GoalStates);
-			CurrentObjectiveState.bActive = true;
-
-			UE_LOG(LogTemp, Warning, TEXT("UGameObjectivesSubsystem: SetGameObjective %s"), *GameObjective->ID.ToString());
-
-			// Update UI
-			OnGameObjectiveNew.Broadcast(CurrentObjectiveState);
+			SetGameObjective(GameObjective);
+			break;
 		}
 	}
+}
+
+void UGameObjectivesSubsystem::SetGameObjective(UGameObjective* GameObjective)
+{
+	// Separating data vs status
+	TArray<FGameObjectiveGoalState> GoalStates;
+
+	for (FGameObjectiveGoal& Goal : GameObjective->Goals)
+	{
+		GoalStates.Add(FGameObjectiveGoalState(Goal.ID, Goal.Title, Goal.ActionGameplayTags,
+		                                       Goal.ActorGameplayTags, Goal.Count));
+	}
+
+	CurrentObjectiveState = FGameObjectiveState(GameObjective->ID, GameObjective->Title, GoalStates);
+	CurrentObjectiveState.bActive = true;
+
+	// Update UI
+	OnGameObjectiveNew.Broadcast(CurrentObjectiveState);
 }
 
 void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTag)
@@ -164,7 +158,8 @@ void UGameObjectivesSubsystem::Emit(AActor* Actor, FGameplayTag ActionGameplayTa
 	{
 		CurrentObjectiveState.bCompleted = true;
 		OnGameObjectiveCompleted.Broadcast(CurrentObjectiveState);
-	} else if (bLeastOneGoalCompleted == true)
+	}
+	else if (bLeastOneGoalCompleted == true)
 	{
 		OnGameObjectiveGoalCompleted.Broadcast(CurrentObjectiveState);
 	}

@@ -4,6 +4,7 @@
 #include "FirstPersonController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "FacilityBreach/HUD/FacilityBreachHUD.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
@@ -66,7 +67,10 @@ void AFirstPersonController::SetupInputComponent()
 
 			// Others
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Tab, ETriggerEvent::Triggered, this,
-									  &AFirstPersonController::ToggleInventory);
+			                          &AFirstPersonController::ToggleInventory);
+			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Back, ETriggerEvent::Triggered, this,
+			                          &AFirstPersonController::Back);
+			
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -164,6 +168,23 @@ void AFirstPersonController::ToggleInventory()
 	OnInventoryToggle.Broadcast();
 }
 
+void AFirstPersonController::Back()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AFirstPersonController::Back()"));
+
+	if (IsPaused())
+	{
+
+		if (bShowingTutorial == true && TutorialSubsystem)
+		{
+			TutorialSubsystem->HideTutorial();
+			bShowingTutorial = false;
+			SetPause(false);
+		}
+		
+	}
+}
+
 void AFirstPersonController::LineTrace()
 {
 	if (FirstPersonCameraComponent)
@@ -245,10 +266,25 @@ void AFirstPersonController::LoadSubsystems()
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
 	if (GameObjectivesSubsystem && AudioSubsystem)
 	{
-		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
-		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,&ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
-		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveNew.AddUObject(AudioSubsystem,
+		                                                       &ULocalPlayerAudioSubsystem::OnGameObjectiveNew);
+		GameObjectivesSubsystem->OnGameObjectiveCompleted.AddUObject(AudioSubsystem,
+		                                                             &ULocalPlayerAudioSubsystem::OnGameObjectiveCompleted);
+		GameObjectivesSubsystem->OnGameObjectiveGoalCompleted.AddUObject(
+			AudioSubsystem, &ULocalPlayerAudioSubsystem::OnGameObjectiveGoalCompleted);
 	}
+
+	TutorialSubsystem = GetWorld()->GetSubsystem<UTutorialSubsystem>();
+	if (TutorialSubsystem)
+	{
+		TutorialSubsystem->OnTutorialShow.AddUObject(this, &AFirstPersonController::OnTutorialShow);
+	}
+}
+
+void AFirstPersonController::OnTutorialShow(const FText& Title, const FText& Description)
+{
+	SetPause(true);
+	bShowingTutorial = true;
 }
 
 void AFirstPersonController::Debug()
@@ -260,7 +296,7 @@ void AFirstPersonController::Debug()
 
 	FFacilityBreachStyle::Shutdown();
 	FFacilityBreachStyle::Initialize();
-	
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(

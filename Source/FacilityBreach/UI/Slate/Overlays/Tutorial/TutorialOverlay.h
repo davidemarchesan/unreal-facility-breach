@@ -16,6 +16,11 @@ public:
 
 	void Construct(const FArguments& InArgs);
 
+	void OnShow(FText InTitle, FText InDescription);
+	void OnHide();
+
 private:
 	TSharedPtr<SOverlay> MainOverlay;
+	TSharedPtr<STextBlock> TitleTextBlock;
+	TSharedPtr<STextBlock> DescriptionTextBlock;
 };

@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
-#include "FacilityBreach/Actors/Portals/Portal.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Subsystems/LocalPlayer/LocalPlayerAudioSubsystem.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
+#include "FacilityBreach/Subsystems/World/TutorialSubsystem.h"
 #include "GameFramework/PlayerController.h"
 #include "FirstPersonController.generated.h"
 
@@ -73,6 +73,8 @@ private:
 
 	void ToggleInventory();
 
+	void Back();
+
 	// Character
 	AFirstPersonCharacter* FirstPersonCharacter;
 	UCameraComponent* FirstPersonCameraComponent;
@@ -86,6 +88,11 @@ private:
 	void LoadSubsystems();
 	ULocalPlayerAudioSubsystem* AudioSubsystem;
 	UGameObjectivesSubsystem* GameObjectivesSubsystem;
+	UTutorialSubsystem* TutorialSubsystem;
+
+	// Tutorial
+	UFUNCTION() void OnTutorialShow(const FText& Title, const FText& Description);
+	bool bShowingTutorial = false;
 
 	// Debug only
 	void Debug();

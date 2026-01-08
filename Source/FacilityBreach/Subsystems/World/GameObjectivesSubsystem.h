@@ -27,6 +27,7 @@ public:
 	virtual void PostInitialize() override;
 
 	void SetGameObjective(FName ID);
+	void SetGameObjective(UGameObjective* GameObjective);
 
 	void Emit(AActor* Actor, FGameplayTag ActionGameplayTag);
 
