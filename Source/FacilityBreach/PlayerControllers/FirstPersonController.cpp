@@ -170,19 +170,13 @@ void AFirstPersonController::ToggleInventory()
 
 void AFirstPersonController::Back()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AFirstPersonController::Back()"));
 
-	if (IsPaused())
+	if (bShowingTutorial == true && TutorialSubsystem)
 	{
-
-		if (bShowingTutorial == true && TutorialSubsystem)
-		{
-			TutorialSubsystem->HideTutorial();
-			bShowingTutorial = false;
-			SetPause(false);
-		}
-		
+		TutorialSubsystem->HideTutorial();
+		bShowingTutorial = false;
 	}
+	
 }
 
 void AFirstPersonController::LineTrace()
@@ -298,7 +292,7 @@ void AFirstPersonController::LoadSubsystems()
 
 void AFirstPersonController::OnTutorialShow(const FText& Title, const FText& Description)
 {
-	SetPause(true);
+	// SetPause(true);
 	bShowingTutorial = true;
 
 	if (AudioSubsystem)
