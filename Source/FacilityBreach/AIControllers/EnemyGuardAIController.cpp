@@ -281,6 +281,5 @@ void AEnemyGuardAIController::EnterAlert()
 		StopMovement();
 		SetState(EAIGuardState::STATE_Alert);
 		MoveToLocation(LastKnownTargetLocation); // Last known position
-		DrawDebugSphere(GetWorld(), LastKnownTargetLocation, 20.0f, 12, FColor::Red, true, 10.f);
 	}
 }
