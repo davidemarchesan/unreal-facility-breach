@@ -11,8 +11,9 @@ void AEnemyGuardAIController::StartPatrol(TArray<TObjectPtr<AWayPoint>> InWayPoi
 	if (BuildWayPointLocations(InWayPoints))
 	{
 		bLoopWayPoints = bInLoopWayPoints;
-		EnterPatrol(); // Starts from WayPoint 0
 	}
+
+	EnterPatrol();
 }
 
 void AEnemyGuardAIController::OnTargetSeen(AActor* Target)
@@ -59,6 +60,9 @@ void AEnemyGuardAIController::OnMoveCompleted(FAIRequestID RequestID, const FPat
 void AEnemyGuardAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	InitialLocation = InPawn->GetActorLocation();
+	InitialRotation = InPawn->GetActorRotation();
 }
 
 bool AEnemyGuardAIController::BuildWayPointLocations(TArray<TObjectPtr<AWayPoint>> InWayPoints)
@@ -97,34 +101,68 @@ bool AEnemyGuardAIController::BuildWayPointLocations(TArray<TObjectPtr<AWayPoint
 
 void AEnemyGuardAIController::MoveToWayPoint()
 {
-	const FVector CurrentWayPointLocation = WayPointLocations[CurrentWayPointIndex];
-	EPathFollowingRequestResult::Type Result = MoveToLocation(CurrentWayPointLocation);
+	if (WayPoints.IsValidIndex(CurrentWayPointIndex))
+	{
+		const FVector CurrentWayPointLocation = WayPointLocations[CurrentWayPointIndex];
+		EPathFollowingRequestResult::Type Result = MoveToLocation(CurrentWayPointLocation);
+
+		if (Result == EPathFollowingRequestResult::Type::Failed)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AEnemyGuardAIController::GoToNextWayPoint() Failed for location %f, %f, %f"),
+			       CurrentWayPointLocation.X,
+			       CurrentWayPointLocation.Y, CurrentWayPointLocation.Z);
+		}
+	}
+}
+
+void AEnemyGuardAIController::MoveToInitialLocation()
+{
+	EPathFollowingRequestResult::Type Result = MoveToLocation(InitialLocation);
 
 	if (Result == EPathFollowingRequestResult::Type::Failed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyGuardAIController::GoToNextWayPoint() Failed for location %f, %f, %f"),
-		       CurrentWayPointLocation.X,
-		       CurrentWayPointLocation.Y, CurrentWayPointLocation.Z);
+		UE_LOG(LogTemp, Warning,
+		       TEXT("AEnemyGuardAIController::MoveToInitialLocation() Failed for location %f, %f, %f"),
+		       InitialLocation.X,
+		       InitialLocation.Y, InitialLocation.Z);
 	}
 }
 
 void AEnemyGuardAIController::EnterPatrol()
 {
 	SetState(EAIGuardState::STATE_Patrol);
-	MoveToWayPoint();
+
+	if (WayPoints.IsEmpty())
+	{
+		MoveToInitialLocation();
+	}
+	else
+	{
+		MoveToWayPoint();
+	}
 
 	OnEnterPatrol.Broadcast();
 }
 
 void AEnemyGuardAIController::OnPatrolCompleted()
 {
+
+	if (WayPoints.IsEmpty())
+	{
+		// Means the AI returned to initial location, set initial rotation
+		if (APawn* ControlledActor = GetPawn())
+		{
+			ControlledActor->SetActorRotation(InitialRotation);
+		}
+		return;
+	}
+	
 	if (WayPoints.IsValidIndex(CurrentWayPointIndex))
 	{
 		AWayPoint* CurrentWayPoint = WayPoints[CurrentWayPointIndex];
 
 		if (CurrentWayPoint && CurrentWayPoint->StayInPositionTime > 0.f)
 		{
-
 			// Move when timer finishes
 			GetWorldTimerManager().ClearTimer(WayPointStayTimerHandle);
 			GetWorldTimerManager().SetTimer(
@@ -143,7 +181,7 @@ void AEnemyGuardAIController::OnPatrolCompleted()
 					ControlledActor->SetActorRotation(CurrentWayPoint->GetActorRotation());
 				}
 			}
-			
+
 			return;
 		}
 	}
@@ -204,7 +242,7 @@ void AEnemyGuardAIController::EnterSuspicious()
 		SuspiciousTimerHandle,
 		this,
 		&AEnemyGuardAIController::CheckSuspiciousness,
-		2.f,
+		1.f,
 		false
 	);
 

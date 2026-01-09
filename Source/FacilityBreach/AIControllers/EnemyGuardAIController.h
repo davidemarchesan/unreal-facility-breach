@@ -52,9 +52,7 @@ protected:
 private:
 
 	void SetState(EAIGuardState NewState) { State = NewState; }
-
 	
-
 	// In game actors
 	TArray<TObjectPtr<AWayPoint>> WayPoints;
 
@@ -80,6 +78,7 @@ private:
 	void EnterPatrol();
 	void OnPatrolCompleted();
 	void MoveToWayPoint();
+	void MoveToInitialLocation();
 	void NextWayPoint();
 	FTimerHandle WayPointStayTimerHandle;
 
@@ -93,5 +92,8 @@ private:
 	
 	/** Alert */
 	void EnterAlert();
+
+	FVector InitialLocation;
+	FRotator InitialRotation;
 	
 };
