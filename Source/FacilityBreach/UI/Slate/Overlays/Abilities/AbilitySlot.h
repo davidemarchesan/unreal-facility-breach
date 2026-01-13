@@ -14,6 +14,7 @@ public:
 		{}
 		SLATE_ARGUMENT(int32, Charges)
 		SLATE_ARGUMENT(FName, Icon)
+		SLATE_ARGUMENT(FString, InputKey)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);

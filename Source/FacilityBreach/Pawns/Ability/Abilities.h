@@ -33,6 +33,9 @@ struct FAbilityTableRow : public FTableRowBase
 	FName Icon = "";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	FString InputKey = "";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TObjectPtr<USoundBase> Sound = nullptr;
 	
 };

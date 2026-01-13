@@ -10,82 +10,118 @@ void SAbilitySlot::Construct(const FArguments& InArgs)
 {
 	const int32 Charges = InArgs._Charges;
 	const FName Icon = InArgs._Icon;
+	const FString InputKey = InArgs._InputKey;
 
 	FSlateFontInfo CooldownTextFont = FFacilityBreachStyle::Get().GetFontStyle("Font.Regular.h2");
 	CooldownTextFont.OutlineSettings = FFontOutlineSettings(1.f, FLinearColor::Black);
 
 	ChildSlot
 	[
-		SNew(SBox)
-		.HeightOverride(AbilitySlotSize)
-		.WidthOverride(AbilitySlotSize)
+
+		SNew(SVerticalBox)
+
+		+ SVerticalBox::Slot()
+		.AutoHeight()
 		[
-
-			SNew(SOverlay)
-
-			// Ability image
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Fill)
+			SNew(SBox)
+			.HeightOverride(AbilitySlotSize)
+			.WidthOverride(AbilitySlotSize)
 			[
 
-				SAssignNew(IconBorder, SBorder)
-				.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Ability.Slot.Enabled"))
-				.Padding(10.f)
-				[
-					SNew(SScaleBox)
-					.Stretch(EStretch::ScaleToFit)
-					.StretchDirection(EStretchDirection::DownOnly)
-					[
+				SNew(SOverlay)
 
-						SNew(SImage)
-						.ColorAndOpacity(FLinearColor::Black)
-						.Image(FFacilityBreachStyle::Get().GetBrush(Icon))
+				// Ability image
+				+ SOverlay::Slot()
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Fill)
+				[
+
+					SAssignNew(IconBorder, SBorder)
+					.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Ability.Slot.Enabled"))
+					.Padding(10.f)
+					[
+						SNew(SScaleBox)
+						.Stretch(EStretch::ScaleToFit)
+						.StretchDirection(EStretchDirection::DownOnly)
+						[
+
+							SNew(SImage)
+							.ColorAndOpacity(FLinearColor::Black)
+							.Image(FFacilityBreachStyle::Get().GetBrush(Icon))
+						]
 					]
 				]
-			]
 
-			// Vertically charging shroud
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Fill)
-			.VAlign(VAlign_Bottom)
-			[
-				SAssignNew(ChargingShroudBox, SBox)
-				.WidthOverride(AbilitySlotSize)
-				.HeightOverride(0.f)
-				.Visibility(EVisibility::Hidden)
+				// Vertically charging shroud
+				+ SOverlay::Slot()
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Bottom)
 				[
-					SNew(SBorder)
-					.BorderImage(
-						new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3f), BorderRadius))
+					SAssignNew(ChargingShroudBox, SBox)
+					.WidthOverride(AbilitySlotSize)
+					.HeightOverride(0.f)
+					.Visibility(EVisibility::Hidden)
+					[
+						SNew(SBorder)
+						.BorderImage(
+							new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3f), BorderRadius))
+					]
 				]
-			]
 
-			// Charges
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Right)
-			.VAlign(VAlign_Bottom)
-			.Padding(5.f)
-			[
-				SAssignNew(ChargesTextBlock, STextBlock)
-				.Text(FText::AsNumber(Charges))
-				.ColorAndOpacity(FLinearColor::Black)
-			]
+				// Charges
+				+ SOverlay::Slot()
+				.HAlign(HAlign_Right)
+				.VAlign(VAlign_Bottom)
+				.Padding(5.f)
+				[
+					SAssignNew(ChargesTextBlock, STextBlock)
+					.Text(FText::AsNumber(Charges))
+					.ColorAndOpacity(FLinearColor::Black)
+				]
 
-			// Cooldown
-			+ SOverlay::Slot()
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
+				// Cooldown
+				+ SOverlay::Slot()
+				.HAlign(HAlign_Center)
+				.VAlign(VAlign_Center)
+				[
+					SAssignNew(CooldownTextBlock, STextBlock)
+					.Visibility(EVisibility::Hidden)
+					.Text(FText::AsNumber(0))
+					.Font(CooldownTextFont)
+					.ColorAndOpacity(FLinearColor::White)
+				]
+
+
+			]
+		]
+
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		.HAlign(HAlign_Center)
+		[
+
+			SNew(SBox)
+			.Padding(0.f, 10.f)
+			.MinDesiredWidth(25.f)
 			[
-				SAssignNew(CooldownTextBlock, STextBlock)
-				.Visibility(EVisibility::Hidden)
-				.Text(FText::AsNumber(0))
-				.Font(CooldownTextFont)
-				.ColorAndOpacity(FLinearColor::White)
+				SNew(SBorder)
+				.BorderImage(FFacilityBreachStyle::Get().GetBrush("Brush.Ability.InputKey"))
+				.Padding(5.f)
+				[
+
+					SNew(STextBlock)
+					.Justification(ETextJustify::Center)
+					.Text(FText::FromString(InputKey))
+					.TransformPolicy(ETextTransformPolicy::ToUpper)
+					.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.SemiBold.help"))
+					.ColorAndOpacity(FLinearColor::White)
+				]
+
 			]
 
 
 		]
+
 	];
 }
 
