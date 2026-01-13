@@ -5,12 +5,14 @@
 
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
+#include "FacilityBreach/GameModes/GameModeTest.h"
 #include "FacilityBreach/Pawns/Ability/AbilityComponent.h"
 #include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/PlayerStates/FirstPersonPlayerState.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/Subsystems/World/TutorialSubsystem.h"
 #include "FacilityBreach/UI/Slate/Overlays/Abilities/AbilitiesOverlay.h"
+#include "FacilityBreach/UI/Slate/Overlays/EndGame/EndGameOverlay.h"
 
 #include "Widgets/SOverlay.h"
 
@@ -19,6 +21,8 @@ void AFacilityBreachHUD::BeginPlay()
 	Super::BeginPlay();
 
 	CharacterOwner = Cast<AFirstPersonCharacter>(GetOwningPawn());
+
+	GameMode = Cast<AGameModeTest>(GetWorld()->GetAuthGameMode());
 
 	InitializeDelegatesSub();
 
@@ -32,6 +36,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 	InitializeDelegatesGameObjectives();
 	InitializeDelegatesInventory();
 	InitializeDelegatesTutorial();
+	InitializeDelegatesEndGame();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -195,6 +200,22 @@ void AFacilityBreachHUD::OnTutorialHide()
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesEndGame()
+{
+	if (GameMode)
+	{
+		GameMode->OnPlayerDeath.AddUObject(this, &AFacilityBreachHUD::OnPlayerDeath);
+	}
+}
+
+void AFacilityBreachHUD::OnPlayerDeath()
+{
+	if (EndGameOverlay.IsValid())
+	{
+		EndGameOverlay->SetVisibility(EVisibility::Visible);
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
@@ -205,6 +226,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayGameObjectives();
 		InitializeOverlayInventory();
 		InitializeOverlayTutorial();
+		InitializeOverlayEndGame();
 	}
 }
 
@@ -292,5 +314,24 @@ void AFacilityBreachHUD::InitializeOverlayTutorial()
 	if (TutorialOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(TutorialOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayEndGame()
+{
+	EndGameOverlay = SNew(SEndGameOverlay)
+		.OnRespawn_Lambda([this]() -> FReply
+		{
+			if (GameMode)
+			{
+				GameMode->RespawnPlayer();
+			}
+			return FReply::Handled();
+		});
+	EndGameOverlay->SetVisibility(EVisibility::Collapsed);
+
+	if (EndGameOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(EndGameOverlay.ToSharedRef());
 	}
 }

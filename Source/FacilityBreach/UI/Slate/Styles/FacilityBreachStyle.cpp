@@ -21,6 +21,17 @@ struct FStyleIconData
 	FVector2D Size;
 };
 
+struct FStyleButtonData
+{
+	FString Name;
+	FSlateBrush Normal;
+	FSlateBrush Hovered;
+	FSlateBrush Pressed;
+	FSlateColor NormalForeground;
+	FSlateColor HoveredForeground;
+	FSlateColor PressedForeground;
+};
+
 void FFacilityBreachStyle::Initialize()
 {
 	if (StyleInstance.IsValid())
@@ -33,6 +44,7 @@ void FFacilityBreachStyle::Initialize()
 	InitializeFonts();
 	InitializeIcons();
 	InitializeBrushes();
+	InitializeButtons();
 
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleInstance);
 }
@@ -94,14 +106,13 @@ void FFacilityBreachStyle::InitializeFonts()
 			// Example: FB.Font.Regular.sm or FB.Font.Regular.md
 
 			StyleInstance->Set(*StyleFontName, FSlateFontInfo(
-								   LoadObject<UFont>(
-									   nullptr, *StyleFont.Source),
-								   FontSize.Value
-							   )
+				                   LoadObject<UFont>(
+					                   nullptr, *StyleFont.Source),
+				                   FontSize.Value
+			                   )
 			);
 		}
 	}
-	
 }
 
 void FFacilityBreachStyle::InitializeIcons()
@@ -136,20 +147,78 @@ void FFacilityBreachStyle::InitializeIcons()
 void FFacilityBreachStyle::InitializeBrushes()
 {
 	StyleInstance->Set("Brush.Ability.Slot.Enabled", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
-	StyleInstance->Set("Brush.Ability.Slot.Disabled", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("999999")), 5.f));
-	
+	StyleInstance->Set("Brush.Ability.Slot.Disabled",
+	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("999999")), 5.f));
+
 	StyleInstance->Set("Brush.Interaction.Hint", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
 	StyleInstance->Set("Brush.Interaction.Key", new FSlateRoundedBoxBrush(FLinearColor::White, 4.f));
-	
-	StyleInstance->Set("Brush.Goal.ProgressBar.Background", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3), 4.f, FLinearColor(1.f, 1.f, 1.f, 0.7), 2.f));
-	StyleInstance->Set("Brush.Goal.ProgressBar.InProgress", new FSlateRoundedBoxBrush(FLinearColor::Yellow, 4.f, FLinearColor::Transparent, 2.f));
-	StyleInstance->Set("Brush.Goal.ProgressBar.Completed", new FSlateRoundedBoxBrush(FLinearColor::White, 4.f, FLinearColor::Transparent, 2.f));
+
+	StyleInstance->Set("Brush.Goal.ProgressBar.Background",
+	                   new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.3), 4.f,
+	                                             FLinearColor(1.f, 1.f, 1.f, 0.7), 2.f));
+	StyleInstance->Set("Brush.Goal.ProgressBar.InProgress",
+	                   new FSlateRoundedBoxBrush(FLinearColor::Yellow, 4.f, FLinearColor::Transparent, 2.f));
+	StyleInstance->Set("Brush.Goal.ProgressBar.Completed",
+	                   new FSlateRoundedBoxBrush(FLinearColor::White, 4.f, FLinearColor::Transparent, 2.f));
 
 	StyleInstance->Set("Brush.Objective.Banner.New", new FSlateRoundedBoxBrush(FLinearColor(0.f, 0.f, 0.f, 0.6), 5.f));
 	StyleInstance->Set("Brush.Objective.Banner.Completed", new FSlateRoundedBoxBrush(FLinearColor::White, 5.f));
 
-	StyleInstance->Set("Brush.Inventory.Background", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14FF")), 5.f));
-	StyleInstance->Set("Brush.Inventory.Slot.Background", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f, FLinearColor::Transparent, 1.f));
-	StyleInstance->Set("Brush.Inventory.Slot.Background.Active", new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f, FLinearColor::White, 1.f));
-	
+	StyleInstance->Set("Brush.Inventory.Background",
+	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14FF")), 5.f));
+	StyleInstance->Set("Brush.Inventory.Slot.Background",
+	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f,
+	                                             FLinearColor::Transparent, 1.f));
+	StyleInstance->Set("Brush.Inventory.Slot.Background.Active",
+	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("1A3A28FF")), 5.f, FLinearColor::White,
+	                                             1.f));
+
+	StyleInstance->Set("Brush.EndGame.Background",
+	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14D9")), 0.f));
+}
+
+void FFacilityBreachStyle::InitializeButtons()
+{
+	const TArray<FStyleButtonData> StyleButtons = {
+		FStyleButtonData(
+			"Button.Yellow",
+			FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("#ceab00")), 5.f),
+			FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("#ffd935")), 5.f),
+			FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("#ffd935")), 5.f),
+			FLinearColor::Black,
+			FLinearColor::Black,
+			FLinearColor::Black
+		),
+		FStyleButtonData(
+			"Button.Outline.Yellow",
+			FSlateRoundedBoxBrush(FLinearColor::Transparent, 5.f, FLinearColor(FColor::FromHex("#ffd935")), 4.f),
+			FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("#ffd935")), 5.f, FLinearColor(FColor::FromHex("#ffd935")), 4.f),
+			FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("#ffd935")), 5.f, FLinearColor(FColor::FromHex("#ffd935")), 4.f),
+			FLinearColor(FColor::FromHex("#ffd935")),
+			FLinearColor::Black,
+			FLinearColor::Black
+		),
+	};
+
+	const TMap<FString, FMargin> ButtonSizes = {
+		{"md", FMargin(12.f, 4.f)}
+	};
+
+	for (const FStyleButtonData& StyleButton : StyleButtons)
+	{
+		for (const TPair<FString, FMargin>& ButtonSize : ButtonSizes)
+		{
+			const FButtonStyle Style = FButtonStyle()
+			                           .SetNormal(StyleButton.Normal)
+			                           .SetHovered(StyleButton.Hovered)
+			                           .SetPressed(StyleButton.Pressed)
+			                           .SetNormalForeground(StyleButton.NormalForeground)
+			                           .SetHoveredForeground(StyleButton.HoveredForeground)
+			                           .SetPressedForeground(StyleButton.PressedForeground)
+			                           .SetNormalPadding(ButtonSize.Value);
+
+			FString StyleButtonName = StyleButton.Name + "." + ButtonSize.Key;
+			StyleInstance->Set(*StyleButtonName, Style);
+		}
+	}
 }

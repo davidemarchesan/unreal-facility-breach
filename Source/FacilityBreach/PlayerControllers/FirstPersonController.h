@@ -98,6 +98,8 @@ private:
 	// Debug only
 	void Debug();
 
+	UFUNCTION() void OnPlayerDeath();
+
 public:
 
 	/** Inventory */

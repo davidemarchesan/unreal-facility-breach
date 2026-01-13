@@ -6,6 +6,7 @@
 #include "GameplayTagAssetInterface.h"
 #include "Engine/TriggerBox.h"
 #include "FacilityBreach/Actors/GameObjectives/GameObjectives.h"
+#include "FacilityBreach/Subsystems/World/CheckPointsSubsystem.h"
 #include "FacilityBreach/Subsystems/World/GameObjectivesSubsystem.h"
 #include "FacilityBreach/Subsystems/World/TutorialSubsystem.h"
 #include "CheckPoint.generated.h"
@@ -75,6 +76,9 @@ protected:
 	UPROPERTY(Category="Gameplay Tags", EditAnywhere)
 	FGameplayTagContainer GameplayTags;
 
+	UPROPERTY(EditAnywhere, Category="Trigger", meta=(ToolTip="Wether the player can respawn on this checkpoint"))
+	bool bRespawnCheckPoint = false;
+
 private:
 
 	bool bFired = false;
@@ -82,5 +86,6 @@ private:
 	UFUNCTION() void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UGameObjectivesSubsystem* GameObjectivesSubsystem;
+	UCheckPointsSubsystem* CheckPointsSubsystem;
 	
 };

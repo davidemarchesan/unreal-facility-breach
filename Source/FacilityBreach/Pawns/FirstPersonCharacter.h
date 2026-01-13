@@ -43,6 +43,9 @@ public:
 
 	FOnDeath OnDeath;
 
+	void RespawnCharacter(FVector Location, FRotator Rotation);
+	void RespawnCharacter();
+
 	/* IGameplayTagAssetInterface */
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	/* END IGameplayTagAssetInterface */
@@ -73,5 +76,8 @@ private:
 
 	bool bDead = false;
 	void Die();
+
+	FVector InitialLocation;
+	FRotator InitialRotation;
 	
 };

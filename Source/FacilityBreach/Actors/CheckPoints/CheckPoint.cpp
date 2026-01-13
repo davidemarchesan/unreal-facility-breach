@@ -52,6 +52,7 @@ void ACheckPoint::BeginPlay()
 	}
 
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
+	CheckPointsSubsystem = GetWorld()->GetSubsystem<UCheckPointsSubsystem>();
 }
 
 void ACheckPoint::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -67,6 +68,11 @@ void ACheckPoint::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	if (GameObjectivesSubsystem)
 	{
 		GameObjectivesSubsystem->Emit(this, GameObjectivesSubsystem->Tag_Action_Overlap_Begin);
+	}
+
+	if (CheckPointsSubsystem && bRespawnCheckPoint == true)
+	{
+		CheckPointsSubsystem->SetLastCheckPoint(this);
 	}
 
 	if (Triggers.Num() > 0)

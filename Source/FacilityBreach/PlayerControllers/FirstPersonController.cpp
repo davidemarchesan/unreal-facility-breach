@@ -4,6 +4,7 @@
 #include "FirstPersonController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "FacilityBreach/GameModes/GameModeTest.h"
 #include "FacilityBreach/HUD/FacilityBreachHUD.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
@@ -38,6 +39,11 @@ void AFirstPersonController::BeginPlay()
 	}
 
 	LoadSubsystems();
+
+	if (AGameModeTest* GameMode = Cast<AGameModeTest>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->OnPlayerDeath.AddUObject(this, &AFirstPersonController::OnPlayerDeath);
+	}
 }
 
 void AFirstPersonController::SetupInputComponent()
@@ -319,6 +325,24 @@ void AFirstPersonController::Debug()
 			FColor::Blue,
 			TEXT("Style has been reset")
 		);
+	}
+}
+
+void AFirstPersonController::OnPlayerDeath()
+{
+	bShowMouseCursor = 1;
+	SetInputMode(FInputModeUIOnly());
+	
+	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (FirstPersonInputMappingContext)
+			{
+				InputSystem->RemoveMappingContext(FirstPersonInputMappingContext);
+			}
+		}
 	}
 }
 

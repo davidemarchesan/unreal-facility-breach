@@ -49,6 +49,9 @@ void AFirstPersonCharacter::BeginPlay()
 	}
 
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
+
+	InitialLocation = GetActorLocation();
+	InitialRotation = GetActorRotation();
 }
 
 void AFirstPersonCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -69,6 +72,19 @@ void AFirstPersonCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AA
 void AFirstPersonCharacter::Die()
 {
 	bDead = true;
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->SetSimulatePhysics(false);
+		CapsuleComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	}
+
+	if (UFirstPersonMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->DisableMovement();
+		MoveComp->StopMovementImmediately();
+	}
+	
 	OnDeath.Broadcast();
 }
 
@@ -108,4 +124,16 @@ void AFirstPersonCharacter::Scan()
 	{
 		AbilityComponent->Scan();
 	}
+}
+
+void AFirstPersonCharacter::RespawnCharacter(FVector Location, FRotator Rotation)
+{
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
+}
+
+void AFirstPersonCharacter::RespawnCharacter()
+{
+	SetActorLocation(InitialLocation);
+	SetActorRotation(InitialRotation);
 }

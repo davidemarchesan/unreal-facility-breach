@@ -3,8 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/Subsystems/World/CheckPointsSubsystem.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameModeTest.generated.h"
+
+DECLARE_MULTICAST_DELEGATE(FOnPlayerDeath)
+DECLARE_MULTICAST_DELEGATE(FOnPlayerRespawn)
 
 /**
  * 
@@ -14,14 +19,22 @@ class FACILITYBREACH_API AGameModeTest : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
+private:
+
+	UFUNCTION() void OnPlayerDeathDelegate();
+
+	AFirstPersonCharacter* PlayerCharacter;
+	UCheckPointsSubsystem* CheckPointsSubsystem;
 
 protected:
 
 	virtual void BeginPlay() override;
 
-private:
+public:
 
-	UFUNCTION() void OnPlayerDeath();
+	void RespawnPlayer();
+
+	FOnPlayerDeath OnPlayerDeath;
+	FOnPlayerRespawn OnPlayerRespawn;
 	
 };
