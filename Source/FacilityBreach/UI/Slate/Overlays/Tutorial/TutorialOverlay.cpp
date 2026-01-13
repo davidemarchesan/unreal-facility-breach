@@ -73,13 +73,55 @@ void STutorialOverlay::Construct(const FArguments& InArgs)
 	];
 }
 
+void STutorialOverlay::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+{
+	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+
+	if (bFadedOut == true)
+	{
+		return;
+	}
+
+	if (bIsFading)
+	{
+		const float ElapsedTimeSinceFadingOut = InCurrentTime - FadeOutStartTime;
+		if (ElapsedTimeSinceFadingOut < 0.f)
+		{
+			return;
+		}
+
+		const float Alpha = ElapsedTimeSinceFadingOut / FadeOutDuration;
+		const float Opacity = FMath::InterpEaseOut(1.f, 0.f, Alpha, 2.f);
+
+		if (MainOverlay.IsValid())
+		{
+			if (FMath::IsNearlyZero(Opacity, 0.02f))
+			{
+				MainOverlay->SetVisibility(EVisibility::Collapsed);
+				bIsFading = false;
+				bFadedOut = true;
+			}
+			else
+			{
+				MainOverlay->SetRenderOpacity(Opacity);
+			}
+		}
+	}
+}
+
 void STutorialOverlay::OnShow(FText InTitle, FText InDescription)
 {
 	if (MainOverlay.IsValid() && TitleTextBlock.IsValid() && DescriptionTextBlock.IsValid())
 	{
 		TitleTextBlock->SetText(FText::Format(FText::FromString("Tutorial - {0}"), InTitle));
 		DescriptionTextBlock->SetText(InDescription);
+
+		MainOverlay->SetRenderOpacity(1.f);
 		MainOverlay->SetVisibility(EVisibility::Visible);
+
+		FadeOutStartTime = FSlateApplication::Get().GetCurrentTime() + FadeOutDelay;
+		bIsFading = true;
+		bFadedOut = false;
 	}
 }
 
@@ -88,5 +130,6 @@ void STutorialOverlay::OnHide()
 	if (MainOverlay.IsValid())
 	{
 		MainOverlay->SetVisibility(EVisibility::Collapsed);
+		bFadedOut = true;
 	}
 }
