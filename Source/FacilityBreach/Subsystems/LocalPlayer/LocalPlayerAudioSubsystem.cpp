@@ -13,7 +13,9 @@ void ULocalPlayerAudioSubsystem::Initialize(FSubsystemCollectionBase& Collection
 
 	const FSoftObjectPath GameAudioDataPath(TEXT("/Game/Audio/DT_GameAudio.DT_GameAudio"));
 
-	GameAudioDataTable = Cast<UDataTable>(GameAudioDataPath.TryLoad());
+	GameAudioDataTableAsset = TSoftObjectPtr<UDataTable>(GameAudioDataPath);
+	GameAudioDataTable = GameAudioDataTableAsset.LoadSynchronous();
+	
 	if (GameAudioDataTable == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Could not load GameAudioDataTable %s"), *GameAudioDataPath.ToString());

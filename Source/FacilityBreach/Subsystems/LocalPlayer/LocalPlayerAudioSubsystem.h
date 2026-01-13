@@ -30,6 +30,9 @@ public:
 
 private:
 
+	TSoftObjectPtr<UDataTable> GameAudioDataTableAsset;
+
+	UPROPERTY()
 	TObjectPtr<const UDataTable> GameAudioDataTable;
 	
 };
