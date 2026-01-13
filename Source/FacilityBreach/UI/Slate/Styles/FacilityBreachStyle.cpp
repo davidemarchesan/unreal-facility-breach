@@ -175,6 +175,9 @@ void FFacilityBreachStyle::InitializeBrushes()
 
 	StyleInstance->Set("Brush.EndGame.Background",
 	                   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14D9")), 0.f));
+
+	StyleInstance->Set("Brush.Loading.Background",
+					   new FSlateRoundedBoxBrush(FLinearColor(FColor::FromHex("0A1E14FF")), 0.f));
 }
 
 void FFacilityBreachStyle::InitializeButtons()

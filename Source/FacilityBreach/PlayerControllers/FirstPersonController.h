@@ -23,6 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHideInteractionHint);
 
 DECLARE_MULTICAST_DELEGATE(FOnInventoryToggle);
 
+DECLARE_MULTICAST_DELEGATE(FOnControllerReady);
+
 /**
  * 
  */
@@ -40,6 +42,9 @@ public:
 	FOnHideInteractionHint OnHideInteractionHint;
 
 	FOnInventoryToggle OnInventoryToggle;
+
+	bool IsReady() const { return bReady;}
+	FOnControllerReady OnControllerReady;
 
 protected:
 
@@ -99,6 +104,10 @@ private:
 	void Debug();
 
 	UFUNCTION() void OnPlayerDeath();
+
+	bool bReady = false;
+
+	UFUNCTION() void OnLevelReady();
 
 public:
 

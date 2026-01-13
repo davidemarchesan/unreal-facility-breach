@@ -37,6 +37,7 @@ void AFacilityBreachHUD::InitializeDelegatesSub()
 	InitializeDelegatesInventory();
 	InitializeDelegatesTutorial();
 	InitializeDelegatesEndGame();
+	InitializeDelegatesLoading();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesAbilities()
@@ -216,6 +217,22 @@ void AFacilityBreachHUD::OnPlayerDeath()
 	}
 }
 
+void AFacilityBreachHUD::InitializeDelegatesLoading()
+{
+	if (GameMode)
+	{
+		GameMode->OnLevelReady.AddUObject(this, &AFacilityBreachHUD::OnLevelReady);
+	}
+}
+
+void AFacilityBreachHUD::OnLevelReady()
+{
+	if (LoadingOverlay.IsValid())
+	{
+		LoadingOverlay->FadeOut();
+	}
+}
+
 void AFacilityBreachHUD::InitializeOverlays()
 {
 	if (GEngine && GEngine->GameViewport)
@@ -227,6 +244,7 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayInventory();
 		InitializeOverlayTutorial();
 		InitializeOverlayEndGame();
+		InitializeOverlayLoading();
 	}
 }
 
@@ -333,5 +351,15 @@ void AFacilityBreachHUD::InitializeOverlayEndGame()
 	if (EndGameOverlay)
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(EndGameOverlay.ToSharedRef());
+	}
+}
+
+void AFacilityBreachHUD::InitializeOverlayLoading()
+{
+	LoadingOverlay = SNew(SLoadingOverlay);
+
+	if (LoadingOverlay)
+	{
+		GEngine->GameViewport->AddViewportWidgetContent(LoadingOverlay.ToSharedRef());
 	}
 }

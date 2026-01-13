@@ -68,8 +68,9 @@ void SGameObjectiveBanner::Tick(const FGeometry& AllottedGeometry, const double 
 		}
 
 		const float Alpha = ElapsedTimeSinceFadingOut / FadeOutDuration;
-		float Opacity = FMath::InterpEaseOut(1.f, 0.f, Alpha, 2.f);
-		if (MainBox)
+		const float Opacity = FMath::InterpEaseOut(1.f, 0.f, Alpha, 2.f);
+		
+		if (MainBox.IsValid())
 		{
 			if (FMath::IsNearlyZero(Opacity, 0.02f))
 			{

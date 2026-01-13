@@ -11,6 +11,8 @@
 DECLARE_MULTICAST_DELEGATE(FOnPlayerDeath)
 DECLARE_MULTICAST_DELEGATE(FOnPlayerRespawn)
 
+DECLARE_MULTICAST_DELEGATE(FOnLevelReady)
+
 /**
  * 
  */
@@ -26,6 +28,14 @@ private:
 	AFirstPersonCharacter* PlayerCharacter;
 	UCheckPointsSubsystem* CheckPointsSubsystem;
 
+	bool bReady = false;
+	bool bControllerReady = false;
+	bool bReadyBroadcasted = false;
+
+	void CheckForLevelLoaded();
+
+	void OnControllerReady();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -36,5 +46,7 @@ public:
 
 	FOnPlayerDeath OnPlayerDeath;
 	FOnPlayerRespawn OnPlayerRespawn;
+
+	FOnLevelReady OnLevelReady;
 	
 };

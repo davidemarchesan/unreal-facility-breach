@@ -5,6 +5,7 @@
 
 #include "FacilityBreach/Actors/CheckPoints/CheckPoint.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
+#include "FacilityBreach/PlayerControllers/FirstPersonController.h"
 #include "FacilityBreach/Subsystems/World/CheckPointsSubsystem.h"
 
 void AGameModeTest::RespawnPlayer()
@@ -16,7 +17,8 @@ void AGameModeTest::RespawnPlayer()
 		{
 			if (PlayerCharacter)
 			{
-				PlayerCharacter->RespawnCharacter(LastCheckPoint->GetActorLocation(), LastCheckPoint->GetActorRotation());
+				PlayerCharacter->RespawnCharacter(LastCheckPoint->GetActorLocation(),
+				                                  LastCheckPoint->GetActorRotation());
 				return;
 			}
 		}
@@ -30,12 +32,44 @@ void AGameModeTest::RespawnPlayer()
 	}
 }
 
+void AGameModeTest::CheckForLevelLoaded()
+{
+	// Avoid to broadcast multiple times
+	if (bReadyBroadcasted == true)
+	{
+		return;
+	}
+	
+	if (bReady == true && bControllerReady == true)
+	{
+		OnLevelReady.Broadcast();
+		bReadyBroadcasted = true;
+	}
+}
+
+void AGameModeTest::OnControllerReady()
+{
+	bControllerReady = true;
+	CheckForLevelLoaded();
+}
+
 void AGameModeTest::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController* Controller =  GetWorld()->GetFirstPlayerController())
+	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(GetWorld()->GetFirstPlayerController()))
 	{
+
+		// Check if controller is ready
+		if (Controller->IsReady() == true)
+		{
+			bControllerReady = true;
+		}
+		else
+		{
+			Controller->OnControllerReady.AddUObject(this, &AGameModeTest::OnControllerReady);
+		}
+
 		PlayerCharacter = Cast<AFirstPersonCharacter>(Controller->GetPawn());
 		if (PlayerCharacter)
 		{
@@ -44,6 +78,10 @@ void AGameModeTest::BeginPlay()
 	}
 
 	CheckPointsSubsystem = GetWorld()->GetSubsystem<UCheckPointsSubsystem>();
+
+	bReady = true;
+	
+	CheckForLevelLoaded();
 }
 
 void AGameModeTest::OnPlayerDeathDelegate()

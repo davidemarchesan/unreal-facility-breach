@@ -5,7 +5,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "FacilityBreach/GameModes/GameModeTest.h"
-#include "FacilityBreach/HUD/FacilityBreachHUD.h"
 #include "FacilityBreach/Input/Configs/FirstPersonInputConfig.h"
 #include "FacilityBreach/Interfaces/InteractableInterface.h"
 #include "FacilityBreach/Pawns/FirstPersonCharacter.h"
@@ -18,14 +17,18 @@ void AFirstPersonController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (bReady == false)
+	{
+		bReady = true;
+		OnControllerReady.Broadcast();
+	}
+
 	LineTrace();
 }
 
 void AFirstPersonController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	InitializeMappingContexts();
 
 	FirstPersonCharacter = Cast<AFirstPersonCharacter>(GetPawn());
 	if (FirstPersonCharacter == nullptr)
@@ -43,6 +46,7 @@ void AFirstPersonController::BeginPlay()
 	if (AGameModeTest* GameMode = Cast<AGameModeTest>(GetWorld()->GetAuthGameMode()))
 	{
 		GameMode->OnPlayerDeath.AddUObject(this, &AFirstPersonController::OnPlayerDeath);
+		GameMode->OnLevelReady.AddUObject(this, &AFirstPersonController::OnLevelReady);
 	}
 }
 
@@ -344,6 +348,11 @@ void AFirstPersonController::OnPlayerDeath()
 			}
 		}
 	}
+}
+
+void AFirstPersonController::OnLevelReady()
+{
+	InitializeMappingContexts();
 }
 
 void AFirstPersonController::AddItemToInventory(FString ItemName, int32 Quantity)
