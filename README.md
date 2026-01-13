@@ -31,23 +31,23 @@ At the moment, there are two abilities: dash and scan.
 
 A simple dash in the direction of movement (or forward if not moving).
 
-[gif]
+![Dash](Media/gifs/dash.gif)
 
 #### Scan
 
 A spherical scan with its center on player's position, that reveals enemies behind walls using post-process materials.
 
-[gif]
+![Scan](Media/gifs/scan.gif)
 
 ## Items and inventory system
 
 Items can be picked up by the player and added to the inventory. Pressing the `TAB` input key can show the inventory.
 
-[image inventory]
+![Inventory](Media/images/inventory.jpg)
 
 Items are defined in a DataTable where each row has its own `id` and `name`.
 
-[gif pickup item]
+![Pickup](Media/gifs/pickup.gif)
 
 ## Interactable objects and doors
 
@@ -55,13 +55,11 @@ Actors using the `UInteractableInterface` interface are meant to be interactable
 
 Usually, a white outline appears around the actor mesh when focused, using post-process materials. Interaction depends on the type of actor. For example, an item can be picked up on interaction, meanwhile a door opens.
 
-[gif door locked]
+![Door](Media/images/door.jpg)
 
 Also, doors may require a specific item in the player's inventory to be interacted with. `ADoor` actor performs these checks within the `OnInteract()` function.
 
-[image door editor requirement]
-
-[gif door unlocked]
+![Door](Media/images/door_locked.jpg)
 
 ## Objective system
 
@@ -73,11 +71,11 @@ A requirement is usually composed of:
 
 Thanks to `actor` and `action` it is possible to filter events. The objective system is responsible for checking if the event satisfies an active goal's requirements or not, and also responsible for checking if the current objective is completed.
 
-[image goal requirements]
+![Objective](Media/images/objective.jpg)
 
 `actor` and `action` are both Unreal Engine built-in `GameplayTags` defined in multiple DataTables. `actor` tags are assigned to actors in the level, meanwhile `action` tags are selected in the code. Below, an example of `ADoor` emitting an "open" action.
 
-[image door actor]
+![Door](Media/images/door_editor.jpg)
 
 ```
 void Open()
@@ -86,13 +84,13 @@ void Open()
 }
 ```
 
-[gif door open -> completed]
+![Objective completed](Media/gifs/obj_completed.gif)
 
 ## Tutorial system
 
 The tutorial (sub)system is responsible for showing a popup with instructions. These instructions are DataAssets.
 
-[image data asset tutorial]
+![Tutorial](Media/images/tutorial.jpg)
 
 ## Checkpoints system
 
@@ -102,9 +100,9 @@ Checkpoints are simple boxes that react on player overlapping. It is possible to
 - trigger a new objective
 - push an event to the objective system
 
-[gif checkpoint tutorial]
+![Tutorial](Media/gifs/tutorial.gif)
 
-[image checkpoint editor]
+![Checkpoint](Media/images/checkpoint_editor.jpg)
 
 ## Enemy AI
 
@@ -112,11 +110,11 @@ Enemies follow a path made by waypoints. A waypoint is an actor that can be plac
 - time the enemy stays on the waypoint
 - facing direction
 
-[image waypoint editor]
+![Waypoint](Media/images/waypoint_editor.jpg)
 
 Waypoints can be referenced in enemies in patrol settings. If an enemy has no waypoints, it will not move. Other than waypoints, settings like speed or vision range can be adjusted in patrol settings.
 
-[image patrol settings enemy]
+![Waypoint](Media/images/enemy_editor.jpg)
 
 When an enemy detects the player in its vision range, it starts the chase. The AI status (idle, patrol, alert, chase) is controlled by a custom AI controller.
 
