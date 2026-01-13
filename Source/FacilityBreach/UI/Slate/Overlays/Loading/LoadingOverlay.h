@@ -8,8 +8,7 @@ public:
 	SLATE_BEGIN_ARGS(SLoadingOverlay)
 		{
 		}
-
-		SLATE_EVENT(FOnClicked, OnRespawn)
+		SLATE_EVENT(FSimpleDelegate, OnFadeOut)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
@@ -28,4 +27,6 @@ private:
 
 	bool bIsFading = false;
 	bool bFadedOut = false;
+
+	FSimpleDelegate OnFadeOut;
 };

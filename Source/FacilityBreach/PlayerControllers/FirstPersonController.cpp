@@ -26,6 +26,36 @@ void AFirstPersonController::Tick(float DeltaSeconds)
 	LineTrace();
 }
 
+void AFirstPersonController::EnableInput(class APlayerController* PlayerController)
+{
+	Super::EnableInput(PlayerController);
+
+	bShowMouseCursor = 0;
+	SetInputMode(FInputModeGameOnly());
+
+	InitializeMappingContexts();
+}
+
+void AFirstPersonController::DisableInput(class APlayerController* PlayerController)
+{
+	Super::DisableInput(PlayerController);
+
+	bShowMouseCursor = 1;
+	SetInputMode(FInputModeUIOnly());
+
+	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (FirstPersonInputMappingContext)
+			{
+				InputSystem->RemoveMappingContext(FirstPersonInputMappingContext);
+			}
+		}
+	}
+}
+
 void AFirstPersonController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -46,6 +76,7 @@ void AFirstPersonController::BeginPlay()
 	if (AGameModeTest* GameMode = Cast<AGameModeTest>(GetWorld()->GetAuthGameMode()))
 	{
 		GameMode->OnPlayerDeath.AddUObject(this, &AFirstPersonController::OnPlayerDeath);
+		GameMode->OnPlayerRespawn.AddUObject(this, &AFirstPersonController::OnPlayerRespawn);
 		GameMode->OnLevelReady.AddUObject(this, &AFirstPersonController::OnLevelReady);
 	}
 }
@@ -80,7 +111,7 @@ void AFirstPersonController::SetupInputComponent()
 			                          &AFirstPersonController::ToggleInventory);
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Back, ETriggerEvent::Triggered, this,
 			                          &AFirstPersonController::Back);
-			
+
 
 			// Debug only
 			EnhancedInput->BindAction(FirstPersonInputConfig->IA_Debug, ETriggerEvent::Triggered, this,
@@ -180,13 +211,11 @@ void AFirstPersonController::ToggleInventory()
 
 void AFirstPersonController::Back()
 {
-
 	if (bShowingTutorial == true && TutorialSubsystem)
 	{
 		TutorialSubsystem->HideTutorial();
 		bShowingTutorial = false;
 	}
-	
 }
 
 void AFirstPersonController::LineTrace()
@@ -334,25 +363,17 @@ void AFirstPersonController::Debug()
 
 void AFirstPersonController::OnPlayerDeath()
 {
-	bShowMouseCursor = 1;
-	SetInputMode(FInputModeUIOnly());
-	
-	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
-			UEnhancedInputLocalPlayerSubsystem>())
-		{
-			if (FirstPersonInputMappingContext)
-			{
-				InputSystem->RemoveMappingContext(FirstPersonInputMappingContext);
-			}
-		}
-	}
+	DisableInput(this);
+}
+
+void AFirstPersonController::OnPlayerRespawn()
+{
+	EnableInput(this);
 }
 
 void AFirstPersonController::OnLevelReady()
 {
-	InitializeMappingContexts();
+	EnableInput(this);
 }
 
 void AFirstPersonController::AddItemToInventory(FString ItemName, int32 Quantity)

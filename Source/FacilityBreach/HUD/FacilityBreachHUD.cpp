@@ -146,9 +146,8 @@ void AFacilityBreachHUD::InitializeDelegatesInventory()
 {
 	if (AFirstPersonController* Controller = Cast<AFirstPersonController>(GetOwningPlayerController()))
 	{
-
 		Controller->OnInventoryToggle.AddUObject(this, &AFacilityBreachHUD::OnInventoryToggle);
-		
+
 		if (AFirstPersonPlayerState* PlayerState = Controller->GetPlayerState<
 			AFirstPersonPlayerState>())
 		{
@@ -211,10 +210,7 @@ void AFacilityBreachHUD::InitializeDelegatesEndGame()
 
 void AFacilityBreachHUD::OnPlayerDeath()
 {
-	if (EndGameOverlay.IsValid())
-	{
-		EndGameOverlay->SetVisibility(EVisibility::Visible);
-	}
+	InitializeOverlayEndGame();
 }
 
 void AFacilityBreachHUD::InitializeDelegatesLoading()
@@ -222,6 +218,7 @@ void AFacilityBreachHUD::InitializeDelegatesLoading()
 	if (GameMode)
 	{
 		GameMode->OnLevelReady.AddUObject(this, &AFacilityBreachHUD::OnLevelReady);
+		GameMode->OnPlayerRespawn.AddUObject(this, &AFacilityBreachHUD::InitializeOverlayLoading);
 	}
 }
 
@@ -243,7 +240,6 @@ void AFacilityBreachHUD::InitializeOverlays()
 		InitializeOverlayGameObjectives();
 		InitializeOverlayInventory();
 		InitializeOverlayTutorial();
-		InitializeOverlayEndGame();
 		InitializeOverlayLoading();
 	}
 }
@@ -276,7 +272,7 @@ void AFacilityBreachHUD::InitializeOverlayAbilities()
 {
 	AbilitiesOverlay = SNew(SAbilitiesOverlay);
 
-	if (AbilitiesOverlay && CharacterOwner)
+	if (AbilitiesOverlay.IsValid() && CharacterOwner)
 	{
 		if (UAbilityComponent* AbilityComponent = CharacterOwner->GetAbilityComponent())
 		{
@@ -290,7 +286,7 @@ void AFacilityBreachHUD::InitializeOverlayInteractables()
 {
 	InteractablesOverlay = SNew(SInteractablesOverlay);
 
-	if (InteractablesOverlay)
+	if (InteractablesOverlay.IsValid())
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(InteractablesOverlay.ToSharedRef());
 	}
@@ -300,7 +296,7 @@ void AFacilityBreachHUD::InitializeOverlayGameObjectives()
 {
 	GameObjectivesOverlay = SNew(SGameObjectivesOverlay);
 
-	if (GameObjectivesOverlay)
+	if (GameObjectivesOverlay.IsValid())
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(GameObjectivesOverlay.ToSharedRef());
 
@@ -319,7 +315,7 @@ void AFacilityBreachHUD::InitializeOverlayInventory()
 {
 	InventoryOverlay = SNew(SInventoryOverlay);
 
-	if (InventoryOverlay)
+	if (InventoryOverlay.IsValid())
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(InventoryOverlay.ToSharedRef());
 	}
@@ -329,7 +325,7 @@ void AFacilityBreachHUD::InitializeOverlayTutorial()
 {
 	TutorialOverlay = SNew(STutorialOverlay);
 
-	if (TutorialOverlay)
+	if (TutorialOverlay.IsValid())
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(TutorialOverlay.ToSharedRef());
 	}
@@ -344,9 +340,12 @@ void AFacilityBreachHUD::InitializeOverlayEndGame()
 			{
 				GameMode->RespawnPlayer();
 			}
+			if (EndGameOverlay.IsValid())
+			{
+				GEngine->GameViewport->RemoveViewportWidgetContent(EndGameOverlay.ToSharedRef());
+			}
 			return FReply::Handled();
 		});
-	EndGameOverlay->SetVisibility(EVisibility::Collapsed);
 
 	if (EndGameOverlay)
 	{
@@ -356,9 +355,16 @@ void AFacilityBreachHUD::InitializeOverlayEndGame()
 
 void AFacilityBreachHUD::InitializeOverlayLoading()
 {
-	LoadingOverlay = SNew(SLoadingOverlay);
+	LoadingOverlay = SNew(SLoadingOverlay)
+		.OnFadeOut_Lambda([this]()
+		{
+			if (LoadingOverlay.IsValid())
+			{
+				GEngine->GameViewport->RemoveViewportWidgetContent(LoadingOverlay.ToSharedRef());
+			}
+		});
 
-	if (LoadingOverlay)
+	if (LoadingOverlay.IsValid())
 	{
 		GEngine->GameViewport->AddViewportWidgetContent(LoadingOverlay.ToSharedRef());
 	}

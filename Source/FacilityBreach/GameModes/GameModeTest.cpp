@@ -10,7 +10,6 @@
 
 void AGameModeTest::RespawnPlayer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGameModeTest::RespawnPlayer"));
 	if (CheckPointsSubsystem)
 	{
 		if (ACheckPoint* LastCheckPoint = CheckPointsSubsystem->GetLastCheckPoint())
@@ -30,6 +29,12 @@ void AGameModeTest::RespawnPlayer()
 	{
 		PlayerCharacter->RespawnCharacter();
 	}
+
+	OnPlayerRespawn.Broadcast();
+	bReadyBroadcasted = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(RespawnTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(RespawnTimerHandle, this, &AGameModeTest::CheckForLevelLoaded, 2.f);
 }
 
 void AGameModeTest::CheckForLevelLoaded()

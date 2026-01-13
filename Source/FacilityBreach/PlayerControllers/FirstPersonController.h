@@ -46,6 +46,9 @@ public:
 	bool IsReady() const { return bReady;}
 	FOnControllerReady OnControllerReady;
 
+	virtual void EnableInput(class APlayerController* PlayerController) override;
+	virtual void DisableInput(class APlayerController* PlayerController) override;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -104,9 +107,9 @@ private:
 	void Debug();
 
 	UFUNCTION() void OnPlayerDeath();
+	UFUNCTION()	void OnPlayerRespawn();
 
 	bool bReady = false;
-
 	UFUNCTION() void OnLevelReady();
 
 public:

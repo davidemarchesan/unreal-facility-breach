@@ -130,10 +130,29 @@ void AFirstPersonCharacter::RespawnCharacter(FVector Location, FRotator Rotation
 {
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);
+	
+	ResetCharacter();
 }
 
 void AFirstPersonCharacter::RespawnCharacter()
 {
 	SetActorLocation(InitialLocation);
 	SetActorRotation(InitialRotation);
+	
+	ResetCharacter();
+}
+
+void AFirstPersonCharacter::ResetCharacter()
+{
+	bDead = false;
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	}
+
+	if (UFirstPersonMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->SetMovementMode(MOVE_Walking);
+	}
 }

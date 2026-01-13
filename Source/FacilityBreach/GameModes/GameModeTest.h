@@ -46,6 +46,7 @@ public:
 
 	FOnPlayerDeath OnPlayerDeath;
 	FOnPlayerRespawn OnPlayerRespawn;
+	FTimerHandle RespawnTimerHandle;
 
 	FOnLevelReady OnLevelReady;
 	

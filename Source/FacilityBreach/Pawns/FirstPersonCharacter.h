@@ -46,6 +46,8 @@ public:
 	void RespawnCharacter(FVector Location, FRotator Rotation);
 	void RespawnCharacter();
 
+	void ResetCharacter();
+
 	/* IGameplayTagAssetInterface */
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	/* END IGameplayTagAssetInterface */

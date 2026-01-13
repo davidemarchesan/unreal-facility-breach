@@ -4,6 +4,9 @@
 
 void SLoadingOverlay::Construct(const FArguments& InArgs)
 {
+
+	OnFadeOut = InArgs._OnFadeOut;
+	
 	ChildSlot
 	[
 		SAssignNew(MainOverlay, SOverlay)
@@ -60,6 +63,8 @@ void SLoadingOverlay::Tick(const FGeometry& AllottedGeometry, const double InCur
 				MainOverlay->SetVisibility(EVisibility::Collapsed);
 				bIsFading = false;
 				bFadedOut = true;
+
+				OnFadeOut.ExecuteIfBound();
 			}
 			else
 			{
