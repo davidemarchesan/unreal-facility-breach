@@ -9,6 +9,7 @@ class SEndGameOverlay : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SEndGameOverlay) {}
+		SLATE_ARGUMENT(bool, Dead);
 		SLATE_EVENT(FOnClicked, OnRespawn)
 	SLATE_END_ARGS()
 

@@ -29,8 +29,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UFUNCTION() void OnPlayerDeath();
-
 private:
 
 	TObjectPtr<AFirstPersonCharacter> CharacterOwner;
@@ -63,6 +61,8 @@ private:
 	UFUNCTION() void OnTutorialHide();
 
 	void InitializeDelegatesEndGame();
+	UFUNCTION() void OnPlayerDeath();
+	UFUNCTION() void OnPlayerWin();
 
 	void InitializeDelegatesLoading();
 	UFUNCTION() void OnLevelReady();
@@ -75,7 +75,7 @@ private:
 	void InitializeOverlayGameObjectives();
 	void InitializeOverlayInventory();
 	void InitializeOverlayTutorial();
-	void InitializeOverlayEndGame();
+	void InitializeOverlayEndGame(bool bDead);
 	void InitializeOverlayLoading();
 
 	TSharedPtr<SAbilitiesOverlay> AbilitiesOverlay;

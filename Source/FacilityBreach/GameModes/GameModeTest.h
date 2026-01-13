@@ -10,6 +10,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerDeath)
 DECLARE_MULTICAST_DELEGATE(FOnPlayerRespawn)
+DECLARE_MULTICAST_DELEGATE(FOnPlayerWin)
 
 DECLARE_MULTICAST_DELEGATE(FOnLevelReady)
 
@@ -24,6 +25,7 @@ class FACILITYBREACH_API AGameModeTest : public AGameModeBase
 private:
 
 	UFUNCTION() void OnPlayerDeathDelegate();
+	UFUNCTION() void OnPlayerWinDelegate();
 
 	AFirstPersonCharacter* PlayerCharacter;
 	UCheckPointsSubsystem* CheckPointsSubsystem;
@@ -46,6 +48,7 @@ public:
 
 	FOnPlayerDeath OnPlayerDeath;
 	FOnPlayerRespawn OnPlayerRespawn;
+	FOnPlayerWin OnPlayerWin;
 	FTimerHandle RespawnTimerHandle;
 
 	FOnLevelReady OnLevelReady;

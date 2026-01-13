@@ -46,6 +46,7 @@ void AFirstPersonCharacter::BeginPlay()
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
 	{
 		CapsuleComp->OnComponentHit.AddDynamic(this, &AFirstPersonCharacter::OnComponentHit);
+		CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &AFirstPersonCharacter::OnComponentBeginOverlap);
 	}
 
 	GameObjectivesSubsystem = GetWorld()->GetSubsystem<UGameObjectivesSubsystem>();
@@ -66,6 +67,15 @@ void AFirstPersonCharacter::OnComponentHit(UPrimitiveComponent* HitComponent, AA
 	if (AEnemyGuardCharacter* Enemy = Cast<AEnemyGuardCharacter>(OtherActor))
 	{
 		Die();
+	}
+}
+
+void AFirstPersonCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor->ActorHasTag("Room.Winning"))
+	{
+		OnWin.Broadcast();
 	}
 }
 

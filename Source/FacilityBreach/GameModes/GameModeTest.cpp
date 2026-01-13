@@ -78,7 +78,8 @@ void AGameModeTest::BeginPlay()
 		PlayerCharacter = Cast<AFirstPersonCharacter>(Controller->GetPawn());
 		if (PlayerCharacter)
 		{
-			PlayerCharacter->OnDeath.AddDynamic(this, &AGameModeTest::OnPlayerDeathDelegate);
+			PlayerCharacter->OnDeath.AddUObject(this, &AGameModeTest::OnPlayerDeathDelegate);
+			PlayerCharacter->OnWin.AddUObject(this, &AGameModeTest::OnPlayerWinDelegate);
 		}
 	}
 
@@ -91,6 +92,10 @@ void AGameModeTest::BeginPlay()
 
 void AGameModeTest::OnPlayerDeathDelegate()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGameModeTest player is dead"));
 	OnPlayerDeath.Broadcast();
+}
+
+void AGameModeTest::OnPlayerWinDelegate()
+{
+	OnPlayerWin.Broadcast();
 }

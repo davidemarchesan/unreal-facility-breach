@@ -8,6 +8,9 @@ void SEndGameOverlay::Construct(const FArguments& InArgs)
 	Font.Size = 34.f;
 
 	FOnClicked OnRespawn = InArgs._OnRespawn;
+	bool bDead = InArgs._Dead;
+
+	FString Title = bDead ? TEXT("You're dead!") : TEXT("You win!");
 
 	ChildSlot
 	[
@@ -37,7 +40,7 @@ void SEndGameOverlay::Construct(const FArguments& InArgs)
 					[
 						SNew(STextBlock)
 						.Font(FFacilityBreachStyle::Get().GetFontStyle("Font.Bold.h1"))
-						.Text(FText::FromString("You're dead"))
+						.Text(FText::FromString(Title))
 						.ColorAndOpacity(FColor::Yellow)
 					]
 

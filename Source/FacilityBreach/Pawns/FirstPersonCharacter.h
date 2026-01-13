@@ -13,7 +13,8 @@
 class UAbilityComponent;
 class UCameraComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_MULTICAST_DELEGATE(FOnWin);
 
 UCLASS()
 class FACILITYBREACH_API AFirstPersonCharacter : public ACharacter, public IGameplayTagAssetInterface
@@ -42,6 +43,7 @@ public:
 	void Scan();
 
 	FOnDeath OnDeath;
+	FOnWin OnWin;
 
 	void RespawnCharacter(FVector Location, FRotator Rotation);
 	void RespawnCharacter();
@@ -56,6 +58,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION() void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION() void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	/** Gameplay Tags */
 	UPROPERTY(Category="Gameplay Tags", EditAnywhere)

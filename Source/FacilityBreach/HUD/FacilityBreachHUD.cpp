@@ -205,12 +205,18 @@ void AFacilityBreachHUD::InitializeDelegatesEndGame()
 	if (GameMode)
 	{
 		GameMode->OnPlayerDeath.AddUObject(this, &AFacilityBreachHUD::OnPlayerDeath);
+		GameMode->OnPlayerWin.AddUObject(this, &AFacilityBreachHUD::OnPlayerWin);
 	}
 }
 
 void AFacilityBreachHUD::OnPlayerDeath()
 {
-	InitializeOverlayEndGame();
+	InitializeOverlayEndGame(true);
+}
+
+void AFacilityBreachHUD::OnPlayerWin()
+{
+	InitializeOverlayEndGame(false);
 }
 
 void AFacilityBreachHUD::InitializeDelegatesLoading()
@@ -331,9 +337,10 @@ void AFacilityBreachHUD::InitializeOverlayTutorial()
 	}
 }
 
-void AFacilityBreachHUD::InitializeOverlayEndGame()
+void AFacilityBreachHUD::InitializeOverlayEndGame(bool bDead)
 {
 	EndGameOverlay = SNew(SEndGameOverlay)
+		.Dead(bDead)
 		.OnRespawn_Lambda([this]() -> FReply
 		{
 			if (GameMode)
