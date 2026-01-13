@@ -166,3 +166,13 @@ void AFirstPersonCharacter::ResetCharacter()
 		MoveComp->SetMovementMode(MOVE_Walking);
 	}
 }
+
+void AFirstPersonCharacter::FellOutOfWorld(const class UDamageType& dmgType)
+{
+	if (bDead == true)
+	{
+		return;
+	}
+	
+	Die();
+}

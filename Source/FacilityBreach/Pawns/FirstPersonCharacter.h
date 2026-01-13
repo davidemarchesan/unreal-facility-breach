@@ -50,6 +50,8 @@ public:
 
 	void ResetCharacter();
 
+	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
+
 	/* IGameplayTagAssetInterface */
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	/* END IGameplayTagAssetInterface */
