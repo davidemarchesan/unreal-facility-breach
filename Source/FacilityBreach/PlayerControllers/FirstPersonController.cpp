@@ -258,15 +258,15 @@ void AFirstPersonController::LineTrace()
 							OnShowInteractionHint.Broadcast(InteractionHint);
 
 							InteractableScriptInterface->OnFocus(this);
-
 							return;
 						}
 					}
-					return;
 				}
 
 				if (LineTraceHitActor == nullptr || OutHit.GetActor() != LineTraceHitActor)
 				{
+					UnFocusInteractable(LineTraceHitActor);
+
 					// We got a new actor
 					LineTraceHitActor = OutHit.GetActor();
 
@@ -290,17 +290,22 @@ void AFirstPersonController::LineTrace()
 		}
 
 		// Hit nothing
-		if (LineTraceHitActor && LineTraceHitActor->Implements<UInteractableInterface>())
-		{
-			TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
-				IInteractableInterface>(LineTraceHitActor);
-			if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
-			{
-				InteractableScriptInterface->OnFocusLost(this);
-				LineTraceHitActor = nullptr;
-			}
-		}
+		UnFocusInteractable(LineTraceHitActor);
+		LineTraceHitActor = nullptr;
 		OnHideInteractionHint.Broadcast();
+	}
+}
+
+void AFirstPersonController::UnFocusInteractable(AActor* Actor)
+{
+	if (Actor && Actor->Implements<UInteractableInterface>())
+	{
+		TScriptInterface<IInteractableInterface> InteractableScriptInterface = TScriptInterface<
+			IInteractableInterface>(Actor);
+		if (InteractableScriptInterface && InteractableScriptInterface->IsInteractable() == true)
+		{
+			InteractableScriptInterface->OnFocusLost(this);
+		}
 	}
 }
 

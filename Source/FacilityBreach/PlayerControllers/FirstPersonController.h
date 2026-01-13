@@ -92,6 +92,8 @@ private:
 	float LineTraceRayLength = 250.f;
 	void LineTrace();
 	AActor* LineTraceHitActor = nullptr;
+
+	void UnFocusInteractable(AActor* Actor);
 	
 	// Subsystems
 	void LoadSubsystems();
