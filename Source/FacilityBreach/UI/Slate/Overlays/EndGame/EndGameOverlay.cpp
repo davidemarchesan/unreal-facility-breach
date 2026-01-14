@@ -10,7 +10,7 @@ void SEndGameOverlay::Construct(const FArguments& InArgs)
 	FOnClicked OnRespawn = InArgs._OnRespawn;
 	bool bDead = InArgs._Dead;
 
-	FString Title = bDead ? TEXT("You're dead!") : TEXT("You win!");
+	FString Title = bDead ? TEXT("You're dead!") : TEXT("You win!!");
 
 	ChildSlot
 	[
@@ -49,6 +49,7 @@ void SEndGameOverlay::Construct(const FArguments& InArgs)
 					[
 
 						SNew(SVerticalBox)
+						.Visibility(bDead ? EVisibility::Visible : EVisibility::Collapsed)
 
 						+ SVerticalBox::Slot()
 						.AutoHeight()

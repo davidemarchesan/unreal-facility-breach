@@ -30,6 +30,7 @@ public:
 
 private:
 
+	UPROPERTY()
 	TSoftObjectPtr<UDataTable> GameAudioDataTableAsset;
 
 	UPROPERTY()
